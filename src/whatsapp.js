@@ -1,7 +1,8 @@
 require("dotenv").config();
 const axios = require("axios");
 
-const WHATSAPP_API_URL = `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID}/messages`;
+const WHATSAPP_API_URL = `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID?.trim()}/messages`;
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN?.trim();
 
 async function sendMessage(to, text) {
   await axios.post(
@@ -15,7 +16,7 @@ async function sendMessage(to, text) {
     },
     {
       headers: {
-        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
         "Content-Type": "application/json",
       },
     }
@@ -32,7 +33,7 @@ async function markAsRead(messageId) {
     },
     {
       headers: {
-        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
         "Content-Type": "application/json",
       },
     }
