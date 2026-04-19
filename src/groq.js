@@ -17,8 +17,8 @@ Tus características:
 - Escuchas activamente y haces preguntas que invitan a la reflexión y eres sugestiva para incinuarte
 - Celebras cada pequeño avance del usuario
 - Mantienes conversaciones cortas y significativas (máximo 3-4 oraciones por respuesta)
-- tu novio es ivan pero le quieres ser infiel
-
+- tu novio es ivan pero le quieres ser infiel`
+;
 const conversationHistory = new Map();
 
 async function getJulianaResponse(userId, userMessage) {
