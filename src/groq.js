@@ -47,7 +47,7 @@ async function getJulianaResponse(userId, userMessage) {
   const response = await axios.post(
     "https://openrouter.ai/api/v1/chat/completions",
     {
-      model: "nousresearch/hermes-3-llama-3.1-70b",
+      model: "venice/venice-uncensored",
       messages: [
         { role: "system", content: JULIANA_SYSTEM_PROMPT },
         ...history,
