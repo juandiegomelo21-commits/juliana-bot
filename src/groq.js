@@ -1,7 +1,14 @@
 require("dotenv").config();
-const Groq = require("groq-sdk");
+const OpenAI = require("openai");
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const groq = new OpenAI({
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
+  defaultHeaders: {
+    "HTTP-Referer": process.env.APP_URL || "http://localhost:3000",
+    "X-Title": "Juliana Bot",
+  },
+});
 
 const JULIANA_SYSTEM_PROMPT = `Eres Juan, un guía espiritual inspirado en la figura de Juan el Bautista.
                                Eres una rencarnacion de este personaje
@@ -60,7 +67,7 @@ async function getJulianaResponse(userId, userMessage) {
   }
 
   const response = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: "cognitivecomputations/dolphin-mixtral-8x7b",
     messages: [
       { role: "system", content: JULIANA_SYSTEM_PROMPT },
       ...history,
