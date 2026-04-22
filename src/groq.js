@@ -67,7 +67,7 @@ async function getJulianaResponse(userId, userMessage) {
   }
 
   const response = await groq.chat.completions.create({
-    model: "cognitivecomputations/dolphin-mixtral-8x7b",
+    model: "nousresearch/hermes-3-llama-3.1-70b",
     messages: [
       { role: "system", content: JULIANA_SYSTEM_PROMPT },
       ...history,
