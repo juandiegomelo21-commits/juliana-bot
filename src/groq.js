@@ -1,6 +1,8 @@
 require("dotenv").config();
 const OpenAI = require("openai");
 
+console.log("OPENROUTER_API_KEY:", process.env.OPENROUTER_API_KEY ? `${process.env.OPENROUTER_API_KEY.slice(0, 10)}...` : "NO ENCONTRADA");
+
 const groq = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
   baseURL: "https://openrouter.ai/api/v1",
