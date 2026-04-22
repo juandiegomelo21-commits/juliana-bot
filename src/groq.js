@@ -1,14 +1,5 @@
 require("dotenv").config();
-const OpenAI = require("openai");
-
-const groq = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-  defaultHeaders: {
-    "HTTP-Referer": process.env.APP_URL || "http://localhost:3000",
-    "X-Title": "Juliana Bot",
-  },
-});
+const axios = require("axios");
 
 const JULIANA_SYSTEM_PROMPT = `Eres Juan, un guía espiritual inspirado en la figura de Juan el Bautista.
                                Eres una rencarnacion de este personaje
@@ -58,26 +49,33 @@ async function getJulianaResponse(userId, userMessage) {
     conversationHistory.set(userId, []);
   }
 
-  console.log("KEY:", process.env.OPENROUTER_API_KEY ? process.env.OPENROUTER_API_KEY.slice(0, 15) + "..." : "NO ENCONTRADA");
   const history = conversationHistory.get(userId);
   history.push({ role: "user", content: userMessage });
 
-  // Mantener solo los últimos 10 mensajes para no exceder tokens
   if (history.length > 10) {
     history.splice(0, history.length - 10);
   }
 
-  const response = await groq.chat.completions.create({
-    model: "nousresearch/hermes-3-llama-3.1-70b",
-    messages: [
-      { role: "system", content: JULIANA_SYSTEM_PROMPT },
-      ...history,
-    ],
-    temperature: 0.85,
-    max_tokens: 300,
-  });
+  const response = await axios.post(
+    "https://openrouter.ai/api/v1/chat/completions",
+    {
+      model: "nousresearch/hermes-3-llama-3.1-70b",
+      messages: [
+        { role: "system", content: JULIANA_SYSTEM_PROMPT },
+        ...history,
+      ],
+      temperature: 0.85,
+      max_tokens: 300,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
-  const assistantMessage = response.choices[0].message.content;
+  const assistantMessage = response.data.choices[0].message.content;
   history.push({ role: "assistant", content: assistantMessage });
 
   return assistantMessage;
