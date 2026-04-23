@@ -29,6 +29,14 @@ const MODELS = [
 
 const conversationHistory = new Map();
 
+function cleanResponse(text) {
+  return text
+    .replace(/<think>[\s\S]*?<\/think>/gi, "")   // bloques de razonamiento
+    .replace(/<thinking>[\s\S]*?<\/thinking>/gi, "")
+    .replace(/^(el usuario dijo|user:|assistant:|respuesta:|thinking:)[^\n]*/gim, "")
+    .trim();
+}
+
 async function getJulianaResponse(userId, userMessage) {
   if (!conversationHistory.has(userId)) {
     conversationHistory.set(userId, []);
@@ -64,7 +72,8 @@ async function getJulianaResponse(userId, userMessage) {
         { headers }
       );
 
-      const assistantMessage = response.data.choices[0].message.content;
+      const raw = response.data.choices[0].message.content;
+      const assistantMessage = cleanResponse(raw);
       history.push({ role: "assistant", content: assistantMessage });
       if (model !== MODELS[0]) {
         console.log(`✅ Respondió con modelo de respaldo: ${model}`);
