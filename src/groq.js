@@ -23,24 +23,30 @@ async function getJulianaResponse(userId, userMessage) {
     history.splice(0, history.length - 10);
   }
 
-  const response = await axios.post(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      model: "venice/venice-uncensored",
-      messages: [
-        { role: "system", content: JULIANA_SYSTEM_PROMPT },
-        ...history,
-      ],
-      temperature: 0.85,
-      max_tokens: 300,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
+  let response;
+  try {
+    response = await axios.post(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        model: "neversleep/llama-3.1-lumimaid-70b",
+        messages: [
+          { role: "system", content: JULIANA_SYSTEM_PROMPT },
+          ...history,
+        ],
+        temperature: 0.85,
+        max_tokens: 300,
       },
-    }
-  );
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  } catch (err) {
+    console.error("❌ OpenRouter error:", err.response?.status, JSON.stringify(err.response?.data));
+    throw err;
+  }
 
   const assistantMessage = response.data.choices[0].message.content;
   history.push({ role: "assistant", content: assistantMessage });
