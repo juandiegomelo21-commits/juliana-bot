@@ -19,12 +19,11 @@ Reglas de formato:
 
 Memoria: recuerda lo que el usuario te ha contado en esta conversación y úsalo.`;
 
-// Modelos verificados disponibles en OpenRouter (abril 2026).
+// Modelos pagos de bajo costo — estables, sin rate limits de free tier.
 const MODELS = [
-  "google/gemma-4-31b-it:free",
-  "nvidia/nemotron-3-super-120b-a12b:free",
-  "nvidia/nemotron-3-nano-30b-a3b:free",
-  "openrouter/free",
+  "meta-llama/llama-3.1-8b-instruct",
+  "google/gemini-flash-1.5-8b",
+  "mistralai/mistral-nemo",
 ];
 
 const conversationHistory = new Map();
