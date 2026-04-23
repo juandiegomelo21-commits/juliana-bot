@@ -23,29 +23,40 @@ async function getJulianaResponse(userId, userMessage) {
     history.splice(0, history.length - 10);
   }
 
+  const payload = {
+    model: "venice/uncensored:free",
+    messages: [
+      { role: "system", content: JULIANA_SYSTEM_PROMPT },
+      ...history,
+    ],
+    temperature: 0.85,
+    max_tokens: 300,
+  };
+  const headers = {
+    Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+    "Content-Type": "application/json",
+  };
+
   let response;
-  try {
-    response = await axios.post(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        model: "venice/uncensored:free",
-        messages: [
-          { role: "system", content: JULIANA_SYSTEM_PROMPT },
-          ...history,
-        ],
-        temperature: 0.85,
-        max_tokens: 300,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json",
-        },
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      response = await axios.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        payload,
+        { headers }
+      );
+      break;
+    } catch (err) {
+      const status = err.response?.status;
+      console.error(`❌ OpenRouter error (intento ${attempt}):`, status, JSON.stringify(err.response?.data));
+      if (status === 429 && attempt < 4) {
+        const wait = attempt * 8000;
+        console.log(`⏳ Rate limit, reintentando en ${wait / 1000}s...`);
+        await new Promise((r) => setTimeout(r, wait));
+        continue;
       }
-    );
-  } catch (err) {
-    console.error("❌ OpenRouter error:", err.response?.status, JSON.stringify(err.response?.data));
-    throw err;
+      throw err;
+    }
   }
 
   const assistantMessage = response.data.choices[0].message.content;
