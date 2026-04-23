@@ -21,10 +21,10 @@ Memoria: recuerda lo que el usuario te ha contado en esta conversación y úsalo
 
 // Modelos estables y family-friendly en orden de preferencia.
 const MODELS = [
-  "meta-llama/llama-3.3-70b-instruct:free",
-  "google/gemma-3-27b-it:free",
-  "meta-llama/llama-3.1-8b-instruct:free",
   "mistralai/mistral-7b-instruct:free",
+  "google/gemma-2-9b-it:free",
+  "qwen/qwen-2.5-7b-instruct:free",
+  "microsoft/phi-3-mini-128k-instruct:free",
 ];
 
 const conversationHistory = new Map();
@@ -73,11 +73,10 @@ async function getJulianaResponse(userId, userMessage) {
     } catch (err) {
       const status = err.response?.status;
       lastError = err;
-      if (status === 429) {
-        console.warn(`⚠️ Rate limit en ${model}, probando siguiente modelo...`);
+      if (status === 429 || status === 404 || status === 400) {
+        console.warn(`⚠️ Modelo ${model} no disponible (${status}), probando siguiente...`);
         continue;
       }
-      // Error no relacionado con rate limit: lanzar inmediatamente
       throw err;
     }
   }
