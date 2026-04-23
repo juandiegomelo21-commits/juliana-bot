@@ -28,7 +28,7 @@ async function getJulianaResponse(userId, userMessage) {
     response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+        model: "cognitivecomputations/dolphin3.0-mistral-24b:free",
         messages: [
           { role: "system", content: JULIANA_SYSTEM_PROMPT },
           ...history,
