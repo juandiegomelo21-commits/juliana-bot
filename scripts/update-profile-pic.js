@@ -2,43 +2,52 @@ require("dotenv").config();
 const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
-const FormData = require("form-data");
 
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID?.trim();
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN?.replace(/[^\x20-\x7E]/g, "").trim();
 
 async function updateProfilePicture(imagePath) {
-  console.log(`📸 Subiendo foto: ${imagePath}`);
+  const fileSize = fs.statSync(imagePath).size;
+  console.log(`📸 Foto: ${imagePath} (${fileSize} bytes)`);
 
-  // Paso 1: subir la imagen como media de WhatsApp
-  const form = new FormData();
-  form.append("messaging_product", "whatsapp");
-  form.append("type", "image/png");
-  form.append("file", fs.createReadStream(imagePath), {
-    filename: path.basename(imagePath),
-    contentType: "image/png",
-  });
-
-  const uploadRes = await axios.post(
-    `https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/media`,
-    form,
+  // Paso 1: iniciar sesión de upload resumible
+  const sessionRes = await axios.post(
+    `https://graph.facebook.com/v19.0/app/uploads`,
+    null,
     {
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-        ...form.getHeaders(),
+      params: {
+        file_name: "foto.png",
+        file_length: fileSize,
+        file_type: "image/png",
+        access_token: ACCESS_TOKEN,
       },
     }
   );
+  const uploadSessionId = sessionRes.data.id;
+  console.log(`✅ Sesión de upload creada: ${uploadSessionId}`);
 
-  const mediaId = uploadRes.data.id;
-  console.log(`✅ Imagen subida. Media ID: ${mediaId}`);
+  // Paso 2: subir el archivo binario
+  const fileBuffer = fs.readFileSync(imagePath);
+  const uploadRes = await axios.post(
+    `https://graph.facebook.com/v19.0/${uploadSessionId}`,
+    fileBuffer,
+    {
+      headers: {
+        Authorization: `OAuth ${ACCESS_TOKEN}`,
+        "Content-Type": "image/png",
+        file_offset: "0",
+      },
+    }
+  );
+  const handle = uploadRes.data.h;
+  console.log(`✅ Handle obtenido: ${handle}`);
 
-  // Paso 2: asignar esa imagen como foto de perfil del bot
+  // Paso 3: asignar como foto de perfil
   const profileRes = await axios.post(
     `https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/whatsapp_business_profile`,
     {
       messaging_product: "whatsapp",
-      profile_picture_handle: mediaId,
+      profile_picture_handle: handle,
     },
     {
       headers: {
@@ -48,10 +57,9 @@ async function updateProfilePicture(imagePath) {
     }
   );
 
-  console.log("🎉 Foto de perfil actualizada correctamente:", profileRes.data);
+  console.log("🎉 Foto de perfil actualizada:", profileRes.data);
 }
 
-// Ruta de la imagen: Desktop/foto.png
 const imagePath = path.join(
   process.env.USERPROFILE || process.env.HOME || "/",
   "Desktop",
