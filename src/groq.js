@@ -19,12 +19,12 @@ Reglas de formato:
 
 Memoria: recuerda lo que el usuario te ha contado en esta conversación y úsalo.`;
 
-// Modelos en orden de preferencia. Si uno falla con 429, prueba el siguiente.
+// Modelos estables y family-friendly en orden de preferencia.
 const MODELS = [
-  "venice/uncensored:free",
-  "cognitivecomputations/dolphin3.0-r1-mistral-nemo:free",
-  "deepseek/deepseek-r1:free",
-  "nousresearch/hermes-3-llama-3.1-405b:free",
+  "meta-llama/llama-3.3-70b-instruct:free",
+  "google/gemma-3-27b-it:free",
+  "meta-llama/llama-3.1-8b-instruct:free",
+  "mistralai/mistral-7b-instruct:free",
 ];
 
 const conversationHistory = new Map();
