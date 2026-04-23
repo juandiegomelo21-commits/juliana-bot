@@ -2,11 +2,10 @@ const { getJulianaResponse, clearHistory } = require("../groq");
 const { sendMessage, markAsRead } = require("../whatsapp");
 
 
-const DONATION_LINK = process.env.DONATION_LINK || "https://tu-link-de-donacion.com";
+const DONATION_LINK = process.env.DONATION_LINK || "https://www.instagram.com/jd.gms/";
 
-// Contador de mensajes por usuario para agregar el link de donación periódicamente
 const messageCount = new Map();
-const DONATION_INTERVAL = 5; // Mostrar donación cada 5 mensajes
+const DONATION_INTERVAL = 15; // Sugerir donación cada 15 mensajes
 
 const RESET_KEYWORDS = ["reiniciar", "reset", "nuevo", "empezar de nuevo", "borrar"];
 const DONATION_KEYWORDS = ["donar", "donación", "ayudar", "apoyar", "colaborar"];
@@ -34,7 +33,7 @@ async function handleIncomingMessage(message, contact) {
   if (DONATION_KEYWORDS.some((kw) => lowerText.includes(kw))) {
     await sendMessage(
       userId,
-      `💛 ¡Gracias por tu generosidad! Puedes apoyar este proyecto aquí:\n\n${DONATION_LINK}\n\nTu apoyo me permite seguir acompañando a más personas. 🙏`
+      `Dar es uno de los actos más hermosos que existen. Si quieres apoyar esta misión de acompañar a las personas, puedes hacerlo aquí:\n\n${DONATION_LINK}\n\nDios te lo paga con creces. 🙏`
     );
     return;
   }
@@ -48,7 +47,7 @@ async function handleIncomingMessage(message, contact) {
 
   let finalResponse = julianaResponse;
   if (count % DONATION_INTERVAL === 0) {
-    finalResponse += `\n\n💛 _Si este espacio te ha ayudado, puedes apoyar a Juliana:_\n${DONATION_LINK}`;
+    finalResponse += `\n\nSi estas conversaciones te han dado algo, considera apoyar esta misión:\n${DONATION_LINK} 🙏`;
   }
 
   await sendMessage(userId, finalResponse);
