@@ -19,12 +19,12 @@ Reglas de formato:
 
 Memoria: recuerda lo que el usuario te ha contado en esta conversación y úsalo.`;
 
-// Modelos estables y family-friendly en orden de preferencia.
+// Modelos verificados disponibles en OpenRouter (abril 2026).
 const MODELS = [
-  "mistralai/mistral-7b-instruct:free",
-  "google/gemma-2-9b-it:free",
-  "qwen/qwen-2.5-7b-instruct:free",
-  "microsoft/phi-3-mini-128k-instruct:free",
+  "google/gemma-4-31b-it:free",
+  "nvidia/nemotron-3-super-120b-a12b:free",
+  "nvidia/nemotron-3-nano-30b-a3b:free",
+  "openrouter/free",
 ];
 
 const conversationHistory = new Map();
