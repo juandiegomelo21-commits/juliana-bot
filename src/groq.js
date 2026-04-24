@@ -37,16 +37,49 @@ const MODELS = [
 
 const conversationHistory = new Map();
 
+const GARBAGE_PATTERNS = [
+  /stripe/i,
+  /credit card/i,
+  /bank transfer/i,
+  /método de pago/i,
+  /selecciona un/i,
+  /subscription/i,
+  /billing/i,
+  /payment/i,
+  /grilled chicken/i,
+  /honolulu/i,
+  /shisha/i,
+  /buen provecho/i,
+  /enjoy tonight/i,
+  /aucun paiement/i,
+  /résumé/i,
+  /mi cuenta virtual/i,
+  /donativos/i,
+  /seleccionar cuentas/i,
+];
+
 function cleanResponse(text) {
-  return text
+  let cleaned = text
     .replace(/<think>[\s\S]*?<\/think>/gi, "")
     .replace(/<thinking>[\s\S]*?<\/thinking>/gi, "")
     .replace(/^(el usuario dijo|user:|assistant:|respuesta:|thinking:)[^\n]*/gim, "")
     .replace(/^(publicado|posted|permalink|cita:|quote:|#\d+|join date|mensajes|posts|location|fecha)[^\n]*/gim, "")
     .replace(/\d{1,2} de \w+ de \d{4},?\s*\d{1,2}:\d{2}\s*(AM|PM)?/gi, "")
-    .replace(/(\b\w+\b)(\s*́?\s*\1){4,}/gi, "$1")  // corta loops de palabras repetidas (Fav Fav Fav...)
+    .replace(/(\b\w+\b)(\s*́?\s*\1){4,}/gi, "$1")
     .replace(/^\s*[\r\n]/gm, "")
     .trim();
+
+  // Cortar en la primera línea/oración que contenga basura
+  const sentences = cleaned.split(/(?<=[.!?💋😏🔥💦])\s+/);
+  const goodSentences = [];
+  for (const s of sentences) {
+    if (GARBAGE_PATTERNS.some(p => p.test(s))) break;
+    goodSentences.push(s);
+    if (goodSentences.length >= 3) break;
+  }
+
+  const result = goodSentences.join(" ").trim();
+  return result || cleaned.slice(0, 200).trim();
 }
 
 async function getJulianaResponse(userId, userMessage) {
