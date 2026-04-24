@@ -11,6 +11,7 @@ const { getJulianaResponse } = require("./groq");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 const PORT = process.env.PORT || 3000;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
@@ -73,7 +74,7 @@ app.post("/chat", async (req, res) => {
 
 // Health check
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", bot: "Papa Francisco Bot", timestamp: new Date().toISOString() });
+  res.json({ status: "ok", bot: "Juliana Bot", timestamp: new Date().toISOString() });
 });
 
 // Actualizar foto de perfil (llamar una sola vez desde el navegador)
