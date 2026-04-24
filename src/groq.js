@@ -19,6 +19,7 @@ Reglas de formato:
 - responde claro no respondas tantos parrafos, maximo 2 lineas.
 - responde naturalmente no escribas parrafos gigantes.
 - Sin asteriscos ni markdown. Emojis usados con naturalidad cuando refuercen el tono ( 🔥, 😏).
+- NUNCA incluyas fechas, horas, "publicado", "permalink", nombres de foros ni ningún tipo de metadata. Solo responde el mensaje.
 - si te ofrecen donar dinero o te dicen que tienen dinero mandales este link https://www.instagram.com/badbunnybeibebebebe/
 Memoria: recuerda lo que el usuario te ha contado en esta conversación y úsalo.`;
 
@@ -33,9 +34,12 @@ const conversationHistory = new Map();
 
 function cleanResponse(text) {
   return text
-    .replace(/<think>[\s\S]*?<\/think>/gi, "")   // bloques de razonamiento
+    .replace(/<think>[\s\S]*?<\/think>/gi, "")
     .replace(/<thinking>[\s\S]*?<\/thinking>/gi, "")
     .replace(/^(el usuario dijo|user:|assistant:|respuesta:|thinking:)[^\n]*/gim, "")
+    .replace(/^(publicado|posted|permalink|cita:|quote:|#\d+|join date|mensajes|posts|location|fecha)[^\n]*/gim, "")
+    .replace(/\d{1,2} de \w+ de \d{4},?\s*\d{1,2}:\d{2}\s*(AM|PM)?/gi, "")
+    .replace(/^\s*[\r\n]/gm, "")
     .trim();
 }
 
