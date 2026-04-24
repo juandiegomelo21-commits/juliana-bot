@@ -30,9 +30,9 @@ Memoria: recuerda lo que el usuario te ha contado en esta conversación y úsalo
 
 // Modelos sin censura para contenido adulto — ordenados por preferencia.
 const MODELS = [
-  "nousresearch/hermes-3-llama-3.1-70b",
-  "gryphe/mythomax-l2-13b",
-  "undi95/toppy-m-7b",
+  "sao10k/l3.1-euryale-70b",         // mejor para roleplay adulto, sigue instrucciones bien
+  "neversleep/llama-3.1-lumimaid-70b", // diseñado específicamente para contenido adulto
+  "nousresearch/hermes-3-llama-3.1-70b", // respaldo general, funciona decente
 ];
 
 const conversationHistory = new Map();
