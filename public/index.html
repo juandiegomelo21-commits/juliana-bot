@@ -318,6 +318,132 @@
       animation: blink 2.5s ease-in-out infinite;
     }
 
+    .msg-counter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .counter-badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 100px;
+      border: 1px solid rgba(52,211,153,0.35);
+      color: rgba(52,211,153,0.85);
+      background: rgba(52,211,153,0.08);
+      letter-spacing: 0.3px;
+      transition: all 0.4s;
+    }
+
+    .counter-badge.warn {
+      border-color: rgba(251,191,36,0.4);
+      color: rgba(251,191,36,0.9);
+      background: rgba(251,191,36,0.08);
+    }
+
+    .counter-badge.danger {
+      border-color: rgba(239,68,68,0.45);
+      color: rgba(239,68,68,0.9);
+      background: rgba(239,68,68,0.1);
+      animation: pulse-danger 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-danger {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+      50% { box-shadow: 0 0 0 4px rgba(239,68,68,0.18); }
+    }
+
+    /* PAYWALL MODAL */
+    .paywall-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(8,8,15,0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .paywall-overlay.show { display: flex; }
+
+    .paywall-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 28px;
+      padding: 48px 36px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 0.5px rgba(255,255,255,0.05) inset;
+      animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.88) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .paywall-avatar {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 24px;
+      border: 2px solid rgba(236,72,153,0.4);
+      box-shadow: 0 0 40px rgba(236,72,153,0.25);
+    }
+
+    .paywall-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .paywall-box h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .paywall-box p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .paywall-cta {
+      display: block;
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      border: none;
+      border-radius: 100px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 8px 32px rgba(124,58,237,0.45);
+      margin-bottom: 12px;
+    }
+
+    .paywall-cta:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 16px 48px rgba(124,58,237,0.6);
+    }
+
+    .paywall-note {
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+      font-style: italic;
+      margin-bottom: 0 !important;
+    }
+
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
@@ -588,20 +714,25 @@
       color: rgba(167,139,250,0.8);
     }
 
-    .coming-soon-banner {
-      text-align: center;
-      margin-top: 48px;
-      padding: 20px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 16px;
+    .price-tag {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(167,139,250,0.9);
+      letter-spacing: 0.2px;
     }
 
-    .coming-soon-banner p {
-      font-size: 13px;
-      color: rgba(255,255,255,0.25);
-      font-style: italic;
+    .price-hot {
+      color: #f472b6;
+      text-shadow: 0 0 12px rgba(244,114,182,0.4);
     }
+
+    .card-thumb-7 { background: linear-gradient(135deg, rgba(220,38,38,0.4), rgba(109,40,217,0.5)); }
+
+    .content-card {
+      cursor: pointer;
+    }
+
+    .content-card:active { transform: scale(0.97); }
 
     footer {
       text-align: center;
@@ -681,7 +812,10 @@
             <h3>Juliana</h3>
             <span>Latina · 24 años · IA</span>
           </div>
-          <div class="h-status"></div>
+          <div class="msg-counter">
+            <span class="counter-badge" id="counterBadge">70 mensajes</span>
+            <div class="h-status"></div>
+          </div>
         </div>
 
         <div class="messages" id="msgs">
@@ -717,76 +851,83 @@
 
       <div class="content-grid">
 
-        <div class="content-card">
+        <div class="content-card" onclick="buyContent()">
           <div class="card-thumb card-thumb-1">📸
             <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
           </div>
           <div class="card-body">
             <p class="card-tag">Exclusivo</p>
             <p class="card-name">Lo que nadie más ve</p>
-            <div class="card-price"><span class="lock-tag">Próximamente</span></div>
+            <div class="card-price"><span class="price-tag">$15.000 COP</span></div>
           </div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card" onclick="buyContent()">
           <div class="card-thumb card-thumb-2">🛁
             <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
           </div>
           <div class="card-body">
             <p class="card-tag">Hot</p>
             <p class="card-name">Mañana en mi ducha</p>
-            <div class="card-price"><span class="lock-tag">Próximamente</span></div>
+            <div class="card-price"><span class="price-tag">$20.000 COP</span></div>
           </div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card" onclick="buyContent()">
           <div class="card-thumb card-thumb-3">🌙
             <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
           </div>
           <div class="card-body">
             <p class="card-tag">Premium</p>
             <p class="card-name">Noche en mi cama</p>
-            <div class="card-price"><span class="lock-tag">Próximamente</span></div>
+            <div class="card-price"><span class="price-tag">$25.000 COP</span></div>
           </div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card" onclick="buyContent()">
           <div class="card-thumb card-thumb-4">🏖️
             <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
           </div>
           <div class="card-body">
             <p class="card-tag">Pack</p>
             <p class="card-name">Mi verano sin censura</p>
-            <div class="card-price"><span class="lock-tag">Próximamente</span></div>
+            <div class="card-price"><span class="price-tag">$35.000 COP</span></div>
           </div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card" onclick="buyContent()">
           <div class="card-thumb card-thumb-5">🎀
             <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
           </div>
           <div class="card-body">
             <p class="card-tag">Privado</p>
             <p class="card-name">Solo para ti, bb</p>
-            <div class="card-price"><span class="lock-tag">Próximamente</span></div>
+            <div class="card-price"><span class="price-tag">$30.000 COP</span></div>
           </div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card" onclick="buyContent()">
           <div class="card-thumb card-thumb-6">🔥
             <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
           </div>
           <div class="card-body">
             <p class="card-tag">Especial</p>
             <p class="card-name">Lo más atrevido de Juliana</p>
-            <div class="card-price"><span class="lock-tag">Próximamente</span></div>
+            <div class="card-price"><span class="price-tag">$45.000 COP</span></div>
           </div>
         </div>
 
-      </div>
+        <div class="content-card" onclick="buyContent()">
+          <div class="card-thumb card-thumb-7">🎬
+            <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
+          </div>
+          <div class="card-body">
+            <p class="card-tag">Video</p>
+            <p class="card-name">Juliana sin ropa, sin cortes</p>
+            <div class="card-price"><span class="price-tag price-hot">$100.000 COP</span></div>
+          </div>
+        </div>
 
-      <div class="coming-soon-banner">
-        <p>✦ Pronto podrás desbloquear el contenido. Mientras tanto, habla con Juliana 💋 ✦</p>
       </div>
     </section>
 
@@ -799,8 +940,46 @@
 
   </div><!-- end wrapper -->
 
+  <!-- PAYWALL MODAL -->
+  <div class="paywall-overlay" id="paywallOverlay">
+    <div class="paywall-box">
+      <div class="paywall-avatar">
+        <img src="./juliana-pp.jpg" alt="Juliana" />
+      </div>
+      <h2>Ya me estoy encariñando contigo 😏</h2>
+      <p>Agotaste tus mensajes gratis bb… pero esto apenas empieza. Tengo contenido exclusivo esperándote — fotos y más que solo tú vas a ver.</p>
+      <a class="paywall-cta" href="https://link.mercadopago.com.co/julianahorny" target="_blank" rel="noopener">💳 Desbloquear acceso ilimitado</a>
+      <button class="paywall-cta" style="background: rgba(255,255,255,0.07); box-shadow: none; border: 1px solid rgba(255,255,255,0.12);" onclick="goToContent()">🔥 Ver contenido exclusivo</button>
+      <p class="paywall-note">Solo para mayores de 18 años</p>
+    </div>
+  </div>
+
   <script>
+    const FREE_MSGS = 70;
+    const PROMO_MSGS = [20, 40, 60]; // mensajes donde Juliana menciona su contenido
+
+    const PROMO_LINK = 'https://link.mercadopago.com.co/julianahorny';
+
+    const PROMO_TEXTS = [
+      `Oye bb… tengo contenido exclusivo que no le muestro a cualquiera 😏🔥 Si quieres verme de verdad: ${PROMO_LINK}`,
+      `Te cuento un secreto... tengo fotos guardadas que solo algunos ven 💋 Por si te interesa: ${PROMO_LINK}`,
+      `Me encanta hablar contigo… pero lo que tengo guardado es otra cosa 🙈🔥 Solo para los que saben apreciarme: ${PROMO_LINK}`
+    ];
+
     let busy = false;
+    let msgCount = parseInt(localStorage.getItem('jul_count') || '0');
+
+    function saveCount() { localStorage.setItem('jul_count', msgCount); }
+
+    function updateCounter() {
+      const remaining = Math.max(0, FREE_MSGS - msgCount);
+      const badge = document.getElementById('counterBadge');
+      if (!badge) return;
+      badge.textContent = remaining === 1 ? '1 mensaje' : `${remaining} mensajes`;
+      badge.className = 'counter-badge';
+      if (remaining <= 10) badge.classList.add('danger');
+      else if (remaining <= 25) badge.classList.add('warn');
+    }
 
     function showPage(name) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -808,6 +987,17 @@
       document.getElementById('page-' + name).classList.add('active');
       document.getElementById('btn-' + name).classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goToContent() {
+      document.getElementById('paywallOverlay').classList.remove('show');
+      showPage('contenido');
+    }
+
+    function showPaywall() {
+      document.getElementById('paywallOverlay').classList.add('show');
+      document.getElementById('inp').disabled = true;
+      document.getElementById('sendBtn').disabled = true;
     }
 
     function resize(el) {
@@ -842,13 +1032,15 @@
 
     function hideTyping() { const e = document.getElementById('typing'); if (e) e.remove(); }
 
-    function sessionId() {
-      let id = sessionStorage.getItem('fid');
-      if (!id) { id = Math.random().toString(36).slice(2); sessionStorage.setItem('fid', id); }
+    function userId() {
+      let id = localStorage.getItem('jul_uid');
+      if (!id) { id = 'web-' + Math.random().toString(36).slice(2); localStorage.setItem('jul_uid', id); }
       return id;
     }
 
     async function send() {
+      if (msgCount >= FREE_MSGS) { showPaywall(); return; }
+
       const inp = document.getElementById('inp');
       const text = inp.value.trim();
       if (!text || busy) return;
@@ -859,24 +1051,48 @@
       addMsg(text, 'user');
       showTyping();
 
+      msgCount++;
+      saveCount();
+      updateCounter();
+
       try {
         const r = await fetch('/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text, userId: 'web-' + sessionId() })
+          body: JSON.stringify({ message: text, userId: userId() })
         });
         const data = await r.json();
         hideTyping();
         addMsg(data.reply, 'bot');
+
+        // Promo de contenido en mensajes clave
+        const promoIdx = PROMO_MSGS.indexOf(msgCount);
+        if (promoIdx !== -1) {
+          setTimeout(() => addMsg(PROMO_TEXTS[promoIdx], 'bot'), 1800);
+        }
+
+        // Al llegar al límite, mostrar paywall tras la última respuesta
+        if (msgCount >= FREE_MSGS) {
+          setTimeout(showPaywall, 2200);
+        }
       } catch {
         hideTyping();
         addMsg('Uy, se fue la señal 😅 inténtalo de nuevo bb', 'bot');
+        msgCount--; saveCount(); updateCounter();
       }
 
       busy = false;
-      document.getElementById('sendBtn').disabled = false;
-      inp.focus();
+      if (msgCount < FREE_MSGS) document.getElementById('sendBtn').disabled = false;
+      document.getElementById('inp').focus();
     }
+
+    function buyContent() {
+      window.open('https://link.mercadopago.com.co/julianahorny', '_blank', 'noopener');
+    }
+
+    // Inicializar al cargar
+    updateCounter();
+    if (msgCount >= FREE_MSGS) showPaywall();
   </script>
 </body>
 </html>
