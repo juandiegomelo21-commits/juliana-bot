@@ -7,6 +7,7 @@ const path = require("path");
 const FormData = require("form-data");
 const { handleIncomingMessage } = require("./handlers/message");
 const { getJulianaResponse } = require("./groq");
+const { getConfig, saveConfig } = require("./config");
 
 const app = express();
 app.use(cors());
@@ -75,6 +76,30 @@ app.post("/chat", async (req, res) => {
 // Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok", bot: "Juliana Bot", timestamp: new Date().toISOString() });
+});
+
+// Config pública (precios y link de pago para el frontend)
+app.get("/public-config", (req, res) => {
+  const { prompt, ...pub } = getConfig();
+  res.json(pub);
+});
+
+// Admin: leer config completa
+app.get("/admin/config", (req, res) => {
+  if (req.query.password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "No autorizado" });
+  }
+  res.json(getConfig());
+});
+
+// Admin: guardar config
+app.post("/admin/config", (req, res) => {
+  if (req.body.password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "No autorizado" });
+  }
+  const { password, ...config } = req.body;
+  saveConfig(config);
+  res.json({ ok: true });
 });
 
 // Actualizar foto de perfil (llamar una sola vez desde el navegador)

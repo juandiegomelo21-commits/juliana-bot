@@ -734,6 +734,141 @@
 
     .content-card:active { transform: scale(0.97); }
 
+    /* ADMIN PANEL */
+    .admin-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(8,8,15,0.95);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .admin-overlay.show { display: block; }
+
+    .admin-box {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 0 80px;
+    }
+
+    .admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+
+    .admin-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .admin-close {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.6);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .admin-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    .admin-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .admin-section h3 {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(167,139,250,0.7);
+      margin-bottom: 16px;
+    }
+
+    .admin-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      outline: none;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+
+    .admin-input:focus { border-color: rgba(124,58,237,0.5); }
+
+    textarea.admin-input {
+      resize: vertical;
+      min-height: 180px;
+      line-height: 1.6;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+
+    .card-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .card-row-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 4px;
+    }
+
+    .admin-save {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 8px 32px rgba(124,58,237,0.4);
+      margin-top: 8px;
+    }
+
+    .admin-save:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(124,58,237,0.6); }
+
+    .admin-msg {
+      text-align: center;
+      font-size: 13px;
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .admin-msg.ok { background: rgba(52,211,153,0.1); color: #34d399; display: block; }
+    .admin-msg.err { background: rgba(239,68,68,0.1); color: #ef4444; display: block; }
+
+    /* Trigger oculto en footer */
+    .footer-trigger { cursor: default; user-select: none; }
+
     footer {
       text-align: center;
       padding: 40px 24px;
@@ -849,96 +984,66 @@
       <h2 class="content-title">Contenido Exclusivo</h2>
       <p class="content-sub">Solo para los que saben apreciar a Juliana de verdad 😏</p>
 
-      <div class="content-grid">
-
-        <div class="content-card" onclick="buyContent()">
-          <div class="card-thumb card-thumb-1">📸
-            <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
-          </div>
-          <div class="card-body">
-            <p class="card-tag">Exclusivo</p>
-            <p class="card-name">Lo que nadie más ve</p>
-            <div class="card-price"><span class="price-tag">$15.000 COP</span></div>
-          </div>
-        </div>
-
-        <div class="content-card" onclick="buyContent()">
-          <div class="card-thumb card-thumb-2">🛁
-            <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
-          </div>
-          <div class="card-body">
-            <p class="card-tag">Hot</p>
-            <p class="card-name">Mañana en mi ducha</p>
-            <div class="card-price"><span class="price-tag">$20.000 COP</span></div>
-          </div>
-        </div>
-
-        <div class="content-card" onclick="buyContent()">
-          <div class="card-thumb card-thumb-3">🌙
-            <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
-          </div>
-          <div class="card-body">
-            <p class="card-tag">Premium</p>
-            <p class="card-name">Noche en mi cama</p>
-            <div class="card-price"><span class="price-tag">$25.000 COP</span></div>
-          </div>
-        </div>
-
-        <div class="content-card" onclick="buyContent()">
-          <div class="card-thumb card-thumb-4">🏖️
-            <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
-          </div>
-          <div class="card-body">
-            <p class="card-tag">Pack</p>
-            <p class="card-name">Mi verano sin censura</p>
-            <div class="card-price"><span class="price-tag">$35.000 COP</span></div>
-          </div>
-        </div>
-
-        <div class="content-card" onclick="buyContent()">
-          <div class="card-thumb card-thumb-5">🎀
-            <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
-          </div>
-          <div class="card-body">
-            <p class="card-tag">Privado</p>
-            <p class="card-name">Solo para ti, bb</p>
-            <div class="card-price"><span class="price-tag">$30.000 COP</span></div>
-          </div>
-        </div>
-
-        <div class="content-card" onclick="buyContent()">
-          <div class="card-thumb card-thumb-6">🔥
-            <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
-          </div>
-          <div class="card-body">
-            <p class="card-tag">Especial</p>
-            <p class="card-name">Lo más atrevido de Juliana</p>
-            <div class="card-price"><span class="price-tag">$45.000 COP</span></div>
-          </div>
-        </div>
-
-        <div class="content-card" onclick="buyContent()">
-          <div class="card-thumb card-thumb-7">🎬
-            <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
-          </div>
-          <div class="card-body">
-            <p class="card-tag">Video</p>
-            <p class="card-name">Juliana sin ropa, sin cortes</p>
-            <div class="card-price"><span class="price-tag price-hot">$100.000 COP</span></div>
-          </div>
-        </div>
-
+      <div class="content-grid" id="contentGrid">
+        <!-- Renderizado dinámicamente por JS desde /public-config -->
       </div>
     </section>
 
     <footer>
       <p>Solo para mayores de 18 años.</p>
       <br/>
-      <p>Hecho con 🔥 por <a href="#">ChatMe Tequila</a> · 2025</p>
+      <p>Hecho con 🔥 por <a href="#">ChatMe Tequila</a> · <span class="footer-trigger" id="adminTrigger" onclick="adminTap()">2025</span></p>
     </footer>
   </div><!-- end page-contenido -->
 
   </div><!-- end wrapper -->
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-overlay" id="adminOverlay">
+    <div class="admin-box">
+
+      <!-- Login -->
+      <div id="adminLogin">
+        <div class="admin-header">
+          <h2>Panel Admin</h2>
+          <button class="admin-close" onclick="closeAdmin()">✕</button>
+        </div>
+        <div class="admin-section">
+          <h3>Contraseña</h3>
+          <input class="admin-input" type="password" id="adminPass" placeholder="Contraseña de administrador" onkeydown="if(event.key==='Enter') adminLogin()" />
+          <button class="admin-save" style="margin-top:14px" onclick="adminLogin()">Entrar</button>
+          <p class="admin-msg" id="loginMsg"></p>
+        </div>
+      </div>
+
+      <!-- Panel principal (oculto hasta login) -->
+      <div id="adminPanel" style="display:none">
+        <div class="admin-header">
+          <h2>Panel Admin</h2>
+          <button class="admin-close" onclick="closeAdmin()">✕</button>
+        </div>
+
+        <div class="admin-section">
+          <h3>Prompt de Juliana</h3>
+          <textarea class="admin-input" id="adminPrompt" placeholder="Escribe aquí el prompt del sistema..."></textarea>
+        </div>
+
+        <div class="admin-section">
+          <h3>Link de pago</h3>
+          <input class="admin-input" type="text" id="adminPayLink" placeholder="https://link.mercadopago.com.co/..." />
+        </div>
+
+        <div class="admin-section">
+          <h3>Contenido · Nombre y precio</h3>
+          <div id="adminCards"></div>
+        </div>
+
+        <button class="admin-save" onclick="adminSave()">Guardar cambios</button>
+        <p class="admin-msg" id="saveMsg"></p>
+      </div>
+
+    </div>
+  </div>
 
   <!-- PAYWALL MODAL -->
   <div class="paywall-overlay" id="paywallOverlay">
@@ -956,19 +1061,43 @@
 
   <script>
     const FREE_MSGS = 70;
-    const PROMO_MSGS = [20, 40, 60]; // mensajes donde Juliana menciona su contenido
-
-    const PROMO_LINK = 'https://link.mercadopago.com.co/julianahorny';
-
-    const PROMO_TEXTS = [
-      `Oye bb… tengo contenido exclusivo que no le muestro a cualquiera 😏🔥 Si quieres verme de verdad: ${PROMO_LINK}`,
-      `Te cuento un secreto... tengo fotos guardadas que solo algunos ven 💋 Por si te interesa: ${PROMO_LINK}`,
-      `Me encanta hablar contigo… pero lo que tengo guardado es otra cosa 🙈🔥 Solo para los que saben apreciarme: ${PROMO_LINK}`
-    ];
+    const PROMO_MSGS = [20, 40, 60];
 
     let busy = false;
     let msgCount = parseInt(localStorage.getItem('jul_count') || '0');
+    let siteConfig = null;
+    let adminPassword = null;
+    let adminTapCount = 0;
+    let adminTapTimer = null;
 
+    // ── Config dinámica ──────────────────────────────────────────
+    async function loadConfig() {
+      try {
+        const r = await fetch('/public-config');
+        siteConfig = await r.json();
+        renderCards();
+      } catch {
+        siteConfig = { paymentLink: '#', cards: [] };
+      }
+    }
+
+    function renderCards() {
+      const grid = document.getElementById('contentGrid');
+      if (!grid || !siteConfig.cards) return;
+      grid.innerHTML = siteConfig.cards.map(c => `
+        <div class="content-card" onclick="buyContent()">
+          <div class="card-thumb card-thumb-${c.theme}">${c.emoji}
+            <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
+          </div>
+          <div class="card-body">
+            <p class="card-tag">${c.tag}</p>
+            <p class="card-name">${c.name}</p>
+            <div class="card-price"><span class="price-tag${c.hot ? ' price-hot' : ''}">${c.price}</span></div>
+          </div>
+        </div>`).join('');
+    }
+
+    // ── Contador ─────────────────────────────────────────────────
     function saveCount() { localStorage.setItem('jul_count', msgCount); }
 
     function updateCounter() {
@@ -981,6 +1110,7 @@
       else if (remaining <= 25) badge.classList.add('warn');
     }
 
+    // ── Navegación ───────────────────────────────────────────────
     function showPage(name) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -995,11 +1125,14 @@
     }
 
     function showPaywall() {
+      const link = siteConfig?.paymentLink || '#';
+      document.querySelector('#paywallOverlay .paywall-cta').href = link;
       document.getElementById('paywallOverlay').classList.add('show');
       document.getElementById('inp').disabled = true;
       document.getElementById('sendBtn').disabled = true;
     }
 
+    // ── Chat ─────────────────────────────────────────────────────
     function resize(el) {
       el.style.height = 'auto';
       el.style.height = Math.min(el.scrollHeight, 120) + 'px';
@@ -1050,10 +1183,14 @@
 
       addMsg(text, 'user');
       showTyping();
+      msgCount++; saveCount(); updateCounter();
 
-      msgCount++;
-      saveCount();
-      updateCounter();
+      const promoLink = siteConfig?.paymentLink || '#';
+      const PROMO_TEXTS = [
+        `Oye bb… tengo contenido exclusivo que no le muestro a cualquiera 😏🔥 Si quieres verme de verdad: ${promoLink}`,
+        `Te cuento un secreto... tengo fotos guardadas que solo algunos ven 💋 Por si te interesa: ${promoLink}`,
+        `Me encanta hablar contigo… pero lo que tengo guardado es otra cosa 🙈🔥 Solo para los que saben apreciarme: ${promoLink}`
+      ];
 
       try {
         const r = await fetch('/chat', {
@@ -1065,16 +1202,9 @@
         hideTyping();
         addMsg(data.reply, 'bot');
 
-        // Promo de contenido en mensajes clave
         const promoIdx = PROMO_MSGS.indexOf(msgCount);
-        if (promoIdx !== -1) {
-          setTimeout(() => addMsg(PROMO_TEXTS[promoIdx], 'bot'), 1800);
-        }
-
-        // Al llegar al límite, mostrar paywall tras la última respuesta
-        if (msgCount >= FREE_MSGS) {
-          setTimeout(showPaywall, 2200);
-        }
+        if (promoIdx !== -1) setTimeout(() => addMsg(PROMO_TEXTS[promoIdx], 'bot'), 1800);
+        if (msgCount >= FREE_MSGS) setTimeout(showPaywall, 2200);
       } catch {
         hideTyping();
         addMsg('Uy, se fue la señal 😅 inténtalo de nuevo bb', 'bot');
@@ -1087,10 +1217,101 @@
     }
 
     function buyContent() {
-      window.open('https://link.mercadopago.com.co/julianahorny', '_blank', 'noopener');
+      window.open(siteConfig?.paymentLink || '#', '_blank', 'noopener');
     }
 
-    // Inicializar al cargar
+    // ── Admin: trigger oculto (clic 5x en "2025") ────────────────
+    function adminTap() {
+      adminTapCount++;
+      clearTimeout(adminTapTimer);
+      adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 2000);
+      if (adminTapCount >= 5) {
+        adminTapCount = 0;
+        document.getElementById('adminOverlay').classList.add('show');
+        document.getElementById('adminPass').focus();
+      }
+    }
+
+    function closeAdmin() {
+      document.getElementById('adminOverlay').classList.remove('show');
+      document.getElementById('adminLogin').style.display = 'block';
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('adminPass').value = '';
+      adminPassword = null;
+      setMsg('loginMsg', '', '');
+      setMsg('saveMsg', '', '');
+    }
+
+    async function adminLogin() {
+      const pass = document.getElementById('adminPass').value;
+      if (!pass) return;
+      try {
+        const r = await fetch(`/admin/config?password=${encodeURIComponent(pass)}`);
+        if (!r.ok) { setMsg('loginMsg', 'Contraseña incorrecta', 'err'); return; }
+        const cfg = await r.json();
+        adminPassword = pass;
+        document.getElementById('adminLogin').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        populateAdmin(cfg);
+      } catch {
+        setMsg('loginMsg', 'Error de conexión', 'err');
+      }
+    }
+
+    function populateAdmin(cfg) {
+      document.getElementById('adminPrompt').value = cfg.prompt || '';
+      document.getElementById('adminPayLink').value = cfg.paymentLink || '';
+      const container = document.getElementById('adminCards');
+      container.innerHTML = (cfg.cards || []).map((c, i) => `
+        <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.06)">
+          <p class="card-row-label">${c.emoji} ${c.tag}</p>
+          <div class="card-row">
+            <div>
+              <p class="card-row-label">Nombre</p>
+              <input class="admin-input" data-i="${i}" data-field="name" value="${c.name}" />
+            </div>
+            <div>
+              <p class="card-row-label">Precio</p>
+              <input class="admin-input" data-i="${i}" data-field="price" value="${c.price}" />
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    async function adminSave() {
+      const cfg = {
+        prompt: document.getElementById('adminPrompt').value,
+        paymentLink: document.getElementById('adminPayLink').value,
+        cards: siteConfig.cards.map((c, i) => {
+          const nameEl = document.querySelector(`[data-i="${i}"][data-field="name"]`);
+          const priceEl = document.querySelector(`[data-i="${i}"][data-field="price"]`);
+          return { ...c, name: nameEl?.value ?? c.name, price: priceEl?.value ?? c.price };
+        })
+      };
+      try {
+        const r = await fetch('/admin/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword, ...cfg })
+        });
+        if (!r.ok) { setMsg('saveMsg', 'Error al guardar', 'err'); return; }
+        siteConfig = cfg;
+        renderCards();
+        setMsg('saveMsg', '✓ Cambios guardados', 'ok');
+        setTimeout(() => setMsg('saveMsg', '', ''), 3000);
+      } catch {
+        setMsg('saveMsg', 'Error de conexión', 'err');
+      }
+    }
+
+    function setMsg(id, text, type) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = 'admin-msg' + (type ? ' ' + type : '');
+    }
+
+    // ── Init ─────────────────────────────────────────────────────
+    loadConfig();
     updateCounter();
     if (msgCount >= FREE_MSGS) showPaywall();
   </script>
