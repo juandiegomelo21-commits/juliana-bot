@@ -8,7 +8,11 @@ async function connect() {
     console.warn("⚠️  MONGODB_URI no configurada — usando solo memoria (historial no persistente)");
     return;
   }
-  const client = new MongoClient(process.env.MONGODB_URI);
+  const client = new MongoClient(process.env.MONGODB_URI, {
+    tls: true,
+    tlsAllowInvalidCertificates: true,
+    serverSelectionTimeoutMS: 10000,
+  });
   await client.connect();
   db = client.db("juliana-bot");
   await db.collection("users").createIndex({ userId: 1 }, { unique: true });
