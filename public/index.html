@@ -1029,6 +1029,12 @@
         </div>
 
         <div class="admin-section">
+          <h3>Código de acceso al bot</h3>
+          <input class="admin-input" type="text" id="adminBotPassword" placeholder="Déjalo vacío para no requerir contraseña" />
+          <p style="color:rgba(255,255,255,0.4);font-size:12px;margin-top:8px">Los usuarios nuevos deben escribir este código para registrarse. Si está vacío, cualquiera puede entrar.</p>
+        </div>
+
+        <div class="admin-section">
           <h3>Link de pago</h3>
           <input class="admin-input" type="text" id="adminPayLink" placeholder="https://link.mercadopago.com.co/..." />
         </div>
@@ -1260,6 +1266,7 @@
 
     function populateAdmin(cfg) {
       document.getElementById('adminPrompt').value = cfg.prompt || '';
+      document.getElementById('adminBotPassword').value = cfg.botPassword || '';
       document.getElementById('adminPayLink').value = cfg.paymentLink || '';
       const container = document.getElementById('adminCards');
       container.innerHTML = (cfg.cards || []).map((c, i) => `
@@ -1281,6 +1288,7 @@
     async function adminSave() {
       const cfg = {
         prompt: document.getElementById('adminPrompt').value,
+        botPassword: document.getElementById('adminBotPassword').value,
         paymentLink: document.getElementById('adminPayLink').value,
         cards: siteConfig.cards.map((c, i) => {
           const nameEl = document.querySelector(`[data-i="${i}"][data-field="name"]`);

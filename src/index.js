@@ -8,6 +8,7 @@ const FormData = require("form-data");
 const { handleIncomingMessage } = require("./handlers/message");
 const { getJulianaResponse } = require("./groq");
 const { getConfig, saveConfig } = require("./config");
+const db = require("./db");
 
 const app = express();
 app.use(cors());
@@ -146,7 +147,11 @@ app.get("/set-profile-pic", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🌸 Juliana Bot corriendo en puerto ${PORT}`);
-  console.log(`🔗 Webhook: POST /webhook | Verificación: GET /webhook`);
-});
+db.connect()
+  .catch(err => console.error("❌ Error conectando a MongoDB:", err.message))
+  .finally(() => {
+    app.listen(PORT, () => {
+      console.log(`🌸 Juliana Bot corriendo en puerto ${PORT}`);
+      console.log(`🔗 Webhook: POST /webhook | Verificación: GET /webhook`);
+    });
+  });

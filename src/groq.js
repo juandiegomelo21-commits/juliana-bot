@@ -1,6 +1,7 @@
 require("dotenv").config();
 const axios = require("axios");
 const { getConfig } = require("./config");
+const db = require("./db");
 
 // Modelos sin censura para contenido adulto — ordenados por preferencia.
 const MODELS = [
@@ -9,6 +10,7 @@ const MODELS = [
   "nousresearch/hermes-3-llama-3.1-70b", // respaldo general, funciona decente
 ];
 
+// Cache en memoria para velocidad — MongoDB persiste entre reinicios
 const conversationHistory = new Map();
 
 const GARBAGE_PATTERNS = [
@@ -56,9 +58,11 @@ function cleanResponse(text) {
   return result || cleaned.slice(0, 200).trim();
 }
 
-async function getJulianaResponse(userId, userMessage) {
+async function getJulianaResponse(userId, userMessage, userName) {
   if (!conversationHistory.has(userId)) {
-    conversationHistory.set(userId, []);
+    // Intentar cargar historial previo desde MongoDB
+    const user = await db.getUser(userId);
+    conversationHistory.set(userId, user?.history || []);
   }
 
   const history = conversationHistory.get(userId);
@@ -77,7 +81,10 @@ async function getJulianaResponse(userId, userMessage) {
   for (const model of MODELS) {
     try {
       console.log(`🤖 Probando modelo: ${model}`);
-      const systemPrompt = getConfig().prompt;
+      const basePrompt = getConfig().prompt;
+      const systemPrompt = userName
+        ? `${basePrompt}\n\nEl nombre de la persona con quien hablas es ${userName}. Úsalo de vez en cuando de forma natural.`
+        : basePrompt;
       const response = await axios.post(
         "https://openrouter.ai/api/v1/chat/completions",
         {
@@ -97,6 +104,10 @@ async function getJulianaResponse(userId, userMessage) {
       const raw = response.data.choices[0].message.content;
       const assistantMessage = cleanResponse(raw);
       history.push({ role: "assistant", content: assistantMessage });
+
+      // Persistir en MongoDB sin bloquear la respuesta
+      db.saveHistory(userId, history).catch(err => console.error("⚠️ Error guardando historial:", err.message));
+
       if (model !== MODELS[0]) {
         console.log(`✅ Respondió con modelo de respaldo: ${model}`);
       }
@@ -115,8 +126,13 @@ async function getJulianaResponse(userId, userMessage) {
   throw lastError;
 }
 
-function clearHistory(userId) {
+async function clearHistory(userId) {
+  conversationHistory.delete(userId);
+  await db.clearUser(userId);
+}
+
+function evictCache(userId) {
   conversationHistory.delete(userId);
 }
 
-module.exports = { getJulianaResponse, clearHistory };
+module.exports = { getJulianaResponse, clearHistory, evictCache };
