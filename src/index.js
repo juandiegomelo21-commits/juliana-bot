@@ -5,6 +5,7 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 const FormData = require("form-data");
+const bcrypt = require("bcryptjs");
 const { handleIncomingMessage } = require("./handlers/message");
 const { getJulianaResponse } = require("./groq");
 const { getConfig, saveConfig } = require("./config");
@@ -83,6 +84,46 @@ app.get("/health", (req, res) => {
 app.get("/public-config", (req, res) => {
   const { prompt, ...pub } = getConfig();
   res.json(pub);
+});
+
+// Registro de cuenta de usuario
+app.post("/api/register", async (req, res) => {
+  if (!db.isConnected()) return res.status(503).json({ error: "Base de datos no disponible" });
+  const { phone, username, password } = req.body;
+  if (!phone || !username || !password) return res.status(400).json({ error: "Faltan campos" });
+  if (username.length < 3) return res.status(400).json({ error: "El usuario debe tener al menos 3 caracteres" });
+  if (password.length < 4) return res.status(400).json({ error: "La contraseña debe tener al menos 4 caracteres" });
+
+  const cleanPhone = String(phone).replace(/\D/g, "");
+  const cleanUsername = username.toLowerCase().trim();
+
+  const existing = await db.getUserByUsername(cleanUsername);
+  if (existing) return res.status(409).json({ error: "Ese nombre de usuario ya está en uso" });
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  await db.createAccount(cleanPhone, cleanUsername, passwordHash, null);
+  res.json({ ok: true, username: cleanUsername });
+});
+
+// Login de cuenta de usuario
+app.post("/api/login", async (req, res) => {
+  if (!db.isConnected()) return res.status(503).json({ error: "Base de datos no disponible" });
+  const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ error: "Faltan campos" });
+
+  const account = await db.getUserByUsername(username.toLowerCase().trim());
+  if (!account) return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+
+  const valid = await bcrypt.compare(password, account.passwordHash);
+  if (!valid) return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+
+  res.json({
+    ok: true,
+    username: account.username,
+    name: account.name || null,
+    phone: account.userId,
+    messageCount: account.messageCount || 0,
+  });
 });
 
 // Admin: leer config completa
