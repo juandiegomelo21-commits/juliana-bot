@@ -17,7 +17,7 @@ function setupAuth(app) {
   };
 
   if (process.env.MONGODB_URI) {
-    const MongoStore = require("connect-mongo");
+    const { MongoStore } = require("connect-mongo");
     sessionOpts.store = MongoStore.create({
       mongoUrl: process.env.MONGODB_URI,
       collectionName: "sessions",
