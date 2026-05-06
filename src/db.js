@@ -17,6 +17,7 @@ async function connect() {
   db = client.db("juliana-bot");
   await db.collection("users").createIndex({ userId: 1 }, { unique: true });
   await db.collection("users").createIndex({ username: 1 }, { unique: true, sparse: true });
+  await db.collection("users").createIndex({ googleId: 1 }, { unique: true, sparse: true });
   console.log("✅ MongoDB conectado");
 }
 
@@ -105,10 +106,50 @@ async function clearUser(userId) {
   );
 }
 
+// ── Google Auth ───────────────────────────────────────────────────
+
+async function getUserByGoogleId(googleId) {
+  if (!isConnected()) return null;
+  return db.collection("users").findOne({ googleId });
+}
+
+async function createGoogleAccount({ googleId, email, name, avatar }) {
+  if (!isConnected()) {
+    return { userId: `google-${googleId}`, googleId, googleEmail: email, name, avatar, messageCount: 0 };
+  }
+  const userId = `google-${googleId}`;
+  await db.collection("users").updateOne(
+    { googleId },
+    {
+      $set: {
+        googleId,
+        googleEmail: email,
+        name,
+        googleAvatar: avatar,
+        hasAccount: true,
+        authType: "google",
+        updatedAt: new Date(),
+      },
+      $setOnInsert: { userId, createdAt: new Date(), history: [], messageCount: 0 },
+    },
+    { upsert: true }
+  );
+  return db.collection("users").findOne({ googleId });
+}
+
+async function updateGoogleProfile(googleId, { name, avatar, email }) {
+  if (!isConnected()) return;
+  await db.collection("users").updateOne(
+    { googleId },
+    { $set: { name, googleAvatar: avatar, googleEmail: email, updatedAt: new Date() } }
+  );
+}
+
 module.exports = {
   connect, isConnected,
   getUser, getUserByUsername,
   saveHistory, getAndIncrementCount,
   createAccount, mergeAccount,
   clearUser,
+  getUserByGoogleId, createGoogleAccount, updateGoogleProfile,
 };

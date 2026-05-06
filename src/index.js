@@ -6,14 +6,20 @@ const fs = require("fs");
 const path = require("path");
 const FormData = require("form-data");
 const bcrypt = require("bcryptjs");
+const passport = require("passport");
 const { handleIncomingMessage } = require("./handlers/message");
 const { getJulianaResponse } = require("./groq");
 const { getConfig, saveConfig } = require("./config");
+const { setupAuth } = require("./auth");
 const db = require("./db");
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+
+// Auth (sesión + passport) — debe ir antes de las rutas
+setupAuth(app);
+
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 const PORT = process.env.PORT || 3000;
@@ -133,6 +139,39 @@ app.get("/admin/config", (req, res) => {
   }
   res.json(getConfig());
 });
+
+// ── Google Auth routes ────────────────────────────────────────────
+
+// Iniciar flujo Google
+app.get("/auth/google", (req, res, next) => {
+  if (!process.env.GOOGLE_CLIENT_ID) {
+    return res.redirect("/?auth=disabled");
+  }
+  passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
+});
+
+// Callback de Google
+app.get("/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/?auth=error" }),
+  (req, res) => {
+    res.redirect("/?auth=google");
+  }
+);
+
+// Sesión activa (consulta desde el frontend)
+app.get("/auth/session", (req, res) => {
+  if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+    return res.json({ ok: true, ...req.user });
+  }
+  res.json({ ok: false });
+});
+
+// Logout
+app.post("/auth/logout", (req, res) => {
+  req.logout(() => res.json({ ok: true }));
+});
+
+// ─────────────────────────────────────────────────────────────────
 
 // Admin: guardar config
 app.post("/admin/config", (req, res) => {

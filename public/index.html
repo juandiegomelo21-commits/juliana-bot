@@ -1004,6 +1004,43 @@
       transition: all 0.2s;
     }
     .account-logout:hover { border-color: rgba(239,68,68,0.4); color: #ef4444; }
+    .or-sep {
+      display: flex; align-items: center; gap: 12px;
+      margin: 20px 0 4px; color: rgba(255,255,255,0.18);
+      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .or-sep::before, .or-sep::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+    .google-btn {
+      width: 100%; margin-top: 12px; padding: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.82);
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all 0.22s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .google-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.22);
+      transform: translateY(-1px);
+    }
+    .account-profile .ap-avatar {
+      width: 72px; height: 72px; border-radius: 50%; overflow: hidden;
+      margin: 0 auto 14px;
+      border: 2px solid rgba(124,58,237,0.4);
+      box-shadow: 0 0 24px rgba(124,58,237,0.25);
+      background: rgba(124,58,237,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+    }
+    .account-profile .ap-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .ap-google-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px; padding: 4px 12px; font-size: 11px;
+      color: rgba(255,255,255,0.4); margin-bottom: 12px;
+    }
 
     /* Trigger oculto en footer */
     .footer-trigger { cursor: default; user-select: none; }
@@ -1321,17 +1358,31 @@
 
       <!-- Perfil (visible cuando está logueado) -->
       <div class="account-profile" id="accountProfile">
+        <div class="ap-avatar" id="apAvatar">👤</div>
+        <div id="apGoogleBadge" style="display:none" class="ap-google-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Cuenta Google
+        </div>
         <div class="ap-name" id="apName">—</div>
         <div class="ap-user" id="apUser">@usuario</div>
         <div>
           <span class="ap-stat" id="apMessages">0 mensajes</span>
           <span class="ap-stat" id="apPhone">—</span>
         </div>
-        <p style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:16px;line-height:1.6">
+        <p id="apWhatsAppHint" style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:16px;line-height:1.6">
           Tu cuenta está vinculada a ese número de WhatsApp.<br>
           Desde otro número escribe: <strong style="color:rgba(167,139,250,0.7)">login usuario contraseña</strong>
         </p>
         <button class="account-logout" onclick="accountLogout()">Cerrar sesión</button>
+      </div>
+
+      <!-- Google Auth -->
+      <div id="googleAuthSection">
+        <button class="google-btn" onclick="loginWithGoogle()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continuar con Google
+        </button>
+        <div class="or-sep">o</div>
       </div>
 
       <!-- Tabs (visible cuando no está logueado) -->
@@ -1786,20 +1837,50 @@
     }
 
     function showProfile(data) {
+      document.getElementById('googleAuthSection').style.display = 'none';
       document.getElementById('accountForms').style.display = 'none';
       const prof = document.getElementById('accountProfile');
       prof.classList.add('show');
-      document.getElementById('apName').textContent = data.name || data.username;
-      document.getElementById('apUser').textContent = '@' + data.username;
+
+      // Avatar
+      const avatarEl = document.getElementById('apAvatar');
+      if (data.avatar) {
+        avatarEl.innerHTML = `<img src="${data.avatar}" alt="Avatar" referrerpolicy="no-referrer" />`;
+      } else {
+        avatarEl.innerHTML = (data.name || data.username || '?').charAt(0).toUpperCase();
+      }
+
+      // Badge Google
+      const googleBadge = document.getElementById('apGoogleBadge');
+      googleBadge.style.display = data.authType === 'google' ? 'inline-flex' : 'none';
+
+      document.getElementById('apName').textContent = data.name || data.username || '—';
+
+      if (data.authType === 'google') {
+        document.getElementById('apUser').textContent = data.email || '';
+        document.getElementById('apPhone').style.display = 'none';
+        document.getElementById('apWhatsAppHint').style.display = 'none';
+      } else {
+        document.getElementById('apUser').textContent = data.username ? '@' + data.username : '';
+        document.getElementById('apPhone').textContent = data.phone ? '+' + data.phone : '—';
+        document.getElementById('apPhone').style.display = '';
+        document.getElementById('apWhatsAppHint').style.display = '';
+      }
+
       document.getElementById('apMessages').textContent = (data.messageCount || 0) + ' mensajes';
-      document.getElementById('apPhone').textContent = '+' + (data.phone || '—');
     }
 
-    function accountLogout() {
+    async function accountLogout() {
+      // Cierra sesión en el servidor (Google) si aplica
+      try { await fetch('/auth/logout', { method: 'POST' }); } catch {}
       localStorage.removeItem('jul_account');
       accountSession = null;
+      document.getElementById('googleAuthSection').style.display = 'block';
       document.getElementById('accountForms').style.display = 'block';
       document.getElementById('accountProfile').classList.remove('show');
+      // Restaurar visibilidades que showProfile puede haber ocultado
+      document.getElementById('apPhone').style.display = '';
+      document.getElementById('apWhatsAppHint').style.display = '';
     }
 
     async function doRegister() {
@@ -1928,10 +2009,58 @@
       el.className = 'admin-msg' + (type ? ' ' + type : '');
     }
 
+    // ── Google Auth ───────────────────────────────────────────────
+    function loginWithGoogle() {
+      window.location.href = '/auth/google';
+    }
+
+    async function checkGoogleCallback() {
+      const params = new URLSearchParams(window.location.search);
+      const auth = params.get('auth');
+      if (!auth) return;
+
+      // Limpia el query param de la URL sin recargar
+      history.replaceState({}, '', window.location.pathname);
+
+      if (auth === 'google') {
+        try {
+          const r = await fetch('/auth/session', { credentials: 'include' });
+          const data = await r.json();
+          if (data.ok) {
+            accountSession = data;
+            localStorage.setItem('jul_account', JSON.stringify(data));
+            openAccount();
+            showProfile(data);
+          }
+        } catch {}
+      } else if (auth === 'error') {
+        openAccount();
+        setAccountMsg('loginMsg', 'Error al iniciar sesión con Google. Intenta de nuevo.', 'err');
+      } else if (auth === 'disabled') {
+        openAccount();
+        setAccountMsg('loginMsg', 'Google Auth no está configurado aún.', 'err');
+      }
+    }
+
+    async function checkServerSession() {
+      // Si ya hay sesión en localStorage no consultamos el servidor
+      if (accountSession) return;
+      try {
+        const r = await fetch('/auth/session', { credentials: 'include' });
+        const data = await r.json();
+        if (data.ok) {
+          accountSession = data;
+          localStorage.setItem('jul_account', JSON.stringify(data));
+        }
+      } catch {}
+    }
+
     // ── Init ─────────────────────────────────────────────────────
     loadConfig();
     updateCounter();
     if (msgCount >= FREE_MSGS) showPaywall();
+    checkGoogleCallback();
+    checkServerSession();
   </script>
 </body>
 </html>
