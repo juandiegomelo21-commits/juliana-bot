@@ -1018,11 +1018,152 @@
 
     footer a { color: rgba(167,139,250,0.45); text-decoration: none; }
 
+    /* ───── SEXSHOP ───── */
+    .shop-section {
+      padding: 140px 24px 100px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .shop-hero { text-align: center; margin-bottom: 52px; }
+    .shop-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.22);
+      border-radius: 100px; padding: 6px 20px;
+      font-size: 10px; letter-spacing: 3.5px; text-transform: uppercase;
+      color: rgba(244,114,182,0.85); margin-bottom: 22px;
+    }
+    .shop-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 7vw, 68px); font-weight: 300;
+      line-height: 0.95; margin-bottom: 16px;
+      background: linear-gradient(145deg, #fff 25%, rgba(244,114,182,0.9) 62%, rgba(167,139,250,0.85));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .shop-sub { font-size: 14px; color: rgba(255,255,255,0.3); font-style: italic; letter-spacing: 0.5px; }
+
+    .shop-filters {
+      display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 44px;
+    }
+    .filter-btn {
+      padding: 9px 22px; border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.42);
+      font-size: 12px; cursor: pointer; transition: all 0.28s; letter-spacing: 0.3px;
+    }
+    .filter-btn:hover { border-color: rgba(236,72,153,0.3); color: rgba(255,255,255,0.72); }
+    .filter-btn.active {
+      background: rgba(236,72,153,0.14); border-color: rgba(236,72,153,0.38);
+      color: rgba(244,114,182,0.95);
+    }
+
+    .shop-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;
+    }
+    .shop-card {
+      background: rgba(255,255,255,0.028); backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+      border: 1px solid rgba(255,255,255,0.07); border-radius: 24px; overflow: hidden;
+      transition: all 0.38s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; cursor: default;
+    }
+    .shop-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(236,72,153,0.22);
+      box-shadow: 0 28px 70px rgba(0,0,0,0.55), 0 0 0 1px rgba(236,72,153,0.07);
+    }
+    .shop-card[data-hidden="true"] { display: none; }
+
+    .shop-card-thumb {
+      width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      font-size: 52px; position: relative; overflow: hidden;
+    }
+    .shop-card-thumb::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 40% 40%, rgba(236,72,153,0.12), rgba(109,40,217,0.2));
+    }
+    .shop-card-thumb > span { position: relative; z-index: 1; filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4)); }
+    .shop-thumb-vibrador  { background: linear-gradient(135deg, rgba(131,24,67,0.55),  rgba(109,40,217,0.45)); }
+    .shop-thumb-lubricante{ background: linear-gradient(135deg, rgba(30,27,75,0.75),   rgba(88,28,135,0.55));  }
+    .shop-thumb-lenceria  { background: linear-gradient(135deg, rgba(109,40,217,0.42), rgba(236,72,153,0.38));}
+    .shop-thumb-accesorio { background: linear-gradient(135deg, rgba(49,46,129,0.62),  rgba(131,24,67,0.48));  }
+    .shop-thumb-default   { background: linear-gradient(135deg, rgba(88,28,135,0.5),   rgba(109,40,217,0.42)); }
+
+    .shop-card-badges { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 6px; z-index: 2; }
+    .badge-featured {
+      background: linear-gradient(135deg, rgba(236,72,153,0.88), rgba(244,114,182,0.78));
+      color: #fff; font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 100px; backdrop-filter: blur(8px);
+    }
+
+    .shop-card-body { padding: 18px 20px 22px; }
+    .shop-card-cat { font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(244,114,182,0.58); margin-bottom: 7px; }
+    .shop-card-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; color: rgba(255,255,255,0.9); margin-bottom: 8px; line-height: 1.2; }
+    .shop-card-desc { font-size: 12px; color: rgba(255,255,255,0.28); line-height: 1.65; margin-bottom: 18px; }
+    .shop-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .shop-price { font-size: 16px; font-weight: 500; color: rgba(255,255,255,0.88); letter-spacing: -0.3px; }
+    .shop-buy {
+      padding: 9px 20px;
+      background: linear-gradient(135deg, rgba(236,72,153,0.82), rgba(167,139,250,0.72));
+      border: none; border-radius: 100px; color: #fff; font-size: 12px; font-weight: 500;
+      cursor: pointer; transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1); white-space: nowrap;
+      letter-spacing: 0.2px;
+    }
+    .shop-buy:hover { transform: scale(1.07); box-shadow: 0 8px 28px rgba(236,72,153,0.45); }
+
+    /* ───── ADMIN SHOP ───── */
+    .shop-prod-row {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; padding: 18px; margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+    .shop-prod-row:hover { border-color: rgba(236,72,153,0.15); }
+    .shop-prod-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .shop-prod-hdr-name { font-size: 14px; color: rgba(255,255,255,0.7); font-family: 'Cormorant Garamond', serif; }
+    .admin-del-btn {
+      background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.18); color: rgba(239,68,68,0.72);
+      border-radius: 8px; padding: 5px 13px; font-size: 11px; cursor: pointer; transition: all 0.2s;
+    }
+    .admin-del-btn:hover { background: rgba(239,68,68,0.2); color: #ef4444; border-color: rgba(239,68,68,0.35); }
+    .admin-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+    .admin-grid-1 { margin-bottom: 8px; }
+    .admin-chk-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+    .admin-chk-row label { font-size: 12px; color: rgba(255,255,255,0.38); cursor: pointer; user-select: none; }
+    .admin-chk-row input[type="checkbox"] { accent-color: #ec4899; width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; }
+    .shop-add-btn {
+      width: 100%; padding: 13px; background: rgba(236,72,153,0.06);
+      border: 1px dashed rgba(236,72,153,0.25); border-radius: 14px;
+      color: rgba(244,114,182,0.65); font-size: 13px; cursor: pointer; transition: all 0.22s; margin-top: 6px;
+    }
+    .shop-add-btn:hover { background: rgba(236,72,153,0.13); border-color: rgba(236,72,153,0.42); color: rgba(244,114,182,0.92); }
+    select.admin-input {
+      appearance: none; -webkit-appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px;
+    }
+    select.admin-input option { background: #150a2d; color: #fff; }
+
+    /* Admin tabs */
+    .admin-tabs {
+      display: flex; gap: 4px; background: rgba(255,255,255,0.04);
+      border-radius: 14px; padding: 4px; margin-bottom: 24px;
+    }
+    .admin-tab {
+      flex: 1; padding: 10px; border: none; background: transparent;
+      color: rgba(255,255,255,0.38); font-size: 12px; font-weight: 500;
+      border-radius: 10px; cursor: pointer; transition: all 0.22s; letter-spacing: 0.2px;
+    }
+    .admin-tab.active { background: rgba(124,58,237,0.35); color: #fff; }
+    .admin-tab-panel { display: none; }
+    .admin-tab-panel.active { display: block; }
+
     @media (max-width: 480px) {
       .messages { height: 320px; }
       .glass-box { border-radius: 18px; }
       .content-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .nav-btn { padding: 9px 16px; font-size: 12px; }
+      .nav-btn { padding: 9px 12px; font-size: 11px; }
+      .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .shop-card-thumb { font-size: 36px; }
+      .shop-card-name { font-size: 17px; }
+      .admin-grid-3 { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .filter-btn { padding: 7px 14px; font-size: 11px; }
     }
   </style>
 </head>
@@ -1040,6 +1181,7 @@
   <nav class="nav">
     <button class="nav-btn active" id="btn-inicio" onclick="showPage('inicio')">💋 Juliana</button>
     <button class="nav-btn" id="btn-contenido" onclick="showPage('contenido')">🔥 Contenido</button>
+    <button class="nav-btn" id="btn-sexshop" onclick="showPage('sexshop')">🛍️ SexShop</button>
     <button class="nav-btn" id="btn-cuenta" onclick="openAccount()">👤 Mi Cuenta</button>
   </nav>
 
@@ -1136,6 +1278,37 @@
     </footer>
   </div><!-- end page-contenido -->
 
+  <!-- PAGE SEXSHOP -->
+  <div class="page" id="page-sexshop">
+    <section class="shop-section">
+
+      <div class="shop-hero">
+        <div class="shop-badge">✦ Tienda exclusiva ✦</div>
+        <h2 class="shop-title">Mi SexShop</h2>
+        <p class="shop-sub">Productos seleccionados por Juliana para tu placer 🌹</p>
+      </div>
+
+      <div class="shop-filters">
+        <button class="filter-btn active" onclick="filterShop(this,'todos')">✨ Todos</button>
+        <button class="filter-btn" onclick="filterShop(this,'vibrador')">💜 Vibradores</button>
+        <button class="filter-btn" onclick="filterShop(this,'lubricante')">💧 Lubricantes</button>
+        <button class="filter-btn" onclick="filterShop(this,'lenceria')">🌸 Lencería</button>
+        <button class="filter-btn" onclick="filterShop(this,'accesorio')">🔗 Accesorios</button>
+      </div>
+
+      <div class="shop-grid" id="shopGrid">
+        <!-- Renderizado dinámicamente por JS -->
+      </div>
+
+    </section>
+
+    <footer>
+      <p>Solo para mayores de 18 años.</p>
+      <br/>
+      <p>Hecho con 🔥 por <a href="#">ChatMe Tequila</a> · 2025</p>
+    </footer>
+  </div><!-- end page-sexshop -->
+
   </div><!-- end wrapper -->
 
   <!-- MODAL MI CUENTA -->
@@ -1218,25 +1391,45 @@
           <button class="admin-close" onclick="closeAdmin()">✕</button>
         </div>
 
-        <div class="admin-section">
-          <h3>Prompt de Juliana</h3>
-          <textarea class="admin-input" id="adminPrompt" placeholder="Escribe aquí el prompt del sistema..."></textarea>
+        <!-- Tabs de admin -->
+        <div class="admin-tabs">
+          <button class="admin-tab active" id="atab-general" onclick="switchAdminTab('general')">⚙️ General</button>
+          <button class="admin-tab" id="atab-contenido" onclick="switchAdminTab('contenido')">🔥 Contenido</button>
+          <button class="admin-tab" id="atab-sexshop" onclick="switchAdminTab('sexshop')">🛍️ SexShop</button>
         </div>
 
-        <div class="admin-section">
-          <h3>Código de acceso al bot</h3>
-          <input class="admin-input" type="text" id="adminBotPassword" placeholder="Déjalo vacío para no requerir contraseña" />
-          <p style="color:rgba(255,255,255,0.4);font-size:12px;margin-top:8px">Los usuarios nuevos deben escribir este código para registrarse. Si está vacío, cualquiera puede entrar.</p>
+        <!-- Tab General -->
+        <div class="admin-tab-panel active" id="apanel-general">
+          <div class="admin-section">
+            <h3>Prompt de Juliana</h3>
+            <textarea class="admin-input" id="adminPrompt" placeholder="Escribe aquí el prompt del sistema..."></textarea>
+          </div>
+          <div class="admin-section">
+            <h3>Código de acceso al bot</h3>
+            <input class="admin-input" type="text" id="adminBotPassword" placeholder="Déjalo vacío para no requerir contraseña" />
+            <p style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:8px;line-height:1.6">Los usuarios nuevos deben escribir este código para registrarse. Si está vacío, cualquiera puede entrar.</p>
+          </div>
+          <div class="admin-section">
+            <h3>Link de pago principal</h3>
+            <input class="admin-input" type="text" id="adminPayLink" placeholder="https://link.mercadopago.com.co/..." />
+          </div>
         </div>
 
-        <div class="admin-section">
-          <h3>Link de pago</h3>
-          <input class="admin-input" type="text" id="adminPayLink" placeholder="https://link.mercadopago.com.co/..." />
+        <!-- Tab Contenido digital -->
+        <div class="admin-tab-panel" id="apanel-contenido">
+          <div class="admin-section">
+            <h3>Contenido exclusivo · Nombre y precio</h3>
+            <div id="adminCards"></div>
+          </div>
         </div>
 
-        <div class="admin-section">
-          <h3>Contenido · Nombre y precio</h3>
-          <div id="adminCards"></div>
+        <!-- Tab SexShop -->
+        <div class="admin-tab-panel" id="apanel-sexshop">
+          <div class="admin-section">
+            <h3>SexShop · Catálogo de productos</h3>
+            <div id="adminShopProducts"></div>
+            <button class="shop-add-btn" onclick="addShopProduct()">+ Agregar producto</button>
+          </div>
         </div>
 
         <button class="admin-save" onclick="adminSave()">Guardar cambios</button>
@@ -1277,8 +1470,9 @@
         const r = await fetch('/public-config');
         siteConfig = await r.json();
         renderCards();
+        renderShop();
       } catch {
-        siteConfig = { paymentLink: '#', cards: [] };
+        siteConfig = { paymentLink: '#', cards: [], shopProducts: [] };
       }
     }
 
@@ -1421,6 +1615,143 @@
       window.open(siteConfig?.paymentLink || '#', '_blank', 'noopener');
     }
 
+    // ── SexShop ──────────────────────────────────────────────────
+    function renderShop() {
+      const grid = document.getElementById('shopGrid');
+      if (!grid || !siteConfig?.shopProducts) return;
+      const products = siteConfig.shopProducts.filter(p => p.available !== false);
+      if (products.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 24px;color:rgba(255,255,255,0.25);font-style:italic">Pronto habrá productos disponibles 🌹</div>`;
+        return;
+      }
+      grid.innerHTML = products.map((p, i) => {
+        const thumbClass = `shop-thumb-${(p.category || 'default').replace('é','e').replace('í','i')}`;
+        return `
+          <div class="shop-card" data-category="${p.category || 'default'}" data-idx="${i}">
+            <div class="shop-card-thumb ${thumbClass}">
+              <span>${p.emoji || '🛍️'}</span>
+              ${p.featured ? '<div class="shop-card-badges"><span class="badge-featured">✦ Destacado</span></div>' : ''}
+            </div>
+            <div class="shop-card-body">
+              <p class="shop-card-cat">${p.category || 'producto'}</p>
+              <p class="shop-card-name">${p.name}</p>
+              <p class="shop-card-desc">${p.description || ''}</p>
+              <div class="shop-card-footer">
+                <span class="shop-price">${p.price}</span>
+                <button class="shop-buy" onclick="buyShopProduct(${i})">Comprar</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function filterShop(btn, category) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.shop-card').forEach(card => {
+        const match = category === 'todos' || card.dataset.category === category;
+        card.dataset.hidden = !match;
+      });
+    }
+
+    function buyShopProduct(i) {
+      const product = siteConfig?.shopProducts?.[i];
+      const link = (product?.link && product.link.trim()) || siteConfig?.paymentLink || '#';
+      window.open(link, '_blank', 'noopener');
+    }
+
+    // ── Admin tabs ───────────────────────────────────────────────
+    function switchAdminTab(tab) {
+      ['general','contenido','sexshop'].forEach(t => {
+        document.getElementById('atab-' + t).classList.toggle('active', t === tab);
+        document.getElementById('apanel-' + t).classList.toggle('active', t === tab);
+      });
+    }
+
+    // ── Admin SexShop ─────────────────────────────────────────────
+    let _shopAdmin = [];
+
+    function renderAdminShop(products) {
+      _shopAdmin = products ? products.map(p => ({...p})) : [];
+      const container = document.getElementById('adminShopProducts');
+      if (!container) return;
+      if (_shopAdmin.length === 0) {
+        container.innerHTML = `<p style="color:rgba(255,255,255,0.25);font-size:13px;text-align:center;padding:16px 0">Sin productos aún. Agrega el primero abajo.</p>`;
+        return;
+      }
+      container.innerHTML = _shopAdmin.map((p, i) => `
+        <div class="shop-prod-row" id="spr-${i}">
+          <div class="shop-prod-hdr">
+            <span class="shop-prod-hdr-name">${p.emoji || '🛍️'} ${p.name || 'Nuevo producto'}</span>
+            <button class="admin-del-btn" onclick="removeShopProduct(${i})">Eliminar</button>
+          </div>
+          <div class="admin-grid-3">
+            <div>
+              <p class="card-row-label">Emoji</p>
+              <input class="admin-input" data-sp="${i}" data-spf="emoji" value="${escHtml(p.emoji||'')}" placeholder="💜" />
+            </div>
+            <div>
+              <p class="card-row-label">Categoría</p>
+              <select class="admin-input" data-sp="${i}" data-spf="category">
+                <option value="vibrador"  ${p.category==='vibrador'  ?'selected':''}>Vibrador</option>
+                <option value="lubricante"${p.category==='lubricante'?'selected':''}>Lubricante</option>
+                <option value="lenceria"  ${p.category==='lenceria'  ?'selected':''}>Lencería</option>
+                <option value="accesorio" ${p.category==='accesorio' ?'selected':''}>Accesorio</option>
+              </select>
+            </div>
+            <div>
+              <p class="card-row-label">Precio</p>
+              <input class="admin-input" data-sp="${i}" data-spf="price" value="${escHtml(p.price||'')}" placeholder="$89.000 COP" />
+            </div>
+          </div>
+          <div class="admin-grid-1">
+            <p class="card-row-label">Nombre</p>
+            <input class="admin-input" data-sp="${i}" data-spf="name" value="${escHtml(p.name||'')}" placeholder="Nombre del producto" style="margin-bottom:8px" />
+          </div>
+          <div class="admin-grid-1">
+            <p class="card-row-label">Descripción</p>
+            <input class="admin-input" data-sp="${i}" data-spf="description" value="${escHtml(p.description||'')}" placeholder="Breve descripción" style="margin-bottom:8px" />
+          </div>
+          <div class="admin-grid-1">
+            <p class="card-row-label">Link de compra (opcional — usa el link principal si está vacío)</p>
+            <input class="admin-input" data-sp="${i}" data-spf="link" value="${escHtml(p.link||'')}" placeholder="https://..." />
+          </div>
+          <div class="admin-chk-row">
+            <input type="checkbox" id="spf-${i}" data-sp="${i}" data-spf="featured" ${p.featured?'checked':''} />
+            <label for="spf-${i}">Destacado</label>
+            <input type="checkbox" id="spa-${i}" data-sp="${i}" data-spf="available" ${p.available!==false?'checked':''} style="margin-left:18px" />
+            <label for="spa-${i}">Disponible</label>
+          </div>
+        </div>`).join('');
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function addShopProduct() {
+      _shopAdmin.push({ id: Date.now(), name: 'Nuevo Producto', emoji: '🛍️', category: 'accesorio', description: '', price: '$0 COP', link: '', featured: false, available: true });
+      renderAdminShop(_shopAdmin);
+      switchAdminTab('sexshop');
+    }
+
+    function removeShopProduct(i) {
+      _shopAdmin.splice(i, 1);
+      renderAdminShop(_shopAdmin);
+    }
+
+    function collectShopProducts() {
+      return _shopAdmin.map((p, i) => {
+        const get = field => {
+          const el = document.querySelector(`[data-sp="${i}"][data-spf="${field}"]`);
+          if (!el) return p[field];
+          if (el.type === 'checkbox') return el.checked;
+          return el.value;
+        };
+        return { ...p, emoji: get('emoji'), category: get('category'), price: get('price'), name: get('name'), description: get('description'), link: get('link'), featured: get('featured'), available: get('available') };
+      });
+    }
+
     // ── Admin: trigger oculto (clic 5x en "2025") ────────────────
     function adminTap() {
       adminTapCount++;
@@ -1559,6 +1890,7 @@
             </div>
           </div>
         </div>`).join('');
+      renderAdminShop(cfg.shopProducts || []);
     }
 
     async function adminSave() {
@@ -1570,7 +1902,8 @@
           const nameEl = document.querySelector(`[data-i="${i}"][data-field="name"]`);
           const priceEl = document.querySelector(`[data-i="${i}"][data-field="price"]`);
           return { ...c, name: nameEl?.value ?? c.name, price: priceEl?.value ?? c.price };
-        })
+        }),
+        shopProducts: collectShopProducts()
       };
       try {
         const r = await fetch('/admin/config', {
@@ -1579,8 +1912,9 @@
           body: JSON.stringify({ password: adminPassword, ...cfg })
         });
         if (!r.ok) { setMsg('saveMsg', 'Error al guardar', 'err'); return; }
-        siteConfig = cfg;
+        siteConfig = { ...siteConfig, ...cfg };
         renderCards();
+        renderShop();
         setMsg('saveMsg', '✓ Cambios guardados', 'ok');
         setTimeout(() => setMsg('saveMsg', '', ''), 3000);
       } catch {
