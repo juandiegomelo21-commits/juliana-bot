@@ -1388,12 +1388,12 @@
       <!-- Tabs (visible cuando no está logueado) -->
       <div id="accountForms">
         <div class="account-tabs">
-          <button class="account-tab active" id="tab-registro" onclick="switchTab('registro')">Crear cuenta</button>
-          <button class="account-tab" id="tab-login" onclick="switchTab('login')">Entrar</button>
+          <button class="account-tab active" id="tab-login" onclick="switchTab('login')">Iniciar sesión</button>
+          <button class="account-tab" id="tab-registro" onclick="switchTab('registro')">Crear cuenta</button>
         </div>
 
         <!-- Form Registro -->
-        <div class="account-form active" id="form-registro">
+        <div class="account-form" id="form-registro">
           <label class="account-label">Tu número de WhatsApp</label>
           <input class="account-input" type="tel" id="regPhone" placeholder="Ej: 573001234567 (con código país)" />
           <label class="account-label">Nombre de usuario</label>
@@ -1405,7 +1405,7 @@
         </div>
 
         <!-- Form Login -->
-        <div class="account-form" id="form-login">
+        <div class="account-form active" id="form-login">
           <label class="account-label">Usuario</label>
           <input class="account-input" type="text" id="loginUsername" placeholder="Tu nombre de usuario" />
           <label class="account-label">Contraseña</label>
@@ -1530,8 +1530,8 @@
     function renderCards() {
       const grid = document.getElementById('contentGrid');
       if (!grid || !siteConfig.cards) return;
-      grid.innerHTML = siteConfig.cards.map(c => `
-        <div class="content-card" onclick="buyContent()">
+      grid.innerHTML = siteConfig.cards.map((c, i) => `
+        <div class="content-card" onclick="buyContent(${i})">
           <div class="card-thumb card-thumb-${c.theme}">${c.emoji}
             <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
           </div>
@@ -1662,8 +1662,20 @@
       document.getElementById('inp').focus();
     }
 
-    function buyContent() {
-      window.open(siteConfig?.paymentLink || '#', '_blank', 'noopener');
+    async function buyContent(i) {
+      const card = siteConfig?.cards?.[i];
+      const fallback = siteConfig?.paymentLink || '#';
+      if (!card) { window.open(fallback, '_blank', 'noopener'); return; }
+      try {
+        const r = await fetch('/api/payment/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: card.name, price: card.price, quantity: 1 })
+        });
+        const data = await r.json();
+        if (data.url) { window.open(data.url, '_blank', 'noopener'); return; }
+      } catch {}
+      window.open(fallback, '_blank', 'noopener');
     }
 
     // ── SexShop ──────────────────────────────────────────────────
@@ -1705,10 +1717,40 @@
       });
     }
 
-    function buyShopProduct(i) {
+    async function buyShopProduct(i) {
       const product = siteConfig?.shopProducts?.[i];
-      const link = (product?.link && product.link.trim()) || siteConfig?.paymentLink || '#';
-      window.open(link, '_blank', 'noopener');
+      if (!product) return;
+
+      // Si el producto tiene link manual, usarlo directo
+      if (product.link && product.link.trim()) {
+        window.open(product.link.trim(), '_blank', 'noopener');
+        return;
+      }
+
+      // Checkout Pro — generar link dinámico
+      try {
+        const btn = document.querySelectorAll('.shop-buy')[i];
+        if (btn) { btn.textContent = '...'; btn.disabled = true; }
+
+        const r = await fetch('/api/payment/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: product.name, price: product.price, quantity: 1 })
+        });
+        const data = await r.json();
+
+        if (btn) { btn.textContent = 'Comprar'; btn.disabled = false; }
+
+        if (data.url) {
+          window.open(data.url, '_blank', 'noopener');
+        } else {
+          // Fallback al link general
+          window.open(siteConfig?.paymentLink || '#', '_blank', 'noopener');
+        }
+      } catch {
+        // Fallback al link general
+        window.open(siteConfig?.paymentLink || '#', '_blank', 'noopener');
+      }
     }
 
     // ── Admin tabs ───────────────────────────────────────────────
@@ -1926,6 +1968,27 @@
       el.className = 'account-msg' + (type ? ' ' + type : '');
     }
 
+    function showToast(msg, type) {
+      let t = document.getElementById('globalToast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'globalToast';
+        t.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);z-index:9999;padding:14px 28px;border-radius:100px;font-size:14px;font-weight:500;opacity:0;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;white-space:nowrap';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.background = type === 'err' ? 'rgba(239,68,68,0.92)' : 'rgba(109,40,217,0.92)';
+      t.style.color = '#fff';
+      t.style.boxShadow = '0 8px 32px rgba(0,0,0,0.4)';
+      t.style.opacity = '1';
+      t.style.transform = 'translateX(-50%) translateY(0)';
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => {
+        t.style.opacity = '0';
+        t.style.transform = 'translateX(-50%) translateY(80px)';
+      }, 4000);
+    }
+
     function closeAdmin() {
       document.getElementById('adminOverlay').classList.remove('show');
       document.getElementById('adminLogin').style.display = 'block';
@@ -2017,10 +2080,24 @@
     async function checkGoogleCallback() {
       const params = new URLSearchParams(window.location.search);
       const auth = params.get('auth');
-      if (!auth) return;
+      const payment = params.get('payment');
 
       // Limpia el query param de la URL sin recargar
       history.replaceState({}, '', window.location.pathname);
+
+      // Resultado de pago Mercado Pago
+      if (payment === 'success') {
+        showToast('¡Pago exitoso! 🎉 Pronto recibirás tu producto.', 'ok');
+        return;
+      } else if (payment === 'failure') {
+        showToast('El pago no se completó. Podés intentarlo de nuevo.', 'err');
+        return;
+      } else if (payment === 'pending') {
+        showToast('Pago pendiente de confirmación ⏳', 'ok');
+        return;
+      }
+
+      if (!auth) return;
 
       if (auth === 'google') {
         try {

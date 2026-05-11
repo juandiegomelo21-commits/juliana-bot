@@ -7,6 +7,7 @@ const path = require("path");
 const FormData = require("form-data");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
+const { MercadoPagoConfig, Preference } = require("mercadopago");
 const { handleIncomingMessage } = require("./handlers/message");
 const { getJulianaResponse } = require("./groq");
 const { getConfig, saveConfig } = require("./config");
@@ -78,6 +79,55 @@ app.post("/chat", async (req, res) => {
   } catch (err) {
     console.error("❌ Error en /chat:", err.message);
     res.status(500).json({ error: "Error al obtener respuesta" });
+  }
+});
+
+// Diagnóstico MP (solo para verificar configuración)
+app.get("/api/payment/status", (req, res) => {
+  res.json({ configured: !!process.env.MP_ACCESS_TOKEN });
+});
+
+// Checkout Pro — crear preferencia de pago
+app.post("/api/payment/create", async (req, res) => {
+  if (!process.env.MP_ACCESS_TOKEN) {
+    console.error("❌ MP_ACCESS_TOKEN no configurado");
+    return res.status(503).json({ error: "Pagos no configurados aún" });
+  }
+  const { title, price, quantity = 1 } = req.body;
+  if (!title || !price) {
+    return res.status(400).json({ error: "Faltan datos del producto" });
+  }
+
+  // Parsear "$89.000 COP" → 89000
+  const numericPrice = parseInt(String(price).replace(/[^0-9]/g, ""), 10);
+  if (!numericPrice || numericPrice <= 0) {
+    return res.status(400).json({ error: "Precio inválido" });
+  }
+
+  console.log(`💳 Creando pago: ${title} - ${numericPrice} COP`);
+
+  try {
+    const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+    const preference = new Preference(client);
+    const baseUrl = (process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`).replace(/\/$/, "");
+
+    const result = await preference.create({
+      body: {
+        items: [{ title, unit_price: numericPrice, quantity: parseInt(quantity), currency_id: "COP" }],
+        back_urls: {
+          success: `${baseUrl}/?payment=success`,
+          failure: `${baseUrl}/?payment=failure`,
+          pending: `${baseUrl}/?payment=pending`,
+        },
+        auto_return: "approved",
+      },
+    });
+
+    console.log(`✅ Preferencia creada: ${result.id}`);
+    res.json({ url: result.init_point });
+  } catch (err) {
+    console.error("❌ Error MP:", err.message, err.cause || "");
+    res.status(500).json({ error: "Error al crear el pago", detail: err.message });
   }
 });
 
