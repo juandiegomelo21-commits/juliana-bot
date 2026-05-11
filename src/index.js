@@ -283,5 +283,6 @@ db.connect()
     app.listen(PORT, () => {
       console.log(`🌸 Juliana Bot corriendo en puerto ${PORT}`);
       console.log(`🔗 Webhook: POST /webhook | Verificación: GET /webhook`);
+      console.log(`💳 Mercado Pago: ${process.env.MP_ACCESS_TOKEN ? "✅ configurado" : "❌ NO configurado — agrega MP_ACCESS_TOKEN en Railway"}`);
     });
   });
