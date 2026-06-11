@@ -231,103 +231,82 @@
       position: relative;
     }
 
-    /* ── BLADE RUNNER HOLOGRAM ── */
-    .br-scene {
+    /* ── HERO PHOTO ── */
+    .hero-photo-wrap {
       position: relative;
-      width: 260px; height: 420px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: flex-end;
+      width: 340px;
     }
-    .br-grid {
-      position: absolute; inset: 0; pointer-events: none;
-      background-image:
-        linear-gradient(rgba(0,210,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,210,255,0.03) 1px, transparent 1px);
-      background-size: 22px 22px;
-    }
-    .br-particles { position: absolute; inset: 0; pointer-events: none; }
-    .brp {
-      position: absolute; width: 1.5px; height: 1.5px; border-radius: 50%;
-      background: rgba(0,210,255,0.85); animation: brpFloat linear infinite;
-    }
-    @keyframes brpFloat {
-      0% { opacity: 0; transform: translateY(0) scale(0); }
-      15% { opacity: 0.9; transform: scale(1); }
-      100% { opacity: 0; transform: translateY(-180px) translateX(var(--dx)); }
-    }
-    .br-projection {
+    .hero-photo-frame {
       position: relative;
-      width: 188px; height: 308px;
-      margin-bottom: 2px;
-      background: #000;
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 32px;
       overflow: hidden;
-      -webkit-mask-image:
-        linear-gradient(to bottom, transparent, #000 8%, #000 88%, transparent),
-        linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
-      -webkit-mask-composite: destination-in;
-      mask-image:
-        linear-gradient(to bottom, transparent, #000 8%, #000 88%, transparent),
-        linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
-      mask-composite: intersect;
-      animation: brFlicker 7s step-end infinite;
+      box-shadow:
+        0 48px 120px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(255,255,255,0.07),
+        0 0 80px rgba(236,72,153,0.12);
     }
-    @keyframes brFlicker {
-      0%,93%,95%,97%,100% { opacity: 1; }
-      94% { opacity: 0.72; } 96% { opacity: 0.88; }
-    }
-    .br-photo {
-      position: absolute; inset: 0;
+    .hero-photo-frame img {
       width: 100%; height: 100%;
-      object-fit: cover; object-position: top center; display: block;
-      filter: grayscale(1) brightness(1.6) contrast(1.35);
-      mix-blend-mode: screen;
+      object-fit: cover; object-position: top center;
+      display: block;
+      transition: transform 6s ease;
     }
-    .br-tint { position: absolute; inset: 0; pointer-events: none; background: rgba(0,195,255,0.18); mix-blend-mode: screen; }
-    .br-scanlines {
-      position: absolute; inset: 0; pointer-events: none;
-      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 3px);
+    .hero-photo-frame:hover img { transform: scale(1.04); }
+    .hero-photo-frame::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 40%,
+        rgba(6,6,10,0.55) 100%
+      );
     }
-    .br-scan-pass {
-      position: absolute; left: 0; right: 0; height: 48px; pointer-events: none;
-      background: linear-gradient(to bottom, transparent, rgba(0,210,255,0.07), transparent);
-      animation: brScanPass 5s linear infinite;
+    .hero-photo-badge {
+      position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 100px; padding: 10px 22px;
+      display: flex; align-items: center; gap: 8px;
+      white-space: nowrap; z-index: 2;
     }
-    @keyframes brScanPass { from { top: -48px; } to { top: 308px; } }
-    .br-glitch {
-      position: absolute; inset: 0; pointer-events: none;
-      opacity: 0; animation: brGlitch 9s ease-in-out infinite;
+    .hero-photo-badge .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 8px #34d399;
+      animation: blink 2.5s ease-in-out infinite;
+      flex-shrink: 0;
     }
-    .br-glitch::before, .br-glitch::after {
-      content: ''; position: absolute; left: 0; right: 0; background: rgba(0,210,255,0.15);
+    .hero-photo-badge span {
+      font-size: 12px; color: rgba(255,255,255,0.82); letter-spacing: 0.3px;
     }
-    .br-glitch::before { height: 18px; top: 35%; transform: translateX(5px); }
-    .br-glitch::after  { height: 10px; top: 65%; transform: translateX(-4px); }
-    @keyframes brGlitch {
-      0%,83%,100% { opacity: 0; } 85% { opacity: 1; } 86% { opacity: 0; } 88% { opacity: 0.8; } 90% { opacity: 0; }
-    }
-    .br-beam {
-      width: 120px; height: 78px;
-      background: linear-gradient(to bottom, transparent, rgba(0,200,255,0.08));
-      clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
-      animation: brBeamPulse 3.5s ease-in-out infinite alternate;
-    }
-    @keyframes brBeamPulse { from { opacity: 0.5; } to { opacity: 1; } }
-    .br-platform {
-      width: 120px; height: 3px; border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(0,210,255,0.95), rgba(0,210,255,0.1) 70%, transparent);
-      animation: brPlatPulse 3.5s ease-in-out infinite alternate;
-      margin-top: -1px;
-    }
-    @keyframes brPlatPulse { from { width: 90px; opacity: 0.7; } to { width: 155px; opacity: 1; } }
-    .br-label {
-      position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
-      font-size: 9px; letter-spacing: 3px; color: rgba(0,210,255,0.4);
-      text-transform: uppercase; white-space: nowrap; font-family: 'Courier New', monospace;
-    }
-    .br-halo {
-      position: absolute; inset: -40px;
-      background: radial-gradient(ellipse at center bottom, rgba(0,200,255,0.07) 0%, transparent 65%);
+    .hero-photo-glow {
+      position: absolute;
+      inset: -60px; z-index: -1;
+      background: radial-gradient(ellipse at 50% 70%, rgba(236,72,153,0.18) 0%, rgba(124,58,237,0.1) 45%, transparent 70%);
       pointer-events: none;
+    }
+    .hero-photo-deco {
+      position: absolute; top: -18px; right: -18px;
+      width: 80px; height: 80px;
+      border: 1px solid rgba(236,72,153,0.22);
+      border-radius: 24px;
+      pointer-events: none;
+      animation: decoDrift 5s ease-in-out infinite alternate;
+    }
+    .hero-photo-deco-2 {
+      position: absolute; bottom: -14px; left: -14px;
+      width: 56px; height: 56px;
+      border: 1px solid rgba(124,58,237,0.2);
+      border-radius: 16px;
+      pointer-events: none;
+      animation: decoDrift 7s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes decoDrift {
+      from { transform: rotate(-4deg) scale(1); }
+      to   { transform: rotate(4deg) scale(1.06); }
     }
 
     /* ── MANIFESTO ── */
@@ -851,20 +830,17 @@
         </div>
       </div>
       <div class="hero-right" data-reveal data-delay="2">
-        <div class="br-scene">
-          <div class="br-grid"></div>
-          <div class="br-particles" id="brParticles"></div>
-          <div class="br-projection">
-            <img src="./juliana-pp.jpg" alt="Juliana" class="br-photo" />
-            <div class="br-tint"></div>
-            <div class="br-scanlines"></div>
-            <div class="br-scan-pass"></div>
-            <div class="br-glitch"></div>
+        <div class="hero-photo-wrap">
+          <div class="hero-photo-glow"></div>
+          <div class="hero-photo-deco"></div>
+          <div class="hero-photo-deco-2"></div>
+          <div class="hero-photo-frame">
+            <img src="./juliana-pp.jpg" alt="Juliana" />
+            <div class="hero-photo-badge">
+              <div class="dot"></div>
+              <span>Juliana · en línea ahora</span>
+            </div>
           </div>
-          <div class="br-beam"></div>
-          <div class="br-platform"></div>
-          <div class="br-halo"></div>
-          <div class="br-label">JULIANA · AI · ONLINE</div>
         </div>
       </div>
       <div class="hero-scroll">
