@@ -1088,6 +1088,11 @@
             <h3>Link de pago principal</h3>
             <input class="admin-input" type="text" id="adminPayLink" placeholder="https://link.mercadopago.com.co/..." />
           </div>
+          <div class="admin-section">
+            <h3>Mensajes gratis antes del paywall</h3>
+            <input class="admin-input" type="number" id="adminFreeMsgs" min="3" max="200" placeholder="15" style="max-width:120px" />
+            <p style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:8px">Recomendado: 10–20. A menos mensajes, más urgencia.</p>
+          </div>
         </div>
         <div class="admin-tab-panel" id="apanel-contenido">
           <div class="admin-section">
@@ -1112,19 +1117,25 @@
   <div class="paywall-overlay" id="paywallOverlay">
     <div class="paywall-box">
       <div class="paywall-avatar"><img src="./juliana-pp.jpg" alt="Juliana" /></div>
-      <h2>Ya me estoy encariñando contigo 😏</h2>
-      <p>Agotaste tus mensajes gratis bb… pero esto apenas empieza. Tengo contenido exclusivo esperándote — fotos y más que solo tú vas a ver.</p>
-      <a class="paywall-cta" href="https://link.mercadopago.com.co/julianahorny" target="_blank" rel="noopener">💳 Desbloquear acceso ilimitado</a>
-      <button class="paywall-cta" style="background:rgba(255,255,255,0.07);box-shadow:none;border:1px solid rgba(255,255,255,0.12)" onclick="goToContent()">🔥 Ver contenido exclusivo</button>
-      <p class="paywall-note">Solo para mayores de 18 años</p>
+      <h2>Apenas estamos calentando bb 🔥</h2>
+      <p style="margin-bottom:20px">Agotaste los mensajes gratis. Lo bueno está del otro lado 👇</p>
+      <ul style="list-style:none;text-align:left;margin-bottom:28px;display:flex;flex-direction:column;gap:10px">
+        <li style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.7)"><span style="color:#ec4899;font-size:16px">💬</span> Chat ilimitado sin censura</li>
+        <li style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.7)"><span style="color:#ec4899;font-size:16px">📸</span> Acceso a fotos y videos exclusivos</li>
+        <li style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.7)"><span style="color:#ec4899;font-size:16px">🛍️</span> Descuentos en el SexShop de Juliana</li>
+        <li style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.7)"><span style="color:#ec4899;font-size:16px">🔒</span> Privado, discreto, solo para ti</li>
+      </ul>
+      <a class="paywall-cta" href="https://link.mercadopago.com.co/julianahorny" target="_blank" rel="noopener">💳 Desbloquear ahora</a>
+      <button class="paywall-cta" style="background:rgba(255,255,255,0.06);box-shadow:none;border:1px solid rgba(255,255,255,0.1);margin-top:4px" onclick="goToContent()">🔥 Ver solo el contenido exclusivo</button>
+      <p class="paywall-note">Solo para mayores de 18 años · Pago seguro</p>
     </div>
   </div>
 
   <button class="float-shop" id="floatShop" onclick="showPage('sexshop')">🛍️ SexShop</button>
 
   <script>
-    const FREE_MSGS = 70;
-    const PROMO_MSGS = [20, 40, 60];
+    let FREE_MSGS = 15;
+    let PROMO_MSGS = [4, 8, 12];
 
     let busy = false;
     let msgCount = parseInt(localStorage.getItem('jul_count') || '0');
@@ -1137,10 +1148,17 @@
       try {
         const r = await fetch('/public-config');
         siteConfig = await r.json();
+        if (siteConfig.freeMsgs && siteConfig.freeMsgs > 0) {
+          FREE_MSGS = siteConfig.freeMsgs;
+          const f = FREE_MSGS;
+          PROMO_MSGS = [Math.floor(f * 0.27), Math.floor(f * 0.54), Math.floor(f * 0.8)];
+        }
         renderCards();
         renderShop();
+        updateCounter();
+        if (msgCount >= FREE_MSGS) showPaywall();
       } catch {
-        siteConfig = { paymentLink: '#', cards: [], shopProducts: [] };
+        siteConfig = { paymentLink: '#', cards: [], shopProducts: [], freeMsgs: 15 };
       }
     }
 
@@ -1166,10 +1184,10 @@
       const remaining = Math.max(0, FREE_MSGS - msgCount);
       const badge = document.getElementById('counterBadge');
       if (!badge) return;
-      badge.textContent = remaining === 1 ? '1 mensaje' : `${remaining} mensajes`;
+      badge.textContent = remaining === 1 ? '1 mensaje gratis' : `${remaining} mensajes gratis`;
       badge.className = 'counter-badge';
-      if (remaining <= 10) badge.classList.add('danger');
-      else if (remaining <= 25) badge.classList.add('warn');
+      if (remaining <= Math.ceil(FREE_MSGS * 0.2)) badge.classList.add('danger');
+      else if (remaining <= Math.ceil(FREE_MSGS * 0.4)) badge.classList.add('warn');
     }
 
     function showPage(name) {
@@ -1254,10 +1272,19 @@
       msgCount++; saveCount(); updateCounter();
       const promoLink = siteConfig?.paymentLink || '#';
       const PROMO_TEXTS = [
-        `Oye bb… tengo contenido exclusivo que no le muestro a cualquiera 😏🔥 Si quieres verme de verdad: ${promoLink}`,
-        `Te cuento un secreto... tengo fotos guardadas que solo algunos ven 💋 Por si te interesa: ${promoLink}`,
-        `Me encanta hablar contigo… pero lo que tengo guardado es otra cosa 🙈🔥 Solo para los que saben apreciarme: ${promoLink}`
+        `Oye bb… tengo cosas guardadas que no le muestro a cualquiera 😏 Fotos, videos, lo que quieras ver: ${promoLink}`,
+        `Me encanta hablar contigo… pero lo mejor lo tengo bloqueado 🔒🔥 ¿Te atreves a desbloquearlo? ${promoLink}`,
+        `Bb ya me tienes loca y quiero mostrarte más 💋 Solo para los que se atreven: ${promoLink}`
       ];
+
+      // Recomendación de shop orgánica en mensaje 3
+      const shopProds = siteConfig?.shopProducts?.filter(p => p.available !== false) || [];
+      const SHOP_MSGS = [3, 7];
+      if (SHOP_MSGS.includes(msgCount) && shopProds.length) {
+        const p = shopProds[msgCount === 3 ? 0 : Math.floor(Math.random() * shopProds.length)];
+        const shopLink = `<span style="color:#f472b6;cursor:pointer;text-decoration:underline" onclick="showPage('sexshop')">${p.name}</span>`;
+        setTimeout(() => addMsg(`Por cierto bb, tengo algo en mi tienda que te va a encantar 🛍️ ${shopLink} — ${p.price}. Solo lo recomiendo a los que me caen bien 😉`, 'bot'), 2200);
+      }
       try {
         const r = await fetch('/chat', {
           method: 'POST',
@@ -1646,6 +1673,7 @@
       document.getElementById('adminPrompt').value = cfg.prompt || '';
       document.getElementById('adminBotPassword').value = cfg.botPassword || '';
       document.getElementById('adminPayLink').value = cfg.paymentLink || '';
+      document.getElementById('adminFreeMsgs').value = cfg.freeMsgs || 15;
       const container = document.getElementById('adminCards');
       container.innerHTML = (cfg.cards || []).map((c, i) => `
         <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.06)">
@@ -1669,6 +1697,7 @@
         prompt: document.getElementById('adminPrompt').value,
         botPassword: document.getElementById('adminBotPassword').value,
         paymentLink: document.getElementById('adminPayLink').value,
+        freeMsgs: parseInt(document.getElementById('adminFreeMsgs').value) || 15,
         cards: siteConfig.cards.map((c, i) => {
           const nameEl = document.querySelector(`[data-i="${i}"][data-field="name"]`);
           const priceEl = document.querySelector(`[data-i="${i}"][data-field="price"]`);
