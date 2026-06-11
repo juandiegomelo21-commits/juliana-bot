@@ -170,7 +170,7 @@ app.post("/api/tts", async (req, res) => {
   try {
     const r = await axios.post(
       "https://api.openai.com/v1/audio/speech",
-      { model: "tts-1", voice, input: clean, response_format: "mp3" },
+      { model: "tts-1-hd", voice, input: clean, response_format: "mp3", speed: 0.95 },
       {
         headers: {
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
