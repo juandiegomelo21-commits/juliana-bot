@@ -139,46 +139,42 @@ app.post("/api/payment/create", async (req, res) => {
 
 // TTS diagnóstico — GET para verificar config sin gastar créditos
 app.get("/api/tts/status", (req, res) => {
-  const key = process.env.ELEVENLABS_API_KEY;
-  const voiceId = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL";
+  const key = process.env.OPENAI_API_KEY;
+  const voice = process.env.OPENAI_TTS_VOICE || "nova";
   res.json({
+    provider: "openai",
     configured: !!key,
     keyPrefix: key ? key.slice(0, 8) + "..." : null,
-    voiceId,
-    model: "eleven_multilingual_v2",
+    voice,
+    model: "tts-1",
   });
 });
 
-// TTS — ElevenLabs con logs detallados para Railway
+// TTS — OpenAI con logs detallados para Railway
 app.post("/api/tts", async (req, res) => {
   const { text } = req.body;
   if (!text) return res.status(400).json({ error: "Falta text" });
 
-  if (!process.env.ELEVENLABS_API_KEY) {
-    console.warn("⚠️  TTS: ELEVENLABS_API_KEY no configurada — el cliente usará Web Speech");
+  if (!process.env.OPENAI_API_KEY) {
+    console.warn("⚠️  TTS: OPENAI_API_KEY no configurada — el cliente usará Web Speech");
     return res.status(503).json({ error: "TTS no configurado" });
   }
 
-  const voiceId = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL";
-  const clean = text.replace(/[^\p{L}\p{N}\s¿¡.,!?;:«»]/gu, "").trim().slice(0, 400);
+  const voice = process.env.OPENAI_TTS_VOICE || "nova";
+  const clean = text.replace(/[^\p{L}\p{N}\s¿¡.,!?;:«»\-]/gu, "").trim().slice(0, 4096);
 
   if (!clean) return res.status(400).json({ error: "Texto vacío después de limpiar" });
 
-  console.log(`🎙️ TTS REQUEST | voice: ${voiceId} | chars: ${clean.length} | texto: "${clean.slice(0, 60)}..."`);
+  console.log(`🎙️ TTS REQUEST | voice: ${voice} | chars: ${clean.length} | texto: "${clean.slice(0, 60)}..."`);
 
   try {
     const r = await axios.post(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
-      {
-        text: clean,
-        model_id: "eleven_multilingual_v2",
-        voice_settings: { stability: 0.30, similarity_boost: 0.85, style: 0.20, use_speaker_boost: true },
-      },
+      "https://api.openai.com/v1/audio/speech",
+      { model: "tts-1", voice, input: clean, response_format: "mp3" },
       {
         headers: {
-          "xi-api-key": process.env.ELEVENLABS_API_KEY,
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
           "Content-Type": "application/json",
-          Accept: "audio/mpeg",
         },
         responseType: "arraybuffer",
       }
@@ -186,13 +182,12 @@ app.post("/api/tts", async (req, res) => {
 
     const bytes = r.data.byteLength;
     const contentType = r.headers["content-type"] || "desconocido";
-    const isAudio = contentType.includes("audio");
-    console.log(`✅ TTS OK | ${bytes} bytes | content-type: ${contentType} | audio: ${isAudio}`);
+    console.log(`✅ TTS OK | ${bytes} bytes | content-type: ${contentType}`);
 
-    if (!isAudio || bytes < 1000) {
+    if (bytes < 1000) {
       const body = Buffer.from(r.data).toString().slice(0, 200);
-      console.error(`❌ TTS: respuesta sospechosa (no es audio real) — body: ${body}`);
-      return res.status(500).json({ error: "ElevenLabs no devolvió audio", body });
+      console.error(`❌ TTS: respuesta sospechosa — body: ${body}`);
+      return res.status(500).json({ error: "OpenAI no devolvió audio válido", body });
     }
 
     res.set("Content-Type", "audio/mpeg");
@@ -362,8 +357,8 @@ db.connect()
       console.log(`🌸 Juliana Bot corriendo en puerto ${PORT}`);
       console.log(`🔗 Webhook: POST /webhook | Verificación: GET /webhook`);
       console.log(`💳 Mercado Pago: ${process.env.MP_ACCESS_TOKEN ? "✅ configurado" : "❌ NO configurado — agrega MP_ACCESS_TOKEN en Railway"}`);
-      const elKey = process.env.ELEVENLABS_API_KEY;
-      const elVoice = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL (default)";
-      console.log(`🎙️  ElevenLabs: ${elKey ? `✅ key configurada (${elKey.slice(0,8)}...) | voz: ${elVoice}` : "❌ NO configurado — agrega ELEVENLABS_API_KEY en Railway"}`);
+      const oaiKey = process.env.OPENAI_API_KEY;
+      const oaiVoice = process.env.OPENAI_TTS_VOICE || "nova (default)";
+      console.log(`🎙️  OpenAI TTS: ${oaiKey ? `✅ key configurada (${oaiKey.slice(0,8)}...) | voz: ${oaiVoice}` : "❌ NO configurado — agrega OPENAI_API_KEY en Railway"}`);
     });
   });
