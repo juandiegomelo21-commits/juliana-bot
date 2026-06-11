@@ -711,6 +711,48 @@
     select.admin-input { appearance: none; -webkit-appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; }
     select.admin-input option { background: #150a2d; color: #fff; }
 
+    /* ── ADMIN IMAGE UPLOAD ── */
+    .img-upload-wrap { display:flex; gap:12px; align-items:flex-start; margin-top:8px; flex-wrap:wrap; }
+    .img-thumb-preview {
+      width:72px; height:72px; border-radius:10px; object-fit:cover;
+      border:1px solid rgba(255,255,255,0.1); flex-shrink:0;
+      background:rgba(255,255,255,0.04); display:flex; align-items:center; justify-content:center;
+      font-size:22px; overflow:hidden;
+    }
+    .img-thumb-preview img { width:100%; height:100%; object-fit:cover; border-radius:9px; }
+    .img-upload-btn {
+      flex:1; min-width:0; padding:10px 14px; background:rgba(124,58,237,0.08);
+      border:1px dashed rgba(124,58,237,0.3); border-radius:10px;
+      color:rgba(167,139,250,0.75); font-size:12px; cursor:pointer; text-align:center;
+      transition:all 0.2s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .img-upload-btn:hover { background:rgba(124,58,237,0.16); border-color:rgba(167,139,250,0.5); color:#fff; }
+    .img-upload-input { display:none; }
+    .blur-row { display:flex; align-items:center; gap:10px; margin-top:8px; }
+    .blur-row label { font-size:11px; color:rgba(255,255,255,0.35); white-space:nowrap; }
+    .blur-row input[type=range] { flex:1; accent-color:#ec4899; height:4px; }
+    .blur-val { font-size:11px; color:rgba(244,114,182,0.8); width:32px; text-align:right; flex-shrink:0; }
+    .blur-preview-wrap { position:relative; display:inline-block; border-radius:8px; overflow:hidden; margin-top:6px; }
+    .blur-preview-img { width:100%; max-height:100px; object-fit:cover; display:block; }
+    .blur-preview-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+
+    /* ── ADMIN PAGE ORDER ── */
+    .page-order-list { display:flex; flex-direction:column; gap:8px; }
+    .page-order-item {
+      display:flex; align-items:center; gap:10px;
+      background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
+      border-radius:12px; padding:12px 16px; user-select:none;
+    }
+    .page-order-handle { color:rgba(255,255,255,0.25); font-size:16px; cursor:grab; flex-shrink:0; }
+    .page-order-name { flex:1; font-size:13px; color:rgba(255,255,255,0.75); }
+    .page-order-arrows { display:flex; flex-direction:column; gap:2px; }
+    .page-order-arrows button {
+      background:rgba(255,255,255,0.06); border:none; color:rgba(255,255,255,0.5);
+      border-radius:6px; width:24px; height:20px; font-size:11px; cursor:pointer;
+      transition:all 0.15s; line-height:1;
+    }
+    .page-order-arrows button:hover { background:rgba(124,58,237,0.3); color:#fff; }
+
     /* ── MI CUENTA ── */
     .account-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 200; overflow-y: auto; padding: 24px 16px; }
     .account-overlay.show { display: block; }
@@ -1072,6 +1114,7 @@
         </div>
         <div class="admin-tabs">
           <button class="admin-tab active" id="atab-general" onclick="switchAdminTab('general')">⚙️ General</button>
+          <button class="admin-tab" id="atab-paginas" onclick="switchAdminTab('paginas')">📄 Páginas</button>
           <button class="admin-tab" id="atab-contenido" onclick="switchAdminTab('contenido')">🔥 Contenido</button>
           <button class="admin-tab" id="atab-sexshop" onclick="switchAdminTab('sexshop')">🛍️ SexShop</button>
         </div>
@@ -1094,9 +1137,16 @@
             <p style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:8px">Recomendado: 10–20. A menos mensajes, más urgencia.</p>
           </div>
         </div>
+        <div class="admin-tab-panel" id="apanel-paginas">
+          <div class="admin-section">
+            <h3>Orden de navegación</h3>
+            <p style="font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:14px">Usa las flechas para reordenar. El primero es el que se muestra al abrir la app.</p>
+            <div class="page-order-list" id="pageOrderList"></div>
+          </div>
+        </div>
         <div class="admin-tab-panel" id="apanel-contenido">
           <div class="admin-section">
-            <h3>Contenido exclusivo · Nombre y precio</h3>
+            <h3>Contenido exclusivo · Imagen, blur y precio</h3>
             <div id="adminCards"></div>
           </div>
         </div>
@@ -1156,6 +1206,7 @@
         renderCards();
         renderShop();
         updateCounter();
+        if (siteConfig.pageOrder?.length) applyPageOrder(siteConfig.pageOrder);
         if (msgCount >= FREE_MSGS) showPaywall();
       } catch {
         siteConfig = { paymentLink: '#', cards: [], shopProducts: [], freeMsgs: 15 };
@@ -1165,17 +1216,26 @@
     function renderCards() {
       const grid = document.getElementById('contentGrid');
       if (!grid || !siteConfig.cards) return;
-      grid.innerHTML = siteConfig.cards.map((c, i) => `
+      grid.innerHTML = siteConfig.cards.map((c, i) => {
+        const blurPx = c.blur != null ? c.blur : 10;
+        const thumb = c.image
+          ? `<div class="card-thumb" style="position:relative;overflow:hidden;background:#08080f">
+               <img src="${c.image}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(${blurPx}px);transform:scale(1.12)" />
+               <div class="lock-overlay" style="background:rgba(6,6,10,0.35)"><div class="lock-icon">🔒</div></div>
+             </div>`
+          : `<div class="card-thumb card-thumb-${c.theme}">${c.emoji}
+               <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
+             </div>`;
+        return `
         <div class="content-card" onclick="buyContent(${i})">
-          <div class="card-thumb card-thumb-${c.theme}">${c.emoji}
-            <div class="lock-overlay"><div class="lock-icon">🔒</div></div>
-          </div>
+          ${thumb}
           <div class="card-body">
             <p class="card-tag">${c.tag}</p>
             <p class="card-name">${c.name}</p>
             <div class="card-price"><span class="price-tag${c.hot ? ' price-hot' : ''}">${c.price}</span></div>
           </div>
-        </div>`).join('');
+        </div>`;
+      }).join('');
     }
 
     function saveCount() { localStorage.setItem('jul_count', msgCount); }
@@ -1350,10 +1410,13 @@
       grid.innerHTML = products.map((p, i) => {
         const thumbClass = `shop-thumb-${(p.category || 'default').replace('é','e').replace('í','i')}`;
         const quote = julianaQuotes[i % julianaQuotes.length];
+        const thumbInner = p.image
+          ? `<img src="${p.image}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit" /><span style="position:relative;z-index:1;font-size:28px;text-shadow:0 2px 8px rgba(0,0,0,0.7)">${p.emoji || '🛍️'}</span>`
+          : `<span>${p.emoji || '🛍️'}</span>`;
         return `
           <div class="shop-card" data-category="${p.category || 'default'}" data-idx="${i}" style="animation: shopCardIn 0.42s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.07}s both">
-            <div class="shop-card-thumb ${thumbClass}">
-              <span>${p.emoji || '🛍️'}</span>
+            <div class="shop-card-thumb ${thumbClass}" style="position:relative;overflow:hidden">
+              ${thumbInner}
               ${p.featured ? '<div class="shop-card-badges"><span class="badge-featured">✦ Destacado</span></div>' : ''}
               <div class="shop-card-q"><span class="shop-card-q-text">${quote}</span></div>
             </div>
@@ -1421,9 +1484,121 @@
     }
 
     function switchAdminTab(tab) {
-      ['general','contenido','sexshop'].forEach(t => {
+      ['general','paginas','contenido','sexshop'].forEach(t => {
         document.getElementById('atab-' + t).classList.toggle('active', t === tab);
         document.getElementById('apanel-' + t).classList.toggle('active', t === tab);
+      });
+    }
+
+    // ── Upload de imagen ─────────────────────────────────────────
+    async function uploadImage(file) {
+      const fd = new FormData();
+      fd.append('image', file);
+      const r = await fetch(`/api/upload?password=${encodeURIComponent(adminPassword)}`, { method:'POST', body: fd });
+      if (!r.ok) throw new Error('Upload falló');
+      const data = await r.json();
+      return data.url;
+    }
+
+    function makeImgUploadUI(currentUrl, onChange, { blurVal, onBlurChange } = {}) {
+      const id = 'iu_' + Math.random().toString(36).slice(2);
+      const hasBlur = blurVal != null;
+      setTimeout(() => {
+        const btn = document.getElementById('btn_' + id);
+        const inp = document.getElementById('inp_' + id);
+        const thumb = document.getElementById('th_' + id);
+        if (!btn || !inp) return;
+        btn.onclick = () => inp.click();
+        inp.onchange = async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          btn.textContent = 'Subiendo...';
+          try {
+            const url = await uploadImage(file);
+            if (thumb) {
+              thumb.innerHTML = `<img src="${url}" />`;
+            }
+            btn.textContent = '✓ Imagen subida';
+            onChange(url);
+            if (hasBlur) {
+              const prev = document.getElementById('blurprev_' + id);
+              if (prev) prev.src = url;
+            }
+          } catch {
+            btn.textContent = '✗ Error — reintenta';
+          }
+        };
+        if (hasBlur) {
+          const slider = document.getElementById('blurslider_' + id);
+          const valLabel = document.getElementById('blurval_' + id);
+          const prev = document.getElementById('blurprev_' + id);
+          if (slider) {
+            slider.oninput = () => {
+              const v = parseInt(slider.value);
+              if (valLabel) valLabel.textContent = v + 'px';
+              if (prev) prev.style.filter = `blur(${v}px)`;
+              onBlurChange(v);
+            };
+          }
+        }
+      }, 50);
+
+      const thumbHtml = currentUrl
+        ? `<div class="img-thumb-preview" id="th_${id}"><img src="${currentUrl}" /></div>`
+        : `<div class="img-thumb-preview" id="th_${id}">📷</div>`;
+
+      const blurHtml = hasBlur ? `
+        <div class="blur-row">
+          <label>Blur cliente</label>
+          <input type="range" id="blurslider_${id}" min="0" max="20" value="${blurVal}" class="blur-row" style="display:block;width:100%;accent-color:#ec4899" />
+          <span class="blur-val" id="blurval_${id}">${blurVal}px</span>
+        </div>
+        ${currentUrl ? `<div class="blur-preview-wrap"><img class="blur-preview-img" id="blurprev_${id}" src="${currentUrl}" style="filter:blur(${blurVal}px);border-radius:8px;max-width:100%;display:block" /></div>` : ''}
+      ` : '';
+
+      return `
+        <div class="img-upload-wrap">
+          ${thumbHtml}
+          <div style="flex:1;min-width:0">
+            <input type="file" accept="image/*" class="img-upload-input" id="inp_${id}" />
+            <button type="button" class="img-upload-btn" id="btn_${id}">${currentUrl ? '🔄 Cambiar imagen' : '📤 Subir imagen'}</button>
+          </div>
+        </div>
+        ${blurHtml}
+      `;
+    }
+
+    // ── Page order ───────────────────────────────────────────────
+    let _pageOrder = ['inicio', 'contenido', 'sexshop'];
+    const PAGE_LABELS = { inicio:'🏠 Inicio', contenido:'🔥 Contenido', sexshop:'🛍️ SexShop' };
+
+    function renderPageOrderAdmin() {
+      const list = document.getElementById('pageOrderList');
+      if (!list) return;
+      list.innerHTML = _pageOrder.map((p, i) => `
+        <div class="page-order-item" data-page="${p}">
+          <span class="page-order-handle">⠿</span>
+          <span class="page-order-name">${PAGE_LABELS[p] || p}</span>
+          <div class="page-order-arrows">
+            <button onclick="movePageOrder(${i},-1)" ${i===0?'disabled':''}>▲</button>
+            <button onclick="movePageOrder(${i},1)" ${i===_pageOrder.length-1?'disabled':''}>▼</button>
+          </div>
+        </div>`).join('');
+    }
+
+    function movePageOrder(idx, dir) {
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= _pageOrder.length) return;
+      [_pageOrder[idx], _pageOrder[newIdx]] = [_pageOrder[newIdx], _pageOrder[idx]];
+      renderPageOrderAdmin();
+    }
+
+    function applyPageOrder(order) {
+      const navCenter = document.querySelector('.nav-center');
+      if (!navCenter) return;
+      order.forEach(page => {
+        const btn = document.getElementById('btn-' + page);
+        if (btn) navCenter.appendChild(btn);
       });
     }
 
@@ -1437,7 +1612,12 @@
         container.innerHTML = `<p style="color:rgba(255,255,255,0.25);font-size:13px;text-align:center;padding:16px 0">Sin productos aún. Agrega el primero abajo.</p>`;
         return;
       }
-      container.innerHTML = _shopAdmin.map((p, i) => `
+      container.innerHTML = _shopAdmin.map((p, i) => {
+        const imgUI = makeImgUploadUI(
+          p.image || '',
+          (url) => { _shopAdmin[i].image = url; }
+        );
+        return `
         <div class="shop-prod-row" id="spr-${i}">
           <div class="shop-prod-hdr">
             <span class="shop-prod-hdr-name">${p.emoji || '🛍️'} ${p.name || 'Nuevo producto'}</span>
@@ -1470,7 +1650,9 @@
             <p class="card-row-label">Descripción</p>
             <input class="admin-input" data-sp="${i}" data-spf="description" value="${escHtml(p.description||'')}" placeholder="Breve descripción" style="margin-bottom:8px" />
           </div>
-          <div class="admin-grid-1">
+          <p class="card-row-label" style="margin-top:8px;margin-bottom:4px">Foto del producto</p>
+          ${imgUI}
+          <div class="admin-grid-1" style="margin-top:10px">
             <p class="card-row-label">Link de compra (opcional)</p>
             <input class="admin-input" data-sp="${i}" data-spf="link" value="${escHtml(p.link||'')}" placeholder="https://..." />
           </div>
@@ -1480,7 +1662,8 @@
             <input type="checkbox" id="spa-${i}" data-sp="${i}" data-spf="available" ${p.available!==false?'checked':''} style="margin-left:18px" />
             <label for="spa-${i}">Disponible</label>
           </div>
-        </div>`).join('');
+        </div>`;
+      }).join('');
     }
 
     function escHtml(s) {
@@ -1669,27 +1852,64 @@
       }
     }
 
+    let _adminCards = [];
+
     function populateAdmin(cfg) {
       document.getElementById('adminPrompt').value = cfg.prompt || '';
       document.getElementById('adminBotPassword').value = cfg.botPassword || '';
       document.getElementById('adminPayLink').value = cfg.paymentLink || '';
       document.getElementById('adminFreeMsgs').value = cfg.freeMsgs || 15;
+
+      // Page order
+      _pageOrder = cfg.pageOrder?.length ? [...cfg.pageOrder] : ['inicio','contenido','sexshop'];
+      renderPageOrderAdmin();
+
+      // Content cards with image + blur
+      _adminCards = (cfg.cards || []).map(c => ({ ...c }));
+      renderAdminCards();
+
+      renderAdminShop(cfg.shopProducts || []);
+    }
+
+    function renderAdminCards() {
       const container = document.getElementById('adminCards');
-      container.innerHTML = (cfg.cards || []).map((c, i) => `
-        <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.06)">
-          <p class="card-row-label">${c.emoji} ${c.tag}</p>
+      if (!container) return;
+      container.innerHTML = _adminCards.map((c, i) => {
+        const blur = c.blur != null ? c.blur : 10;
+        const imgUI = makeImgUploadUI(
+          c.image || '',
+          (url) => { _adminCards[i].image = url; },
+          { blurVal: blur, onBlurChange: (v) => { _adminCards[i].blur = v; } }
+        );
+        return `
+        <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.06)">
+          <p class="card-row-label" style="margin-bottom:10px">${c.emoji} ${c.tag} — ${c.name}</p>
           <div class="card-row">
             <div>
               <p class="card-row-label">Nombre</p>
-              <input class="admin-input" data-i="${i}" data-field="name" value="${c.name}" />
+              <input class="admin-input" data-i="${i}" data-field="name" value="${escHtml(c.name)}" />
             </div>
             <div>
               <p class="card-row-label">Precio</p>
-              <input class="admin-input" data-i="${i}" data-field="price" value="${c.price}" />
+              <input class="admin-input" data-i="${i}" data-field="price" value="${escHtml(c.price)}" />
             </div>
           </div>
-        </div>`).join('');
-      renderAdminShop(cfg.shopProducts || []);
+          <p class="card-row-label" style="margin-top:10px;margin-bottom:4px">Foto de preview (se mostrará borrosa al cliente)</p>
+          ${imgUI}
+        </div>`;
+      }).join('');
+    }
+
+    function collectCards() {
+      return _adminCards.map((c, i) => {
+        const nameEl = document.querySelector(`[data-i="${i}"][data-field="name"]`);
+        const priceEl = document.querySelector(`[data-i="${i}"][data-field="price"]`);
+        return {
+          ...c,
+          name: nameEl?.value ?? c.name,
+          price: priceEl?.value ?? c.price,
+        };
+      });
     }
 
     async function adminSave() {
@@ -1698,11 +1918,8 @@
         botPassword: document.getElementById('adminBotPassword').value,
         paymentLink: document.getElementById('adminPayLink').value,
         freeMsgs: parseInt(document.getElementById('adminFreeMsgs').value) || 15,
-        cards: siteConfig.cards.map((c, i) => {
-          const nameEl = document.querySelector(`[data-i="${i}"][data-field="name"]`);
-          const priceEl = document.querySelector(`[data-i="${i}"][data-field="price"]`);
-          return { ...c, name: nameEl?.value ?? c.name, price: priceEl?.value ?? c.price };
-        }),
+        pageOrder: [..._pageOrder],
+        cards: collectCards(),
         shopProducts: collectShopProducts()
       };
       try {

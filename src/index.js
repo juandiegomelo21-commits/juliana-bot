@@ -12,6 +12,7 @@ const { MsEdgeTTS, OUTPUT_FORMAT } = require("msedge-tts");
 const fs = require("fs");
 const path = require("path");
 const FormData = require("form-data");
+const multer = require("multer");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const { MercadoPagoConfig, Preference } = require("mercadopago");
@@ -197,6 +198,37 @@ app.post("/api/tts", async (req, res) => {
     console.error("❌ TTS Edge ERROR:", err.message);
     res.status(500).json({ error: "Error TTS", detail: err.message });
   }
+});
+
+// ── Upload de imágenes ─────────────────────────────────────────────
+const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadsDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+    cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`);
+  },
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 8 * 1024 * 1024 }, // 8 MB
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) cb(null, true);
+    else cb(new Error('Solo imágenes'));
+  },
+});
+
+app.post('/api/upload', (req, res) => {
+  if (req.query.password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'No autorizado' });
+  }
+  upload.single('image')(req, res, (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file) return res.status(400).json({ error: 'Sin archivo' });
+    res.json({ url: `/uploads/${req.file.filename}` });
+  });
 });
 
 // Health check
