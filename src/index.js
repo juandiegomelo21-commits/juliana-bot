@@ -1,4 +1,10 @@
 require("dotenv").config();
+
+// Evita que el proceso muera por rechazos internos del driver MongoDB en dev local
+process.on('unhandledRejection', (reason) => {
+  console.warn('⚠️ Unhandled rejection (no fatal):', reason?.message || reason);
+});
+
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");

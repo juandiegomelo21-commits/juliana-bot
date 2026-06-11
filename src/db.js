@@ -11,9 +11,14 @@ async function connect() {
   const client = new MongoClient(process.env.MONGODB_URI, {
     tls: true,
     tlsAllowInvalidCertificates: true,
-    serverSelectionTimeoutMS: 10000,
+    serverSelectionTimeoutMS: 8000,
   });
-  await client.connect();
+  try {
+    await client.connect();
+  } catch (err) {
+    await client.close().catch(() => {});
+    throw err;
+  }
   db = client.db("juliana-bot");
   await db.collection("users").createIndex({ userId: 1 }, { unique: true });
   await db.collection("users").createIndex({ username: 1 }, { unique: true, sparse: true });

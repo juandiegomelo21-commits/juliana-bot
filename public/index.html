@@ -1202,6 +1202,132 @@
       .admin-grid-3 { grid-template-columns: 1fr 1fr; gap: 8px; }
       .filter-btn { padding: 7px 14px; font-size: 11px; }
     }
+
+    /* ── HOLOGRAMA ── */
+    .holo-scene {
+      position: relative;
+      width: 220px; height: 270px;
+      margin-bottom: 32px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+    }
+    .holo-grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(100,210,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100,210,255,0.04) 1px, transparent 1px);
+      background-size: 22px 22px;
+      animation: hgPulse 5s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes hgPulse { from { opacity: 0.4; } to { opacity: 1; } }
+    .holo-avatar-wrap {
+      position: relative; width: 160px; height: 160px; margin-bottom: 8px;
+    }
+    .holo-avatar-inner {
+      position: relative;
+      width: 160px; height: 160px; border-radius: 50%; overflow: hidden;
+      border: 1.5px solid rgba(100,210,255,0.45);
+      box-shadow: 0 0 30px rgba(100,210,255,0.25), 0 0 70px rgba(100,210,255,0.1), inset 0 0 20px rgba(100,210,255,0.08);
+      animation: holoBreath 4s ease-in-out infinite;
+    }
+    .holo-avatar-inner img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) brightness(1.05) hue-rotate(3deg); }
+    .holo-scanlines {
+      position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(100,210,255,0.025) 3px, rgba(100,210,255,0.025) 4px);
+      animation: hScan 3s linear infinite;
+    }
+    @keyframes hScan { from { background-position: 0 0; } to { background-position: 0 100px; } }
+    .holo-glitch {
+      position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+      background: rgba(100,210,255,0.12);
+      opacity: 0;
+      animation: holoGlitch 7s ease-in-out infinite;
+    }
+    @keyframes holoGlitch {
+      0%,82%,100% { opacity: 0; transform: none; }
+      84% { opacity: 1; transform: translateX(3px); filter: hue-rotate(80deg) brightness(1.6); }
+      86% { transform: translateX(-2px); filter: hue-rotate(-20deg); }
+      88% { opacity: 0; transform: none; filter: none; }
+    }
+    .holo-orbit {
+      position: absolute; inset: -14px; border-radius: 50%;
+      border: 1px solid rgba(100,210,255,0.15);
+      animation: holoSpin 8s linear infinite;
+      border-top-color: rgba(100,210,255,0.75);
+      border-right-color: rgba(100,210,255,0.3);
+    }
+    .holo-orbit-2 {
+      position: absolute; inset: -24px; border-radius: 50%;
+      border: 0.5px dashed rgba(100,210,255,0.1);
+      animation: holoSpin 14s linear infinite reverse;
+    }
+    .holo-orbit-dot {
+      position: absolute; width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(100,210,255,1); top: -3px; left: 50%; margin-left: -3px;
+      box-shadow: 0 0 10px rgba(100,210,255,0.9);
+    }
+    @keyframes holoSpin { to { transform: rotate(360deg); } }
+    @keyframes holoBreath {
+      0%,100% { transform: scale(1); box-shadow: 0 0 30px rgba(100,210,255,0.25), 0 0 70px rgba(100,210,255,0.1); }
+      50% { transform: scale(1.012); box-shadow: 0 0 50px rgba(100,210,255,0.4), 0 0 100px rgba(100,210,255,0.18); }
+    }
+    .holo-beam {
+      width: 80px; height: 85px;
+      background: linear-gradient(to bottom, transparent, rgba(100,210,255,0.1));
+      clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
+      animation: beamPulse 3s ease-in-out infinite alternate;
+    }
+    @keyframes beamPulse { from { opacity: 0.5; width: 70px; } to { opacity: 1; width: 90px; } }
+    .holo-platform {
+      width: 90px; height: 5px;
+      background: radial-gradient(ellipse at center, rgba(100,210,255,0.75), transparent);
+      border-radius: 50%; margin-top: -1px;
+      animation: platPulse 3s ease-in-out infinite alternate;
+    }
+    @keyframes platPulse { from { width: 70px; opacity: 0.6; } to { width: 110px; opacity: 1; } }
+    .holo-particles-wrap { position: absolute; inset: 0; pointer-events: none; }
+    .hp {
+      position: absolute; width: 2px; height: 2px; border-radius: 50%;
+      background: rgba(100,210,255,0.8); animation: hpFloat linear infinite;
+    }
+    @keyframes hpFloat {
+      0% { opacity: 0; transform: translateY(0) scale(0); }
+      15% { opacity: 0.9; transform: scale(1); }
+      100% { opacity: 0; transform: translateY(-110px) translateX(var(--dx)); }
+    }
+    .holo-label {
+      position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+      font-size: 9px; letter-spacing: 2.5px; color: rgba(100,210,255,0.45);
+      text-transform: uppercase; white-space: nowrap; font-family: 'Courier New', monospace;
+    }
+
+    /* ── CHAT — VOZ + EQ + STATUS ── */
+    .voice-btn {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+      font-size: 13px; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .voice-btn:hover { background: rgba(100,210,255,0.1); border-color: rgba(100,210,255,0.3); }
+    .voice-btn.active { background: rgba(100,210,255,0.15); border-color: rgba(100,210,255,0.5); box-shadow: 0 0 12px rgba(100,210,255,0.25); }
+    .eq-wrap {
+      display: flex; align-items: flex-end; gap: 2px; height: 16px;
+    }
+    .eq-bar {
+      width: 3px; border-radius: 2px; background: rgba(100,210,255,0.6); height: 3px;
+    }
+    .eq-wrap.playing .eq-bar:nth-child(1) { animation: eqA 0.6s ease-in-out infinite alternate; }
+    .eq-wrap.playing .eq-bar:nth-child(2) { animation: eqA 0.45s ease-in-out 0.08s infinite alternate; }
+    .eq-wrap.playing .eq-bar:nth-child(3) { animation: eqA 0.7s ease-in-out 0.16s infinite alternate; }
+    .eq-wrap.playing .eq-bar:nth-child(4) { animation: eqA 0.38s ease-in-out 0.04s infinite alternate; }
+    .eq-wrap.playing .eq-bar:nth-child(5) { animation: eqA 0.55s ease-in-out 0.12s infinite alternate; }
+    @keyframes eqA { from { height: 3px; opacity: 0.35; } to { height: 14px; opacity: 1; } }
+    .h-status-text {
+      font-size: 11px; color: rgba(100,210,255,0.65); letter-spacing: 0.3px;
+      transition: color 0.3s;
+    }
   </style>
 </head>
 <body>
@@ -1228,11 +1354,21 @@
   <div class="page active" id="page-inicio">
 
     <section class="hero">
-      <div class="orb-wrap">
-        <div class="orb-ring"></div>
-        <div class="orb-inner">
-          <img src="./juliana-pp.jpg" alt="Juliana" />
+      <div class="holo-scene">
+        <div class="holo-grid-bg"></div>
+        <div class="holo-particles-wrap" id="holoParticles"></div>
+        <div class="holo-avatar-wrap">
+          <div class="holo-orbit-2"></div>
+          <div class="holo-orbit"><div class="holo-orbit-dot"></div></div>
+          <div class="holo-avatar-inner">
+            <img src="./juliana-pp.jpg" alt="Juliana" />
+            <div class="holo-scanlines"></div>
+            <div class="holo-glitch"></div>
+          </div>
         </div>
+        <div class="holo-beam"></div>
+        <div class="holo-platform"></div>
+        <div class="holo-label">Juliana · AI · En línea</div>
       </div>
       <p class="eyebrow">Latina · 24 años · IA</p>
       <h1>Chatea con<br/><em>Juliana</em></h1>
@@ -1264,9 +1400,14 @@
           </div>
           <div class="h-info">
             <h3>Juliana</h3>
-            <span>Latina · 24 años · IA</span>
+            <span id="julianaStatus" class="h-status-text">en línea · 24 años · IA</span>
           </div>
           <div class="msg-counter">
+            <div class="eq-wrap" id="eqWrap">
+              <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+              <div class="eq-bar"></div><div class="eq-bar"></div>
+            </div>
+            <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Escuchar a Juliana">🔇</button>
             <span class="counter-badge" id="counterBadge">70 mensajes</span>
             <div class="h-status"></div>
           </div>
@@ -1598,6 +1739,7 @@
       d.innerHTML = `${avatar}<div class="bubble">${text}</div>`;
       c.appendChild(d);
       c.scrollTop = c.scrollHeight;
+      if (type === 'bot') speakJuliana(text);
     }
 
     function showTyping() {
@@ -1607,9 +1749,15 @@
       d.innerHTML = `<div class="m-av"><img src="./juliana-pp.jpg" alt="Juliana" /></div><div class="typing-bub"><span></span><span></span><span></span></div>`;
       c.appendChild(d);
       c.scrollTop = c.scrollHeight;
+      setJulianaStatus('escribiendo...');
+      startEqualizer();
     }
 
-    function hideTyping() { const e = document.getElementById('typing'); if (e) e.remove(); }
+    function hideTyping() {
+      const e = document.getElementById('typing');
+      if (e) e.remove();
+      stopEqualizer();
+    }
 
     function userId() {
       let id = localStorage.getItem('jul_uid');
@@ -1628,6 +1776,8 @@
       inp.value = ''; inp.style.height = 'auto';
 
       addMsg(text, 'user');
+      setJulianaStatus('visto ✓✓');
+      resetIdleTimer();
       showTyping();
       msgCount++; saveCount(); updateCounter();
 
@@ -1646,13 +1796,20 @@
         });
         const data = await r.json();
         hideTyping();
-        addMsg(data.reply, 'bot');
-
-        const promoIdx = PROMO_MSGS.indexOf(msgCount);
-        if (promoIdx !== -1) setTimeout(() => addMsg(PROMO_TEXTS[promoIdx], 'bot'), 1800);
-        if (msgCount >= FREE_MSGS) setTimeout(showPaywall, 2200);
+        setJulianaStatus('en línea · 24 años · IA');
+        if (!r.ok || !data.reply) {
+          addMsg('Uy, se fue la señal 😅 inténtalo de nuevo bb', 'bot');
+          msgCount--; saveCount(); updateCounter();
+        } else {
+          addMsg(data.reply, 'bot');
+          resetIdleTimer();
+          const promoIdx = PROMO_MSGS.indexOf(msgCount);
+          if (promoIdx !== -1) setTimeout(() => addMsg(PROMO_TEXTS[promoIdx], 'bot'), 1800);
+          if (msgCount >= FREE_MSGS) setTimeout(showPaywall, 2200);
+        }
       } catch {
         hideTyping();
+        setJulianaStatus('en línea · 24 años · IA');
         addMsg('Uy, se fue la señal 😅 inténtalo de nuevo bb', 'bot');
         msgCount--; saveCount(); updateCounter();
       }
@@ -2132,12 +2289,102 @@
       } catch {}
     }
 
+    // ── Hologram status + equalizer ──────────────────────────────
+    function setJulianaStatus(text) {
+      const el = document.getElementById('julianaStatus');
+      if (el) el.textContent = text;
+    }
+
+    function startEqualizer() {
+      document.getElementById('eqWrap')?.classList.add('playing');
+    }
+
+    function stopEqualizer() {
+      document.getElementById('eqWrap')?.classList.remove('playing');
+    }
+
+    // ── Partículas del holograma ──────────────────────────────────
+    function initHoloParticles() {
+      const wrap = document.getElementById('holoParticles');
+      if (!wrap) return;
+      for (let i = 0; i < 14; i++) {
+        const p = document.createElement('div');
+        p.className = 'hp';
+        const left = 18 + Math.random() * 64;
+        const bottom = 28 + Math.random() * 45;
+        const delay = Math.random() * 4;
+        const dur = 2.2 + Math.random() * 2.5;
+        const dx = (Math.random() - 0.5) * 36;
+        p.style.cssText = `left:${left}%;bottom:${bottom}%;--dx:${dx}px;animation-duration:${dur}s;animation-delay:${delay}s`;
+        wrap.appendChild(p);
+      }
+    }
+
+    // ── Voz de Juliana (Web Speech API) ──────────────────────────
+    let voiceEnabled = false;
+
+    function toggleVoice() {
+      voiceEnabled = !voiceEnabled;
+      const btn = document.getElementById('voiceBtn');
+      if (btn) {
+        btn.textContent = voiceEnabled ? '🔊' : '🔇';
+        btn.classList.toggle('active', voiceEnabled);
+      }
+      if (!voiceEnabled && 'speechSynthesis' in window) speechSynthesis.cancel();
+    }
+
+    function speakJuliana(text) {
+      if (!voiceEnabled || !('speechSynthesis' in window)) return;
+      speechSynthesis.cancel();
+      const clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[💋😏🔥💦😈🌹😅🙈👀🥺💜💭]/g, '').trim();
+      if (!clean) return;
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.lang = 'es-419';
+      utter.rate = 0.92;
+      utter.pitch = 1.15;
+      const setVoiceAndSpeak = () => {
+        const voices = speechSynthesis.getVoices();
+        const best = voices.find(v => v.lang.startsWith('es') && /female|mujer|femenin/i.test(v.name))
+          || voices.find(v => v.lang === 'es-419' || v.lang === 'es-CO' || v.lang === 'es-MX' || v.lang === 'es-ES')
+          || voices.find(v => v.lang.startsWith('es'));
+        if (best) utter.voice = best;
+        speechSynthesis.speak(utter);
+      };
+      if (speechSynthesis.getVoices().length > 0) {
+        setVoiceAndSpeak();
+      } else {
+        speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
+      }
+    }
+
+    // ── Mensajes de inactividad ───────────────────────────────────
+    let idleTimer = null;
+    const IDLE_MSGS = [
+      '¿Sigues ahí bb? 👀',
+      'Oye… te extraño 😏',
+      '¿En qué estás pensando? cuéntame 💭',
+      'Estoy aburrida sin ti bb 🥺',
+      'Psst… aquí sigo esperándote 💜',
+    ];
+
+    function resetIdleTimer() {
+      clearTimeout(idleTimer);
+      if (msgCount >= FREE_MSGS) return;
+      idleTimer = setTimeout(() => {
+        const msg = IDLE_MSGS[Math.floor(Math.random() * IDLE_MSGS.length)];
+        addMsg(msg, 'bot');
+        setJulianaStatus('en línea · 24 años · IA');
+      }, 28000);
+    }
+
     // ── Init ─────────────────────────────────────────────────────
     loadConfig();
     updateCounter();
     if (msgCount >= FREE_MSGS) showPaywall();
     checkGoogleCallback();
     checkServerSession();
+    initHoloParticles();
+    resetIdleTimer();
   </script>
 </body>
 </html>
