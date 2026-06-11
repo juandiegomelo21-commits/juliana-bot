@@ -137,12 +137,25 @@ app.post("/api/payment/create", async (req, res) => {
   }
 });
 
-// TTS — ElevenLabs (si está configurado) con fallback graceful
+// TTS diagnóstico — GET para verificar config sin gastar créditos
+app.get("/api/tts/status", (req, res) => {
+  const key = process.env.ELEVENLABS_API_KEY;
+  const voiceId = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL";
+  res.json({
+    configured: !!key,
+    keyPrefix: key ? key.slice(0, 8) + "..." : null,
+    voiceId,
+    model: "eleven_multilingual_v2",
+  });
+});
+
+// TTS — ElevenLabs con logs detallados para Railway
 app.post("/api/tts", async (req, res) => {
   const { text } = req.body;
   if (!text) return res.status(400).json({ error: "Falta text" });
 
   if (!process.env.ELEVENLABS_API_KEY) {
+    console.warn("⚠️  TTS: ELEVENLABS_API_KEY no configurada — el cliente usará Web Speech");
     return res.status(503).json({ error: "TTS no configurado" });
   }
 
@@ -151,7 +164,7 @@ app.post("/api/tts", async (req, res) => {
 
   if (!clean) return res.status(400).json({ error: "Texto vacío después de limpiar" });
 
-  console.log(`🎙️ TTS → voiceId: ${voiceId} | chars: ${clean.length}`);
+  console.log(`🎙️ TTS REQUEST | voice: ${voiceId} | chars: ${clean.length} | texto: "${clean.slice(0, 60)}..."`);
 
   try {
     const r = await axios.post(
@@ -171,7 +184,17 @@ app.post("/api/tts", async (req, res) => {
       }
     );
 
-    console.log(`✅ TTS OK — ${r.data.byteLength} bytes`);
+    const bytes = r.data.byteLength;
+    const contentType = r.headers["content-type"] || "desconocido";
+    const isAudio = contentType.includes("audio");
+    console.log(`✅ TTS OK | ${bytes} bytes | content-type: ${contentType} | audio: ${isAudio}`);
+
+    if (!isAudio || bytes < 1000) {
+      const body = Buffer.from(r.data).toString().slice(0, 200);
+      console.error(`❌ TTS: respuesta sospechosa (no es audio real) — body: ${body}`);
+      return res.status(500).json({ error: "ElevenLabs no devolvió audio", body });
+    }
+
     res.set("Content-Type", "audio/mpeg");
     res.set("Cache-Control", "no-store");
     res.send(Buffer.from(r.data));
@@ -181,7 +204,7 @@ app.post("/api/tts", async (req, res) => {
     if (err.response?.data) {
       try { detail = JSON.parse(Buffer.from(err.response.data).toString()); } catch {}
     }
-    console.error("❌ ElevenLabs TTS error:", status, detail);
+    console.error(`❌ TTS ERROR | status: ${status} | detalle:`, detail);
     res.status(500).json({ error: "Error TTS", status, detail });
   }
 });
