@@ -2320,8 +2320,9 @@
       }
     }
 
-    // ── Voz de Juliana (Web Speech API) ──────────────────────────
+    // ── Voz de Juliana (ElevenLabs → fallback Web Speech) ────────
     let voiceEnabled = false;
+    let currentAudio = null;
 
     function toggleVoice() {
       voiceEnabled = !voiceEnabled;
@@ -2330,31 +2331,50 @@
         btn.textContent = voiceEnabled ? '🔊' : '🔇';
         btn.classList.toggle('active', voiceEnabled);
       }
-      if (!voiceEnabled && 'speechSynthesis' in window) speechSynthesis.cancel();
+      if (!voiceEnabled) {
+        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        if ('speechSynthesis' in window) speechSynthesis.cancel();
+      }
     }
 
-    function speakJuliana(text) {
-      if (!voiceEnabled || !('speechSynthesis' in window)) return;
-      speechSynthesis.cancel();
-      const clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[💋😏🔥💦😈🌹😅🙈👀🥺💜💭]/g, '').trim();
+    async function speakJuliana(text) {
+      if (!voiceEnabled) return;
+      const clean = text.replace(/[\u{1F600}-\u{1F9FF}]/gu, '').replace(/[💋😏🔥💦😈🌹😅🙈👀🥺💜💭✓]/g, '').trim();
       if (!clean) return;
-      const utter = new SpeechSynthesisUtterance(clean);
-      utter.lang = 'es-419';
-      utter.rate = 0.92;
-      utter.pitch = 1.15;
-      const setVoiceAndSpeak = () => {
-        const voices = speechSynthesis.getVoices();
-        const best = voices.find(v => v.lang.startsWith('es') && /female|mujer|femenin/i.test(v.name))
-          || voices.find(v => v.lang === 'es-419' || v.lang === 'es-CO' || v.lang === 'es-MX' || v.lang === 'es-ES')
-          || voices.find(v => v.lang.startsWith('es'));
+
+      try {
+        const r = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: clean })
+        });
+        if (!r.ok) { _fallbackSpeak(clean); return; }
+        const blob = await r.blob();
+        const url = URL.createObjectURL(blob);
+        if (currentAudio) { currentAudio.pause(); URL.revokeObjectURL(currentAudio._url); }
+        currentAudio = new Audio(url);
+        currentAudio._url = url;
+        currentAudio.onended = () => URL.revokeObjectURL(url);
+        currentAudio.play().catch(() => _fallbackSpeak(clean));
+      } catch {
+        _fallbackSpeak(clean);
+      }
+    }
+
+    function _fallbackSpeak(text) {
+      if (!('speechSynthesis' in window)) return;
+      speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'es-419'; utter.rate = 0.92; utter.pitch = 1.15;
+      const go = () => {
+        const v = speechSynthesis.getVoices();
+        const best = v.find(x => x.lang.startsWith('es') && /female|mujer|femenin/i.test(x.name))
+          || v.find(x => ['es-CO','es-MX','es-419','es-ES'].includes(x.lang))
+          || v.find(x => x.lang.startsWith('es'));
         if (best) utter.voice = best;
         speechSynthesis.speak(utter);
       };
-      if (speechSynthesis.getVoices().length > 0) {
-        setVoiceAndSpeak();
-      } else {
-        speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
-      }
+      speechSynthesis.getVoices().length > 0 ? go() : (speechSynthesis.onvoiceschanged = go);
     }
 
     // ── Mensajes de inactividad ───────────────────────────────────

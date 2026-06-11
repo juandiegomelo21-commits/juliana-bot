@@ -137,6 +137,45 @@ app.post("/api/payment/create", async (req, res) => {
   }
 });
 
+// TTS — ElevenLabs (si está configurado) con fallback graceful
+app.post("/api/tts", async (req, res) => {
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ error: "Falta text" });
+
+  if (!process.env.ELEVENLABS_API_KEY) {
+    return res.status(503).json({ error: "TTS no configurado" });
+  }
+
+  const voiceId = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL"; // Bella — joven, suave, expresiva
+  const clean = text.replace(/[^\p{L}\p{N}\s¿¡.,!?;:]/gu, "").trim().slice(0, 400);
+
+  try {
+    const r = await axios.post(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`,
+      {
+        text: clean,
+        model_id: "eleven_multilingual_v2",
+        voice_settings: { stability: 0.45, similarity_boost: 0.78, style: 0.45, use_speaker_boost: true },
+      },
+      {
+        headers: {
+          "xi-api-key": process.env.ELEVENLABS_API_KEY,
+          "Content-Type": "application/json",
+          Accept: "audio/mpeg",
+        },
+        responseType: "stream",
+      }
+    );
+    res.set("Content-Type", "audio/mpeg");
+    res.set("Cache-Control", "no-store");
+    r.data.pipe(res);
+  } catch (err) {
+    const status = err.response?.status;
+    console.error("❌ ElevenLabs TTS error:", status, err.message);
+    res.status(500).json({ error: "Error TTS", status });
+  }
+});
+
 // Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok", bot: "Juliana Bot", timestamp: new Date().toISOString() });
