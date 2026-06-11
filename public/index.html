@@ -1203,102 +1203,112 @@
       .filter-btn { padding: 7px 14px; font-size: 11px; }
     }
 
-    /* ── HOLOGRAMA ── */
-    .holo-scene {
+    /* ── BLADE RUNNER HOLOGRAM ── */
+    .br-scene {
       position: relative;
-      width: 220px; height: 270px;
+      width: 220px; height: 360px;
       margin-bottom: 32px;
       display: flex; flex-direction: column;
       align-items: center; justify-content: flex-end;
     }
-    .holo-grid-bg {
-      position: absolute; inset: 0;
+    .br-grid {
+      position: absolute; inset: 0; pointer-events: none;
       background-image:
-        linear-gradient(rgba(100,210,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(100,210,255,0.04) 1px, transparent 1px);
+        linear-gradient(rgba(0,210,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,210,255,0.035) 1px, transparent 1px);
       background-size: 22px 22px;
-      animation: hgPulse 5s ease-in-out infinite alternate;
-      pointer-events: none;
     }
-    @keyframes hgPulse { from { opacity: 0.4; } to { opacity: 1; } }
-    .holo-avatar-wrap {
-      position: relative; width: 160px; height: 160px; margin-bottom: 8px;
+    .br-particles { position: absolute; inset: 0; pointer-events: none; }
+    .brp {
+      position: absolute; width: 1.5px; height: 1.5px; border-radius: 50%;
+      background: rgba(0,210,255,0.85); animation: brpFloat linear infinite;
     }
-    .holo-avatar-inner {
-      position: relative;
-      width: 160px; height: 160px; border-radius: 50%; overflow: hidden;
-      border: 1.5px solid rgba(100,210,255,0.45);
-      box-shadow: 0 0 30px rgba(100,210,255,0.25), 0 0 70px rgba(100,210,255,0.1), inset 0 0 20px rgba(100,210,255,0.08);
-      animation: holoBreath 4s ease-in-out infinite;
-    }
-    .holo-avatar-inner img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) brightness(1.05) hue-rotate(3deg); }
-    .holo-scanlines {
-      position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(100,210,255,0.025) 3px, rgba(100,210,255,0.025) 4px);
-      animation: hScan 3s linear infinite;
-    }
-    @keyframes hScan { from { background-position: 0 0; } to { background-position: 0 100px; } }
-    .holo-glitch {
-      position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
-      background: rgba(100,210,255,0.12);
-      opacity: 0;
-      animation: holoGlitch 7s ease-in-out infinite;
-    }
-    @keyframes holoGlitch {
-      0%,82%,100% { opacity: 0; transform: none; }
-      84% { opacity: 1; transform: translateX(3px); filter: hue-rotate(80deg) brightness(1.6); }
-      86% { transform: translateX(-2px); filter: hue-rotate(-20deg); }
-      88% { opacity: 0; transform: none; filter: none; }
-    }
-    .holo-orbit {
-      position: absolute; inset: -14px; border-radius: 50%;
-      border: 1px solid rgba(100,210,255,0.15);
-      animation: holoSpin 8s linear infinite;
-      border-top-color: rgba(100,210,255,0.75);
-      border-right-color: rgba(100,210,255,0.3);
-    }
-    .holo-orbit-2 {
-      position: absolute; inset: -24px; border-radius: 50%;
-      border: 0.5px dashed rgba(100,210,255,0.1);
-      animation: holoSpin 14s linear infinite reverse;
-    }
-    .holo-orbit-dot {
-      position: absolute; width: 7px; height: 7px; border-radius: 50%;
-      background: rgba(100,210,255,1); top: -3px; left: 50%; margin-left: -3px;
-      box-shadow: 0 0 10px rgba(100,210,255,0.9);
-    }
-    @keyframes holoSpin { to { transform: rotate(360deg); } }
-    @keyframes holoBreath {
-      0%,100% { transform: scale(1); box-shadow: 0 0 30px rgba(100,210,255,0.25), 0 0 70px rgba(100,210,255,0.1); }
-      50% { transform: scale(1.012); box-shadow: 0 0 50px rgba(100,210,255,0.4), 0 0 100px rgba(100,210,255,0.18); }
-    }
-    .holo-beam {
-      width: 80px; height: 85px;
-      background: linear-gradient(to bottom, transparent, rgba(100,210,255,0.1));
-      clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
-      animation: beamPulse 3s ease-in-out infinite alternate;
-    }
-    @keyframes beamPulse { from { opacity: 0.5; width: 70px; } to { opacity: 1; width: 90px; } }
-    .holo-platform {
-      width: 90px; height: 5px;
-      background: radial-gradient(ellipse at center, rgba(100,210,255,0.75), transparent);
-      border-radius: 50%; margin-top: -1px;
-      animation: platPulse 3s ease-in-out infinite alternate;
-    }
-    @keyframes platPulse { from { width: 70px; opacity: 0.6; } to { width: 110px; opacity: 1; } }
-    .holo-particles-wrap { position: absolute; inset: 0; pointer-events: none; }
-    .hp {
-      position: absolute; width: 2px; height: 2px; border-radius: 50%;
-      background: rgba(100,210,255,0.8); animation: hpFloat linear infinite;
-    }
-    @keyframes hpFloat {
+    @keyframes brpFloat {
       0% { opacity: 0; transform: translateY(0) scale(0); }
       15% { opacity: 0.9; transform: scale(1); }
-      100% { opacity: 0; transform: translateY(-110px) translateX(var(--dx)); }
+      100% { opacity: 0; transform: translateY(-150px) translateX(var(--dx)); }
     }
-    .holo-label {
+    .br-projection {
+      position: relative;
+      width: 158px; height: 260px;
+      margin-bottom: 2px;
+      background: #000;
+      overflow: hidden;
+      -webkit-mask-image:
+        linear-gradient(to bottom, transparent, #000 9%, #000 87%, transparent),
+        linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+      -webkit-mask-composite: destination-in;
+      mask-image:
+        linear-gradient(to bottom, transparent, #000 9%, #000 87%, transparent),
+        linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+      mask-composite: intersect;
+      animation: brFlicker 7s step-end infinite;
+    }
+    @keyframes brFlicker {
+      0%,93%,95%,97%,100% { opacity: 1; }
+      94% { opacity: 0.72; }
+      96% { opacity: 0.88; }
+    }
+    .br-photo {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center; display: block;
+      filter: grayscale(1) brightness(1.6) contrast(1.35);
+      mix-blend-mode: screen;
+    }
+    .br-tint {
+      position: absolute; inset: 0; pointer-events: none;
+      background: rgba(0,195,255,0.18);
+      mix-blend-mode: screen;
+    }
+    .br-scanlines {
+      position: absolute; inset: 0; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px,
+        transparent 1px, transparent 3px
+      );
+    }
+    .br-scan-pass {
+      position: absolute; left: 0; right: 0; height: 40px; pointer-events: none;
+      background: linear-gradient(to bottom, transparent, rgba(0,210,255,0.07), transparent);
+      animation: brScanPass 5s linear infinite;
+    }
+    @keyframes brScanPass { from { top: -40px; } to { top: 260px; } }
+    .br-glitch {
+      position: absolute; inset: 0; pointer-events: none;
+      opacity: 0; animation: brGlitch 9s ease-in-out infinite;
+    }
+    .br-glitch::before, .br-glitch::after {
+      content: ''; position: absolute; left: 0; right: 0;
+      background: rgba(0,210,255,0.15);
+    }
+    .br-glitch::before { height: 18px; top: 35%; transform: translateX(5px); clip-path: inset(0 0 0 0); }
+    .br-glitch::after  { height: 10px; top: 65%; transform: translateX(-4px); }
+    @keyframes brGlitch {
+      0%,83%,100% { opacity: 0; }
+      85% { opacity: 1; }
+      86% { opacity: 0; }
+      88% { opacity: 0.8; }
+      90% { opacity: 0; }
+    }
+    .br-beam {
+      width: 100px; height: 65px;
+      background: linear-gradient(to bottom, transparent, rgba(0,200,255,0.09));
+      clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
+      animation: brBeamPulse 3.5s ease-in-out infinite alternate;
+    }
+    @keyframes brBeamPulse { from { opacity: 0.5; } to { opacity: 1; } }
+    .br-platform {
+      width: 100px; height: 3px; border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(0,210,255,0.95), rgba(0,210,255,0.1) 70%, transparent);
+      animation: brPlatPulse 3.5s ease-in-out infinite alternate;
+      margin-top: -1px;
+    }
+    @keyframes brPlatPulse { from { width: 80px; opacity: 0.7; } to { width: 130px; opacity: 1; } }
+    .br-label {
       position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
-      font-size: 9px; letter-spacing: 2.5px; color: rgba(100,210,255,0.45);
+      font-size: 9px; letter-spacing: 3px; color: rgba(0,210,255,0.4);
       text-transform: uppercase; white-space: nowrap; font-family: 'Courier New', monospace;
     }
 
@@ -1354,21 +1364,19 @@
   <div class="page active" id="page-inicio">
 
     <section class="hero">
-      <div class="holo-scene">
-        <div class="holo-grid-bg"></div>
-        <div class="holo-particles-wrap" id="holoParticles"></div>
-        <div class="holo-avatar-wrap">
-          <div class="holo-orbit-2"></div>
-          <div class="holo-orbit"><div class="holo-orbit-dot"></div></div>
-          <div class="holo-avatar-inner">
-            <img src="./juliana-pp.jpg" alt="Juliana" />
-            <div class="holo-scanlines"></div>
-            <div class="holo-glitch"></div>
-          </div>
+      <div class="br-scene">
+        <div class="br-grid"></div>
+        <div class="br-particles" id="brParticles"></div>
+        <div class="br-projection">
+          <img src="./juliana-pp.jpg" alt="Juliana" class="br-photo" />
+          <div class="br-tint"></div>
+          <div class="br-scanlines"></div>
+          <div class="br-scan-pass"></div>
+          <div class="br-glitch"></div>
         </div>
-        <div class="holo-beam"></div>
-        <div class="holo-platform"></div>
-        <div class="holo-label">Juliana · AI · En línea</div>
+        <div class="br-beam"></div>
+        <div class="br-platform"></div>
+        <div class="br-label">JULIANA · AI · ONLINE</div>
       </div>
       <p class="eyebrow">Latina · 24 años · IA</p>
       <h1>Chatea con<br/><em>Juliana</em></h1>
@@ -2305,16 +2313,16 @@
 
     // ── Partículas del holograma ──────────────────────────────────
     function initHoloParticles() {
-      const wrap = document.getElementById('holoParticles');
+      const wrap = document.getElementById('brParticles');
       if (!wrap) return;
-      for (let i = 0; i < 14; i++) {
+      for (let i = 0; i < 18; i++) {
         const p = document.createElement('div');
-        p.className = 'hp';
-        const left = 18 + Math.random() * 64;
-        const bottom = 28 + Math.random() * 45;
-        const delay = Math.random() * 4;
-        const dur = 2.2 + Math.random() * 2.5;
-        const dx = (Math.random() - 0.5) * 36;
+        p.className = 'brp';
+        const left = 10 + Math.random() * 80;
+        const bottom = 15 + Math.random() * 50;
+        const delay = Math.random() * 5;
+        const dur = 3 + Math.random() * 3;
+        const dx = (Math.random() - 0.5) * 40;
         p.style.cssText = `left:${left}%;bottom:${bottom}%;--dx:${dx}px;animation-duration:${dur}s;animation-delay:${delay}s`;
         wrap.appendChild(p);
       }
