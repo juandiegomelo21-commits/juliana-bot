@@ -323,6 +323,69 @@ app.post("/auth/logout", (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────
 
+// ── Monitor en tiempo real ────────────────────────────────────────
+
+// SSE: stream de conversaciones activas (actualiza cada 4 seg)
+app.get("/admin/monitor", (req, res) => {
+  if (req.query.password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "No autorizado" });
+  }
+  res.set({ "Content-Type": "text/event-stream", "Cache-Control": "no-cache", "Connection": "keep-alive" });
+  res.flushHeaders();
+
+  const send = async () => {
+    try {
+      const users = await db.getRecentConversations(25);
+      const payload = users.map(u => ({
+        userId: u.userId,
+        name: u.name || u.username || u.userId,
+        messageCount: u.messageCount || 0,
+        humanMode: !!u.humanMode,
+        lastMsg: u.history?.slice(-1)[0]?.content?.slice(0, 80) || "",
+        lastRole: u.history?.slice(-1)[0]?.role || "",
+        updatedAt: u.updatedAt,
+      }));
+      res.write(`data: ${JSON.stringify(payload)}\n\n`);
+    } catch (e) { /* ignore */ }
+  };
+
+  send();
+  const interval = setInterval(send, 4000);
+  req.on("close", () => clearInterval(interval));
+});
+
+// Obtener historial completo de un usuario
+app.get("/admin/conversation/:userId", async (req, res) => {
+  if (req.query.password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "No autorizado" });
+  }
+  const user = await db.getUser(req.params.userId);
+  if (!user) return res.json({ history: [], humanMode: false });
+  res.json({ history: user.history || [], humanMode: !!user.humanMode });
+});
+
+// Inyectar mensaje como Juliana (takeover)
+app.post("/admin/inject/:userId", async (req, res) => {
+  if (req.body.password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "No autorizado" });
+  }
+  const { message } = req.body;
+  if (!message?.trim()) return res.status(400).json({ error: "Mensaje vacío" });
+  await db.setQueuedReply(req.params.userId, message.trim());
+  res.json({ ok: true });
+});
+
+// Liberar modo humano (volver a IA)
+app.post("/admin/release/:userId", async (req, res) => {
+  if (req.body.password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "No autorizado" });
+  }
+  await db.setHumanMode(req.params.userId, false);
+  res.json({ ok: true });
+});
+
+// ─────────────────────────────────────────────────────────────────
+
 // Admin: guardar config
 app.post("/admin/config", (req, res) => {
   if (req.body.password !== process.env.ADMIN_PASSWORD) {

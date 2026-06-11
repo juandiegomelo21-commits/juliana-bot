@@ -150,6 +150,46 @@ async function updateGoogleProfile(googleId, { name, avatar, email }) {
   );
 }
 
+// ── Monitor & Takeover ────────────────────────────────────────────
+
+async function getRecentConversations(limit = 20) {
+  if (!isConnected()) return [];
+  return db.collection("users")
+    .find({ history: { $exists: true, $not: { $size: 0 } } })
+    .sort({ updatedAt: -1 })
+    .limit(limit)
+    .project({ userId: 1, username: 1, name: 1, history: 1, messageCount: 1, updatedAt: 1, queuedReply: 1, humanMode: 1 })
+    .toArray();
+}
+
+async function setQueuedReply(userId, message) {
+  if (!isConnected()) return;
+  await db.collection("users").updateOne(
+    { userId },
+    { $set: { queuedReply: message, humanMode: true, updatedAt: new Date() } },
+    { upsert: true }
+  );
+}
+
+async function popQueuedReply(userId) {
+  if (!isConnected()) return null;
+  const result = await db.collection("users").findOneAndUpdate(
+    { userId, queuedReply: { $exists: true, $ne: null } },
+    { $unset: { queuedReply: "" } },
+    { returnDocument: "before" }
+  );
+  return result?.queuedReply || null;
+}
+
+async function setHumanMode(userId, enabled) {
+  if (!isConnected()) return;
+  await db.collection("users").updateOne(
+    { userId },
+    { $set: { humanMode: enabled, updatedAt: new Date() } },
+    { upsert: true }
+  );
+}
+
 module.exports = {
   connect, isConnected,
   getUser, getUserByUsername,
@@ -157,4 +197,5 @@ module.exports = {
   createAccount, mergeAccount,
   clearUser,
   getUserByGoogleId, createGoogleAccount, updateGoogleProfile,
+  getRecentConversations, setQueuedReply, popQueuedReply, setHumanMode,
 };

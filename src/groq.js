@@ -60,13 +60,20 @@ function cleanResponse(text) {
 
 async function getJulianaResponse(userId, userMessage, userName) {
   if (!conversationHistory.has(userId)) {
-    // Intentar cargar historial previo desde MongoDB
     const user = await db.getUser(userId);
     conversationHistory.set(userId, user?.history || []);
   }
 
   const history = conversationHistory.get(userId);
   history.push({ role: "user", content: userMessage });
+
+  // Modo humano: admin inyectó respuesta manual
+  const queued = await db.popQueuedReply(userId);
+  if (queued) {
+    history.push({ role: "assistant", content: queued });
+    db.saveHistory(userId, history).catch(() => {});
+    return queued;
+  }
 
   if (history.length > 10) {
     history.splice(0, history.length - 10);

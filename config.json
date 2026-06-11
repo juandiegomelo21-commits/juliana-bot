@@ -3,6 +3,7 @@
   "botPassword": "",
   "freeMsgs": 15,
   "pageOrder": ["inicio", "contenido", "sexshop"],
+  "shopCarousel": false,
   "paymentLink": "https://link.mercadopago.com.co/julianahorny",
   "cards": [
     { "id": 1, "tag": "Exclusivo", "name": "Lo que nadie más ve",          "price": "$15.000 COP", "emoji": "📸", "theme": "1", "hot": false },
