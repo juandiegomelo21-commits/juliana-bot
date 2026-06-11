@@ -1491,81 +1491,73 @@
     }
 
     // ── Upload de imagen ─────────────────────────────────────────
-    async function uploadImage(file) {
-      const fd = new FormData();
-      fd.append('image', file);
-      const r = await fetch(`/api/upload?password=${encodeURIComponent(adminPassword)}`, { method:'POST', body: fd });
-      if (!r.ok) throw new Error('Upload falló');
-      const data = await r.json();
-      return data.url;
-    }
+    const _imgCbs = {}; // uid → { onChange, onBlurChange, blur }
 
-    function makeImgUploadUI(currentUrl, onChange, { blurVal, onBlurChange } = {}) {
-      const id = 'iu_' + Math.random().toString(36).slice(2);
+    function makeImgUploadUI(uid, currentUrl, onChange, { blurVal, onBlurChange } = {}) {
       const hasBlur = blurVal != null;
-      setTimeout(() => {
-        const btn = document.getElementById('btn_' + id);
-        const inp = document.getElementById('inp_' + id);
-        const thumb = document.getElementById('th_' + id);
-        if (!btn || !inp) return;
-        btn.onclick = () => inp.click();
-        inp.onchange = async (e) => {
-          const file = e.target.files[0];
-          if (!file) return;
-          btn.textContent = 'Subiendo...';
-          try {
-            const url = await uploadImage(file);
-            if (thumb) {
-              thumb.innerHTML = `<img src="${url}" />`;
-            }
-            btn.textContent = '✓ Imagen subida';
-            onChange(url);
-            if (hasBlur) {
-              const prev = document.getElementById('blurprev_' + id);
-              if (prev) prev.src = url;
-            }
-          } catch {
-            btn.textContent = '✗ Error — reintenta';
-          }
-        };
-        if (hasBlur) {
-          const slider = document.getElementById('blurslider_' + id);
-          const valLabel = document.getElementById('blurval_' + id);
-          const prev = document.getElementById('blurprev_' + id);
-          if (slider) {
-            slider.oninput = () => {
-              const v = parseInt(slider.value);
-              if (valLabel) valLabel.textContent = v + 'px';
-              if (prev) prev.style.filter = `blur(${v}px)`;
-              onBlurChange(v);
-            };
-          }
-        }
-      }, 50);
-
-      const thumbHtml = currentUrl
-        ? `<div class="img-thumb-preview" id="th_${id}"><img src="${currentUrl}" /></div>`
-        : `<div class="img-thumb-preview" id="th_${id}">📷</div>`;
-
-      const blurHtml = hasBlur ? `
-        <div class="blur-row">
-          <label>Blur cliente</label>
-          <input type="range" id="blurslider_${id}" min="0" max="20" value="${blurVal}" class="blur-row" style="display:block;width:100%;accent-color:#ec4899" />
-          <span class="blur-val" id="blurval_${id}">${blurVal}px</span>
+      _imgCbs[uid] = { onChange, onBlurChange, blur: blurVal ?? 0 };
+      const thumbInner = currentUrl
+        ? `<img src="${currentUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:9px">`
+        : '📷';
+      const blurSection = hasBlur ? `
+        <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+          <span style="font-size:11px;color:rgba(255,255,255,0.35);white-space:nowrap;flex-shrink:0">Blur cliente</span>
+          <input type="range" min="0" max="20" value="${blurVal}"
+                 style="flex:1;accent-color:#ec4899;cursor:pointer;height:4px"
+                 oninput="adminBlurChange('${uid}',this.value)">
+          <span style="font-size:11px;color:rgba(244,114,182,0.8);width:32px;text-align:right;flex-shrink:0"
+                id="iblurval_${uid}">${blurVal}px</span>
         </div>
-        ${currentUrl ? `<div class="blur-preview-wrap"><img class="blur-preview-img" id="blurprev_${id}" src="${currentUrl}" style="filter:blur(${blurVal}px);border-radius:8px;max-width:100%;display:block" /></div>` : ''}
-      ` : '';
-
+        <div style="margin-top:8px;border-radius:8px;overflow:hidden;max-width:200px">
+          ${currentUrl
+            ? `<img id="iblurprev_${uid}" src="${currentUrl}" style="width:100%;display:block;filter:blur(${blurVal}px)">`
+            : `<div id="iblurprev_${uid}" style="display:none;width:200px;height:80px;background:rgba(255,255,255,0.04);border-radius:8px"></div>`}
+        </div>` : '';
       return `
         <div class="img-upload-wrap">
-          ${thumbHtml}
+          <div class="img-thumb-preview" id="ith_${uid}">${thumbInner}</div>
           <div style="flex:1;min-width:0">
-            <input type="file" accept="image/*" class="img-upload-input" id="inp_${id}" />
-            <button type="button" class="img-upload-btn" id="btn_${id}">${currentUrl ? '🔄 Cambiar imagen' : '📤 Subir imagen'}</button>
+            <input type="file" accept="image/*" style="display:none" id="iinp_${uid}"
+                   onchange="adminUploadImg('${uid}',this)">
+            <button type="button" class="img-upload-btn" id="ibtn_${uid}"
+                    onclick="document.getElementById('iinp_${uid}').click()">
+              ${currentUrl ? '🔄 Cambiar imagen' : '📤 Subir imagen'}
+            </button>
           </div>
         </div>
-        ${blurHtml}
-      `;
+        ${blurSection}`;
+    }
+
+    async function adminUploadImg(uid, input) {
+      const file = input.files[0];
+      if (!file) return;
+      const btn = document.getElementById('ibtn_' + uid);
+      if (btn) btn.textContent = 'Subiendo...';
+      try {
+        const fd = new FormData();
+        fd.append('image', file);
+        const r = await fetch(`/api/upload?password=${encodeURIComponent(adminPassword)}`, { method:'POST', body: fd });
+        if (!r.ok) throw new Error('error');
+        const { url } = await r.json();
+        const th = document.getElementById('ith_' + uid);
+        if (th) th.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:9px">`;
+        if (btn) btn.textContent = '✓ Imagen subida';
+        const prev = document.getElementById('iblurprev_' + uid);
+        if (prev) { prev.src = url; prev.style.display = 'block'; }
+        _imgCbs[uid]?.onChange?.(url);
+      } catch {
+        if (btn) btn.textContent = '✗ Error — reintenta';
+      }
+    }
+
+    function adminBlurChange(uid, val) {
+      const v = parseInt(val);
+      const label = document.getElementById('iblurval_' + uid);
+      if (label) label.textContent = v + 'px';
+      const prev = document.getElementById('iblurprev_' + uid);
+      if (prev) prev.style.filter = `blur(${v}px)`;
+      if (_imgCbs[uid]) _imgCbs[uid].blur = v;
+      _imgCbs[uid]?.onBlurChange?.(v);
     }
 
     // ── Page order ───────────────────────────────────────────────
@@ -1614,6 +1606,7 @@
       }
       container.innerHTML = _shopAdmin.map((p, i) => {
         const imgUI = makeImgUploadUI(
+          `shop_${i}`,
           p.image || '',
           (url) => { _shopAdmin[i].image = url; }
         );
@@ -1877,6 +1870,7 @@
       container.innerHTML = _adminCards.map((c, i) => {
         const blur = c.blur != null ? c.blur : 10;
         const imgUI = makeImgUploadUI(
+          `card_${i}`,
           c.image || '',
           (url) => { _adminCards[i].image = url; },
           { blurVal: blur, onBlurChange: (v) => { _adminCards[i].blur = v; } }
