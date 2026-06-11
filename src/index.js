@@ -362,5 +362,8 @@ db.connect()
       console.log(`🌸 Juliana Bot corriendo en puerto ${PORT}`);
       console.log(`🔗 Webhook: POST /webhook | Verificación: GET /webhook`);
       console.log(`💳 Mercado Pago: ${process.env.MP_ACCESS_TOKEN ? "✅ configurado" : "❌ NO configurado — agrega MP_ACCESS_TOKEN en Railway"}`);
+      const elKey = process.env.ELEVENLABS_API_KEY;
+      const elVoice = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL (default)";
+      console.log(`🎙️  ElevenLabs: ${elKey ? `✅ key configurada (${elKey.slice(0,8)}...) | voz: ${elVoice}` : "❌ NO configurado — agrega ELEVENLABS_API_KEY en Railway"}`);
     });
   });
