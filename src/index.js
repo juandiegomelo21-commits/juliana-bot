@@ -146,16 +146,19 @@ app.post("/api/tts", async (req, res) => {
     return res.status(503).json({ error: "TTS no configurado" });
   }
 
-  const voiceId = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL"; // Bella — joven, suave, expresiva
-  const clean = text.replace(/[^\p{L}\p{N}\s¿¡.,!?;:]/gu, "").trim().slice(0, 400);
+  const voiceId = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL";
+  const clean = text.replace(/[^\p{L}\p{N}\s¿¡.,!?;:«»]/gu, "").trim().slice(0, 400);
+
+  if (!clean) return res.status(400).json({ error: "Texto vacío después de limpiar" });
+
+  console.log(`🎙️ TTS → voiceId: ${voiceId} | chars: ${clean.length}`);
 
   try {
     const r = await axios.post(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
       {
         text: clean,
         model_id: "eleven_multilingual_v2",
-        language_code: "es",
         voice_settings: { stability: 0.30, similarity_boost: 0.85, style: 0.20, use_speaker_boost: true },
       },
       {
@@ -164,16 +167,22 @@ app.post("/api/tts", async (req, res) => {
           "Content-Type": "application/json",
           Accept: "audio/mpeg",
         },
-        responseType: "stream",
+        responseType: "arraybuffer",
       }
     );
+
+    console.log(`✅ TTS OK — ${r.data.byteLength} bytes`);
     res.set("Content-Type", "audio/mpeg");
     res.set("Cache-Control", "no-store");
-    r.data.pipe(res);
+    res.send(Buffer.from(r.data));
   } catch (err) {
     const status = err.response?.status;
-    console.error("❌ ElevenLabs TTS error:", status, err.message);
-    res.status(500).json({ error: "Error TTS", status });
+    let detail = err.message;
+    if (err.response?.data) {
+      try { detail = JSON.parse(Buffer.from(err.response.data).toString()); } catch {}
+    }
+    console.error("❌ ElevenLabs TTS error:", status, detail);
+    res.status(500).json({ error: "Error TTS", status, detail });
   }
 });
 
