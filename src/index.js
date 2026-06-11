@@ -8,6 +8,7 @@ process.on('unhandledRejection', (reason) => {
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const { MsEdgeTTS, OUTPUT_FORMAT } = require("msedge-tts");
 const fs = require("fs");
 const path = require("path");
 const FormData = require("form-data");
@@ -137,70 +138,64 @@ app.post("/api/payment/create", async (req, res) => {
   }
 });
 
-// TTS diagnóstico — GET para verificar config sin gastar créditos
+// TTS diagnóstico
 app.get("/api/tts/status", (req, res) => {
-  const key = process.env.OPENAI_API_KEY;
-  const voice = process.env.OPENAI_TTS_VOICE || "nova";
+  const oaiKey = process.env.OPENAI_API_KEY;
+  const voice = process.env.EDGE_TTS_VOICE || "es-CO-SalomeNeural";
   res.json({
-    provider: "openai",
-    configured: !!key,
-    keyPrefix: key ? key.slice(0, 8) + "..." : null,
-    voice,
-    model: "tts-1",
+    provider: oaiKey ? "openai" : "edge-tts (gratis)",
+    configured: true,
+    voice: oaiKey ? (process.env.OPENAI_TTS_VOICE || "nova") : voice,
   });
 });
 
-// TTS — OpenAI con logs detallados para Railway
+// TTS — Edge TTS gratis (Microsoft neural) con fallback OpenAI si hay key
 app.post("/api/tts", async (req, res) => {
   const { text } = req.body;
   if (!text) return res.status(400).json({ error: "Falta text" });
 
-  if (!process.env.OPENAI_API_KEY) {
-    console.warn("⚠️  TTS: OPENAI_API_KEY no configurada — el cliente usará Web Speech");
-    return res.status(503).json({ error: "TTS no configurado" });
+  const clean = text.replace(/[^\p{L}\p{N}\s¿¡.,!?;:«»\-]/gu, "").trim().slice(0, 4096);
+  if (!clean) return res.status(400).json({ error: "Texto vacío" });
+
+  // OpenAI si hay key con créditos disponibles
+  if (process.env.OPENAI_API_KEY) {
+    try {
+      const voice = process.env.OPENAI_TTS_VOICE || "nova";
+      console.log(`🎙️ TTS (OpenAI) | voice: ${voice} | chars: ${clean.length}`);
+      const r = await axios.post(
+        "https://api.openai.com/v1/audio/speech",
+        { model: "tts-1-hd", voice, input: clean, response_format: "mp3", speed: 0.95 },
+        {
+          headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
+          responseType: "arraybuffer",
+        }
+      );
+      if (r.data.byteLength > 1000) {
+        console.log(`✅ TTS OpenAI OK | ${r.data.byteLength} bytes`);
+        res.set("Content-Type", "audio/mpeg");
+        res.set("Cache-Control", "no-store");
+        return res.send(Buffer.from(r.data));
+      }
+    } catch (err) {
+      console.warn(`⚠️  TTS OpenAI falló (${err.response?.status}) — usando Edge TTS`);
+    }
   }
 
-  const voice = process.env.OPENAI_TTS_VOICE || "nova";
-  const clean = text.replace(/[^\p{L}\p{N}\s¿¡.,!?;:«»\-]/gu, "").trim().slice(0, 4096);
-
-  if (!clean) return res.status(400).json({ error: "Texto vacío después de limpiar" });
-
-  console.log(`🎙️ TTS REQUEST | voice: ${voice} | chars: ${clean.length} | texto: "${clean.slice(0, 60)}..."`);
-
+  // Edge TTS gratuito (Microsoft neural voices)
+  const voice = process.env.EDGE_TTS_VOICE || "es-CO-SalomeNeural";
+  console.log(`🎙️ TTS (Edge) | voice: ${voice} | chars: ${clean.length}`);
   try {
-    const r = await axios.post(
-      "https://api.openai.com/v1/audio/speech",
-      { model: "tts-1-hd", voice, input: clean, response_format: "mp3", speed: 0.95 },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        responseType: "arraybuffer",
-      }
-    );
-
-    const bytes = r.data.byteLength;
-    const contentType = r.headers["content-type"] || "desconocido";
-    console.log(`✅ TTS OK | ${bytes} bytes | content-type: ${contentType}`);
-
-    if (bytes < 1000) {
-      const body = Buffer.from(r.data).toString().slice(0, 200);
-      console.error(`❌ TTS: respuesta sospechosa — body: ${body}`);
-      return res.status(500).json({ error: "OpenAI no devolvió audio válido", body });
-    }
-
+    const tts = new MsEdgeTTS();
+    await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
+    const { audioStream } = tts.toStream(clean);
     res.set("Content-Type", "audio/mpeg");
     res.set("Cache-Control", "no-store");
-    res.send(Buffer.from(r.data));
+    audioStream.on("error", (e) => { console.error("❌ Edge TTS stream error:", e.message); });
+    audioStream.pipe(res);
+    audioStream.on("close", () => console.log("✅ TTS Edge OK"));
   } catch (err) {
-    const status = err.response?.status;
-    let detail = err.message;
-    if (err.response?.data) {
-      try { detail = JSON.parse(Buffer.from(err.response.data).toString()); } catch {}
-    }
-    console.error(`❌ TTS ERROR | status: ${status} | detalle:`, detail);
-    res.status(500).json({ error: "Error TTS", status, detail });
+    console.error("❌ TTS Edge ERROR:", err.message);
+    res.status(500).json({ error: "Error TTS", detail: err.message });
   }
 });
 
@@ -358,7 +353,11 @@ db.connect()
       console.log(`🔗 Webhook: POST /webhook | Verificación: GET /webhook`);
       console.log(`💳 Mercado Pago: ${process.env.MP_ACCESS_TOKEN ? "✅ configurado" : "❌ NO configurado — agrega MP_ACCESS_TOKEN en Railway"}`);
       const oaiKey = process.env.OPENAI_API_KEY;
-      const oaiVoice = process.env.OPENAI_TTS_VOICE || "nova (default)";
-      console.log(`🎙️  OpenAI TTS: ${oaiKey ? `✅ key configurada (${oaiKey.slice(0,8)}...) | voz: ${oaiVoice}` : "❌ NO configurado — agrega OPENAI_API_KEY en Railway"}`);
+      const edgeVoice = process.env.EDGE_TTS_VOICE || "es-CO-SalomeNeural";
+      if (oaiKey) {
+        console.log(`🎙️  TTS: OpenAI ✅ (${oaiKey.slice(0,8)}...) | voz: ${process.env.OPENAI_TTS_VOICE || "nova"}`);
+      } else {
+        console.log(`🎙️  TTS: Edge TTS gratuito ✅ | voz: ${edgeVoice}`);
+      }
     });
   });
