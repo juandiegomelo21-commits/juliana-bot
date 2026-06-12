@@ -863,28 +863,51 @@
       .page { padding-bottom: 64px; }
     }
 
-    /* ── CAROUSEL 3D ── */
-    .carousel-wrap { width: 100%; overflow: hidden; padding: 40px 0 60px; position: relative; }
-    .carousel-scene { perspective: 900px; width: 100%; display: flex; justify-content: center; }
-    .carousel-stage { position: relative; width: 220px; height: 320px; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4,0,0.2,1); }
-    .carousel-item {
-      position: absolute; inset: 0;
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;
-      cursor: pointer; transition: box-shadow 0.3s; backface-visibility: hidden;
+    /* ── CAROUSEL COVERFLOW ── */
+    .carousel-wrap { width: 100%; padding: 20px 0 48px; position: relative; }
+    .carousel-scene {
+      perspective: 1100px; width: 100%;
+      height: 360px; position: relative; overflow: visible;
     }
-    .carousel-item-thumb { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 52px; position: relative; overflow: hidden; }
+    .carousel-stage {
+      position: absolute; left: 50%; top: 0;
+      width: 0; height: 100%;
+      transform-style: preserve-3d;
+    }
+    .carousel-item {
+      position: absolute;
+      width: 200px; height: 310px;
+      left: -100px; top: 25px;
+      background: rgba(20,12,40,0.85);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; overflow: hidden;
+      display: flex; flex-direction: column;
+      cursor: pointer;
+      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1),
+                  opacity 0.55s ease,
+                  box-shadow 0.55s ease;
+      backface-visibility: hidden; will-change: transform;
+    }
+    .carousel-item.c-active {
+      box-shadow: 0 24px 60px rgba(236,72,153,0.35), 0 0 0 1px rgba(236,72,153,0.25);
+    }
+    .carousel-item-thumb {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      font-size: 52px; position: relative; overflow: hidden;
+      background: rgba(255,255,255,0.03);
+    }
     .carousel-item-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .carousel-item-thumb span { position: relative; z-index: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.7); }
-    .carousel-item-body { padding: 14px; background: rgba(6,6,10,0.7); backdrop-filter: blur(8px); }
-    .carousel-item-body .ci-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .carousel-item-body .ci-price { font-size: 12px; color: var(--pink-light); font-weight: 500; }
-    .carousel-nav { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 16px; }
-    .carousel-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
-    .carousel-btn:hover { background: rgba(124,58,237,0.3); border-color: var(--purple); }
+    .carousel-item-body { padding: 14px 16px; background: rgba(6,6,10,0.8); backdrop-filter: blur(8px); flex-shrink: 0; }
+    .carousel-item-body .ci-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.92); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .carousel-item-body .ci-price { font-size: 12px; color: var(--pink-light); font-weight: 600; }
+    .carousel-item-body .ci-btn { display: block; margin-top: 8px; width: 100%; padding: 7px; border-radius: 10px; border: none; background: linear-gradient(135deg, #ec4899, #a855f7); color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .carousel-nav { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 20px; }
+    .carousel-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); width: 44px; height: 44px; border-radius: 50%; font-size: 22px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+    .carousel-btn:hover { background: rgba(124,58,237,0.25); border-color: var(--purple); color: #fff; }
     .carousel-dots { display: flex; gap: 6px; }
-    .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); cursor: pointer; transition: all 0.2s; }
-    .carousel-dot.active { background: var(--pink-light); transform: scale(1.4); }
+    .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.18); cursor: pointer; transition: all 0.25s; }
+    .carousel-dot.active { background: var(--pink-light); transform: scale(1.5); width: 18px; border-radius: 3px; }
 
     /* ── MONITOR list ── */
     .monitor-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; cursor: pointer; transition: background 0.2s; gap: 10px; }
@@ -1056,6 +1079,16 @@
       <h2 class="content-title">Contenido <em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(244,114,182,0.85)">Exclusivo</em></h2>
       <p class="content-sub">Solo para los que saben apreciar a Juliana de verdad 😏</p>
       <div class="content-grid" id="contentGrid"></div>
+      <div class="carousel-wrap" id="contentCarouselWrap" style="display:none">
+        <div class="carousel-scene">
+          <div class="carousel-stage" id="contentCarouselStage"></div>
+        </div>
+        <div class="carousel-nav">
+          <button class="carousel-btn" onclick="carouselMove(-1,'content')">‹</button>
+          <div class="carousel-dots" id="contentCarouselDots"></div>
+          <button class="carousel-btn" onclick="carouselMove(1,'content')">›</button>
+        </div>
+      </div>
     </section>
     <footer>
       <p>Solo para mayores de 18 años.</p><br/>
@@ -1083,9 +1116,9 @@
           <div class="carousel-stage" id="carouselStage"></div>
         </div>
         <div class="carousel-nav">
-          <button class="carousel-btn" onclick="carouselMove(-1)">‹</button>
+          <button class="carousel-btn" onclick="carouselMove(-1,'shop')">‹</button>
           <div class="carousel-dots" id="carouselDots"></div>
-          <button class="carousel-btn" onclick="carouselMove(1)">›</button>
+          <button class="carousel-btn" onclick="carouselMove(1,'shop')">›</button>
         </div>
       </div>
     </section>
@@ -1220,6 +1253,13 @@
         </div>
         <div class="admin-tab-panel" id="apanel-contenido">
           <div class="admin-section">
+            <h3>Contenido · Vista</h3>
+            <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer">
+              <input type="checkbox" id="adminContentCarousel" style="width:16px;height:16px;accent-color:var(--purple)" />
+              Activar carrusel 3D (en lugar de grilla)
+            </label>
+          </div>
+          <div class="admin-section">
             <h3>Contenido exclusivo · Imagen, blur y precio</h3>
             <div id="adminCards"></div>
           </div>
@@ -1334,8 +1374,20 @@
 
     function renderCards() {
       const grid = document.getElementById('contentGrid');
+      const cwrap = document.getElementById('contentCarouselWrap');
       if (!grid || !siteConfig.cards) return;
-      grid.innerHTML = siteConfig.cards.map((c, i) => {
+
+      const useCarousel = !!siteConfig.contentCarousel;
+      grid.style.display = useCarousel ? 'none' : '';
+      if (cwrap) cwrap.style.display = useCarousel ? '' : 'none';
+
+      const cards = siteConfig.cards;
+      if (useCarousel) {
+        carouselBuild(cards.map(c => ({ ...c, emoji: c.emoji || '📸' })), 'content');
+        return;
+      }
+
+      grid.innerHTML = cards.map((c, i) => {
         const blurPx = c.blur != null ? c.blur : 0;
         const thumb = c.image
           ? `<div class="card-thumb" style="position:relative;overflow:hidden;background:#08080f">
@@ -1529,7 +1581,7 @@
       }
 
       if (useCarousel) {
-        carouselBuild(products);
+        carouselBuild(products, 'shop');
       } else {
         const julianaQuotes = [
           'Yo lo uso y me encanta, te lo juro',
@@ -1617,9 +1669,9 @@
     }
 
     function switchAdminTab(tab) {
-      ['general','paginas','contenido','sexshop'].forEach(t => {
-        document.getElementById('atab-' + t).classList.toggle('active', t === tab);
-        document.getElementById('apanel-' + t).classList.toggle('active', t === tab);
+      ['general','paginas','contenido','sexshop','monitor'].forEach(t => {
+        document.getElementById('atab-' + t)?.classList.toggle('active', t === tab);
+        document.getElementById('apanel-' + t)?.classList.toggle('active', t === tab);
       });
     }
 
@@ -1636,6 +1688,7 @@
         <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
           <span style="font-size:11px;color:rgba(255,255,255,0.35);white-space:nowrap;flex-shrink:0">Blur cliente</span>
           <input type="range" min="0" max="20" value="${blurVal}"
+                 id="iblurrange_${uid}"
                  style="flex:1;accent-color:#ec4899;cursor:pointer;height:4px"
                  oninput="adminBlurChange('${uid}',this.value)">
           <span style="font-size:11px;color:rgba(244,114,182,0.8);width:32px;text-align:right;flex-shrink:0"
@@ -1994,6 +2047,8 @@
       _adminCards = (cfg.cards || []).map(c => ({ ...c }));
       renderAdminCards();
 
+      const contentCarouselEl = document.getElementById('adminContentCarousel');
+      if (contentCarouselEl) contentCarouselEl.checked = !!cfg.contentCarousel;
       const shopCarouselEl = document.getElementById('adminShopCarousel');
       if (shopCarouselEl) shopCarouselEl.checked = !!cfg.shopCarousel;
       renderAdminShop(cfg.shopProducts || []);
@@ -2033,10 +2088,12 @@
       return _adminCards.map((c, i) => {
         const nameEl = document.querySelector(`[data-i="${i}"][data-field="name"]`);
         const priceEl = document.querySelector(`[data-i="${i}"][data-field="price"]`);
+        const blurEl = document.getElementById(`iblurrange_card_${i}`);
         return {
           ...c,
           name: nameEl?.value ?? c.name,
           price: priceEl?.value ?? c.price,
+          blur: blurEl ? parseInt(blurEl.value) : (c.blur ?? 0),
         };
       });
     }
@@ -2048,6 +2105,7 @@
         paymentLink: document.getElementById('adminPayLink').value,
         freeMsgs: parseInt(document.getElementById('adminFreeMsgs').value) || 15,
         pageOrder: [..._pageOrder],
+        contentCarousel: document.getElementById('adminContentCarousel')?.checked || false,
         shopCarousel: document.getElementById('adminShopCarousel')?.checked || false,
         cards: collectCards(),
         shopProducts: collectShopProducts()
@@ -2252,67 +2310,95 @@
       floatBtn.classList.toggle('visible', onInicio && window.scrollY > 320);
     }, { passive: true });
 
-    // ── CARRUSEL 3D ────────────────────────────────────────────────
+    // ── CARRUSEL COVERFLOW ─────────────────────────────────────────
     let _carouselItems = [];
     let _carouselIdx = 0;
     let _carouselAuto = null;
+    let _carouselType = 'shop'; // 'shop' | 'content'
 
-    function carouselBuild(products) {
+    function carouselBuild(products, type) {
       _carouselItems = products;
       _carouselIdx = 0;
-      const stage = document.getElementById('carouselStage');
-      const dots = document.getElementById('carouselDots');
+      _carouselType = type || 'shop';
+      const stageId = type === 'content' ? 'contentCarouselStage' : 'carouselStage';
+      const dotsId  = type === 'content' ? 'contentCarouselDots'  : 'carouselDots';
+      const stage = document.getElementById(stageId);
+      const dots  = document.getElementById(dotsId);
       if (!stage) return;
-      const n = products.length;
-      const angleStep = 360 / n;
-      const radius = Math.max(180, Math.round(220 / (2 * Math.tan(Math.PI / n))));
-      stage.style.width = '220px';
-      stage.style.height = '320px';
+
       stage.innerHTML = products.map((p, i) => {
         const thumbInner = p.image
           ? `<img src="${p.image}" /><span>${p.emoji || '🛍️'}</span>`
-          : `<span>${p.emoji || '🛍️'}</span>`;
-        return `<div class="carousel-item" data-ci="${i}" onclick="carouselItemClick(${i})" style="transform:rotateY(${angleStep * i}deg) translateZ(${radius}px)">
+          : `<span>${p.emoji || (type === 'content' ? (p.emoji||'📸') : '🛍️')}</span>`;
+        const bodyExtra = type === 'content'
+          ? `<button class="ci-btn" onclick="buyContent(${i})">Ver contenido</button>`
+          : `<button class="ci-btn" onclick="buyShopProduct(${i})">Comprar</button>`;
+        return `<div class="carousel-item" data-ci="${i}" data-ctype="${type}" onclick="carouselItemClick(event,${i},'${type}')">
           <div class="carousel-item-thumb">${thumbInner}</div>
           <div class="carousel-item-body">
             <div class="ci-name">${p.name}</div>
             <div class="ci-price">${p.price}</div>
+            ${bodyExtra}
           </div>
         </div>`;
       }).join('');
+
       if (dots) dots.innerHTML = products.map((_, i) =>
-        `<div class="carousel-dot${i===0?' active':''}" onclick="carouselGoTo(${i})"></div>`
+        `<div class="carousel-dot${i===0?' active':''}" onclick="carouselGoTo(${i},'${type}')"></div>`
       ).join('');
-      carouselApply();
+
+      carouselApply(type);
       clearInterval(_carouselAuto);
-      _carouselAuto = setInterval(() => carouselMove(1), 3500);
+      _carouselAuto = setInterval(() => carouselMove(1, type), 3800);
     }
 
-    function carouselApply() {
-      const stage = document.getElementById('carouselStage');
+    function carouselApply(type) {
+      const stageId = (type||_carouselType) === 'content' ? 'contentCarouselStage' : 'carouselStage';
+      const dotsId  = (type||_carouselType) === 'content' ? 'contentCarouselDots'  : 'carouselDots';
+      const stage = document.getElementById(stageId);
       if (!stage) return;
-      const n = _carouselItems.length;
-      const angleStep = 360 / n;
-      stage.style.transform = `rotateY(${-_carouselIdx * angleStep}deg)`;
-      document.querySelectorAll('.carousel-dot').forEach((d, i) =>
+      const items = stage.querySelectorAll('.carousel-item');
+      const n = items.length;
+
+      items.forEach((el, i) => {
+        let off = (i - _carouselIdx + n) % n;
+        if (off > n / 2) off -= n;              // range: -n/2 … +n/2
+        const abs = Math.abs(off);
+        const sign = off < 0 ? -1 : 1;
+
+        const tx    = sign * Math.min(abs, 2) * 195;
+        const ry    = -sign * Math.min(abs, 2) * 38;
+        const scale = abs === 0 ? 1 : abs === 1 ? 0.82 : 0.68;
+        const op    = abs === 0 ? 1 : abs === 1 ? 0.72 : abs === 2 ? 0.4 : 0;
+        const zi    = 20 - abs * 5;
+
+        el.style.transform = `translateX(${tx}px) rotateY(${ry}deg) scale(${scale})`;
+        el.style.opacity    = op;
+        el.style.zIndex     = zi;
+        el.style.display    = abs > 2 ? 'none' : '';
+        el.classList.toggle('c-active', abs === 0);
+      });
+
+      document.querySelectorAll(`#${dotsId} .carousel-dot`).forEach((d, i) =>
         d.classList.toggle('active', i === _carouselIdx)
       );
     }
 
-    function carouselMove(dir) {
+    function carouselMove(dir, type) {
       if (!_carouselItems.length) return;
       _carouselIdx = (_carouselIdx + dir + _carouselItems.length) % _carouselItems.length;
-      carouselApply();
+      carouselApply(type || _carouselType);
     }
 
-    function carouselGoTo(i) {
+    function carouselGoTo(i, type) {
       _carouselIdx = i;
-      carouselApply();
+      carouselApply(type || _carouselType);
     }
 
-    function carouselItemClick(i) {
-      if (i !== _carouselIdx) { carouselGoTo(i); return; }
-      buyShopProduct(i);
+    function carouselItemClick(e, i, type) {
+      e.stopPropagation();
+      if (i !== _carouselIdx) { carouselGoTo(i, type); return; }
+      // center card click handled by inner button
     }
 
     // ── MONITOR DE CONVERSACIONES ──────────────────────────────────

@@ -3,6 +3,7 @@
   "botPassword": "",
   "freeMsgs": 15,
   "pageOrder": ["inicio", "contenido", "sexshop"],
+  "contentCarousel": false,
   "shopCarousel": false,
   "paymentLink": "https://link.mercadopago.com.co/julianahorny",
   "cards": [
