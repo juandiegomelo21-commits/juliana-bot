@@ -201,19 +201,28 @@ app.post("/api/tts", async (req, res) => {
 });
 
 // ── Upload de imágenes ─────────────────────────────────────────────
+// Cloudinary si está configurado, fallback a disco local (dev)
+const cloudinary = (() => {
+  if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+    const { v2 } = require('cloudinary');
+    v2.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+    console.log('☁️  Cloudinary configurado — uploads permanentes');
+    return v2;
+  }
+  console.warn('⚠️  CLOUDINARY no configurado — usando disco local (imágenes no persisten en Railway)');
+  return null;
+})();
+
 const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadsDir),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
-    cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`);
-  },
-});
 const upload = multer({
-  storage,
-  limits: { fileSize: 8 * 1024 * 1024 }, // 8 MB
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     if (file.mimetype.startsWith('image/')) cb(null, true);
     else cb(new Error('Solo imágenes'));
@@ -224,10 +233,32 @@ app.post('/api/upload', (req, res) => {
   if (req.query.password !== process.env.ADMIN_PASSWORD) {
     return res.status(401).json({ error: 'No autorizado' });
   }
-  upload.single('image')(req, res, (err) => {
+  upload.single('image')(req, res, async (err) => {
     if (err) return res.status(400).json({ error: err.message });
     if (!req.file) return res.status(400).json({ error: 'Sin archivo' });
-    res.json({ url: `/uploads/${req.file.filename}` });
+
+    // Subir a Cloudinary si está disponible
+    if (cloudinary) {
+      try {
+        const result = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: 'juliana-bot', resource_type: 'image' },
+            (error, result) => error ? reject(error) : resolve(result)
+          );
+          stream.end(req.file.buffer);
+        });
+        return res.json({ url: result.secure_url });
+      } catch (e) {
+        console.error('❌ Cloudinary upload error:', e.message);
+        return res.status(500).json({ error: 'Error subiendo imagen a Cloudinary' });
+      }
+    }
+
+    // Fallback: guardar en disco local
+    const ext = path.extname(req.file.originalname).toLowerCase() || '.jpg';
+    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
+    fs.writeFileSync(path.join(uploadsDir, filename), req.file.buffer);
+    res.json({ url: `/uploads/${filename}` });
   });
 });
 
