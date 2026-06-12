@@ -270,7 +270,7 @@ app.get("/health", (req, res) => {
 // Config pública (precios y link de pago para el frontend)
 app.get("/public-config", (req, res) => {
   const { prompt, ...pub } = getConfig();
-  res.json(pub);
+  res.json({ ...pub, googleEnabled: !!process.env.GOOGLE_CLIENT_ID });
 });
 
 // Registro de cuenta de usuario
