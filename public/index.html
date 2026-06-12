@@ -2328,14 +2328,17 @@
       if (!stage) return;
 
       stage.innerHTML = products.map((p, i) => {
+        const blurPx = type === 'content' ? (p.blur != null ? p.blur : 0) : 0;
+        const inset  = blurPx > 0 ? `-${blurPx + 4}px` : '0px';
         const thumbInner = p.image
-          ? `<img src="${p.image}" /><span>${p.emoji || '🛍️'}</span>`
-          : `<span>${p.emoji || (type === 'content' ? (p.emoji||'📸') : '🛍️')}</span>`;
+          ? `<div style="position:absolute;inset:${inset};background:url('${p.image}') center/cover no-repeat;filter:blur(${blurPx}px)"></div>
+             ${type === 'content' ? `<div style="position:absolute;inset:0;background:rgba(6,6,10,0.35)"></div><span style="position:relative;z-index:1;font-size:28px">🔒</span>` : `<span style="position:relative;z-index:1;font-size:28px">${p.emoji||'🛍️'}</span>`}`
+          : `<span>${p.emoji || (type === 'content' ? '📸' : '🛍️')}</span>`;
         const bodyExtra = type === 'content'
           ? `<button class="ci-btn" onclick="buyContent(${i})">Ver contenido</button>`
           : `<button class="ci-btn" onclick="buyShopProduct(${i})">Comprar</button>`;
         return `<div class="carousel-item" data-ci="${i}" data-ctype="${type}" onclick="carouselItemClick(event,${i},'${type}')">
-          <div class="carousel-item-thumb">${thumbInner}</div>
+          <div class="carousel-item-thumb" style="position:relative;overflow:hidden">${thumbInner}</div>
           <div class="carousel-item-body">
             <div class="ci-name">${p.name}</div>
             <div class="ci-price">${p.price}</div>
