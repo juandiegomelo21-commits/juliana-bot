@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Juliana</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -820,47 +822,100 @@
     .bottom-nav {
       display: none;
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-      background: rgba(6,6,10,0.92);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding: 8px 0 env(safe-area-inset-bottom, 8px);
-      display: none;
+      background: rgba(8, 4, 18, 0.62);
+      backdrop-filter: blur(48px) saturate(220%) brightness(1.08);
+      -webkit-backdrop-filter: blur(48px) saturate(220%) brightness(1.08);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 6px 0 env(safe-area-inset-bottom, 10px);
+      box-shadow:
+        0 -1px 0 0 rgba(236,72,153,0.12),
+        0 -24px 48px rgba(6,6,10,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.06);
     }
-    .bottom-nav-inner { display: flex; justify-content: space-around; align-items: center; }
+    .bottom-nav::before {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        rgba(124,58,237,0.04) 0%,
+        rgba(236,72,153,0.03) 100%
+      );
+    }
+    .bottom-nav-inner { display: flex; justify-content: space-around; align-items: center; position: relative; }
     .bnav-btn {
       display: flex; flex-direction: column; align-items: center; gap: 3px;
       background: none; border: none; color: rgba(255,255,255,0.38);
-      font-size: 10px; font-weight: 500; cursor: pointer; padding: 4px 12px;
-      transition: color 0.2s; letter-spacing: 0.3px; min-width: 60px;
+      font-size: 10px; font-weight: 500; cursor: pointer; padding: 6px 14px;
+      transition: color 0.22s, transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
+      letter-spacing: 0.3px; min-width: 60px; border-radius: 14px;
     }
-    .bnav-btn .bnav-icon { font-size: 20px; line-height: 1; }
+    .bnav-btn .bnav-icon {
+      font-size: 22px; line-height: 1;
+      transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), filter 0.22s;
+    }
     .bnav-btn.active { color: var(--pink-light); }
-    .bnav-btn.active .bnav-icon { filter: drop-shadow(0 0 6px rgba(244,114,182,0.6)); }
+    .bnav-btn.active .bnav-icon {
+      transform: scale(1.18) translateY(-1px);
+      filter: drop-shadow(0 0 8px rgba(244,114,182,0.7));
+    }
+    .bnav-btn:active { transform: scale(0.9); }
 
     @media (max-width: 480px) {
+      /* Nav */
       .nav-center { display: none; }
-      .nav { justify-content: space-between; }
+      .nav-account { display: none; }
+      .nav { justify-content: center; padding: 0 20px; }
+      .nav-logo { font-size: 26px; }
       .bottom-nav { display: block; }
-      .hero-title .line-1, .hero-title .line-2 { font-size: clamp(48px, 16vw, 80px); }
-      .messages { height: 320px; }
+
+      /* Performance: apagar animaciones pesadas en móvil */
+      .blob { animation: none !important; filter: blur(60px); opacity: 0.2; }
+      .blob-1 { width: 300px; height: 300px; }
+      .blob-2 { width: 250px; height: 250px; }
+      .blob-3 { width: 220px; height: 220px; display: none; }
+      .blob-4 { width: 180px; height: 180px; display: none; }
+      .grid-bg { opacity: 0.5; }
+      [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+      .hero-photo-deco, .hero-photo-deco-2 { display: none; }
+
+      /* Hero */
+      .hero { padding: 76px 20px 52px; gap: 28px; min-height: auto; }
+      .hero-title .line-1, .hero-title .line-2 { font-size: clamp(46px, 15vw, 76px); letter-spacing: -2px; }
+      .hero-sub { font-size: 15px; margin-bottom: 28px; }
+      .hero-photo-wrap { width: min(260px, 72vw); }
+      .hero-actions { flex-direction: column; gap: 10px; }
+      .hero-actions .btn-primary { width: 100%; text-align: center; }
+      .hero-actions .btn-secondary { display: none; }
+      .hero-scroll { display: none; }
+
+      /* Secciones */
+      .manifesto { padding: 56px 20px; }
+      .manifesto-stats { gap: 20px; }
+      .shop-teaser { margin: 0 10px 40px; }
+      .st-inner { padding: 32px 20px; }
+      .st-previews { flex-wrap: wrap; justify-content: center; gap: 8px; }
+      .st-preview { width: 96px; padding: 14px 8px; }
+
+      /* Chat */
+      .chat-wrap { padding: 52px 14px 96px; }
+      .messages { height: 300px; }
       .glass-box { border-radius: 18px; }
+      .bubble { font-size: 13px; }
+
+      /* Shop / Contenido */
+      .shop-content { padding: 36px 14px 100px; }
+      .content-section { padding: 88px 14px 100px; }
       .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .content-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-      .admin-grid-3 { grid-template-columns: 1fr 1fr; }
-      .filter-btn { padding: 7px 12px; font-size: 11px; }
+      .filter-btn { padding: 7px 11px; font-size: 11px; }
+      .shop-filters { gap: 6px; }
       .float-shop { display: none; }
-      .manifesto-stats { gap: 20px; }
-      .shop-content { padding: 40px 16px 100px; }
-      .content-section { padding: 100px 16px 100px; }
-      .chat-wrap { padding: 60px 16px 100px; }
-      .hero { padding: 80px 20px 60px; }
-      .hero-sub { font-size: 14px; }
-      .hero-actions { flex-direction: column; gap: 10px; }
-      .hero-actions .btn-primary, .hero-actions .btn-secondary { width: 100%; text-align: center; }
-      .manifesto { padding: 60px 20px; }
-      .shop-teaser { margin: 0 10px 40px; }
-      .page { padding-bottom: 64px; }
+
+      /* Admin */
+      .admin-grid-3 { grid-template-columns: 1fr 1fr; }
+
+      /* Espaciado base de páginas */
+      .page { padding-bottom: 72px; }
     }
 
     /* ── CAROUSEL COVERFLOW ── */
