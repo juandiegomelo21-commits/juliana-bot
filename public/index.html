@@ -1520,6 +1520,9 @@
           showPage(siteConfig.pageOrder[0]);
         }
         if (msgCount >= FREE_MSGS) showPaywall();
+        if (!siteConfig.googleEnabled) {
+          document.getElementById('googleAuthSection').style.display = 'none';
+        }
       } catch {
         siteConfig = { paymentLink: '#', cards: [], shopProducts: [], freeMsgs: 15 };
       }
@@ -2346,6 +2349,7 @@
     }
 
     function loginWithGoogle() {
+      if (siteConfig && !siteConfig.googleEnabled) return;
       window.location.href = '/auth/google';
     }
 
