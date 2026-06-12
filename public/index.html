@@ -1358,7 +1358,7 @@
           <h3>Contraseña</h3>
           <input class="admin-input" type="password" id="adminPass" placeholder="Contraseña de administrador" onkeydown="if(event.key==='Enter') adminLogin()" />
           <button class="admin-save" style="margin-top:14px" onclick="adminLogin()">Entrar</button>
-          <p class="admin-msg" id="loginMsg"></p>
+          <p class="admin-msg" id="adminLoginMsg"></p>
         </div>
       </div>
       <div id="adminPanel" style="display:none">
@@ -2106,7 +2106,7 @@
     }
 
     async function accountLogout() {
-      try { await fetch('/auth/logout', { method: 'POST' }); } catch {}
+      try { await fetch('/auth/logout', { method: 'POST', credentials: 'include' }); } catch {}
       localStorage.removeItem('jul_account');
       accountSession = null;
       document.getElementById('googleAuthSection').style.display = 'block';
@@ -2186,7 +2186,7 @@
       document.getElementById('adminPanel').style.display = 'none';
       document.getElementById('adminPass').value = '';
       adminPassword = null;
-      setMsg('loginMsg', '', '');
+      setMsg('adminLoginMsg', '', '');
       setMsg('saveMsg', '', '');
     }
 
@@ -2195,14 +2195,14 @@
       if (!pass) return;
       try {
         const r = await fetch(`/admin/config?password=${encodeURIComponent(pass)}`);
-        if (!r.ok) { setMsg('loginMsg', 'Contraseña incorrecta', 'err'); return; }
+        if (!r.ok) { setMsg('adminLoginMsg', 'Contraseña incorrecta', 'err'); return; }
         const cfg = await r.json();
         adminPassword = pass;
         document.getElementById('adminLogin').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         populateAdmin(cfg);
       } catch {
-        setMsg('loginMsg', 'Error de conexión', 'err');
+        setMsg('adminLoginMsg', 'Error de conexión', 'err');
       }
     }
 
@@ -2393,6 +2393,9 @@
         if (data.ok) {
           accountSession = data;
           localStorage.setItem('jul_account', JSON.stringify(data));
+          if (document.getElementById('accountOverlay')?.classList.contains('show')) {
+            showProfile(data);
+          }
         }
       } catch {}
     }

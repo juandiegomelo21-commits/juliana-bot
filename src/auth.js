@@ -13,6 +13,7 @@ function setupAuth(app) {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
       httpOnly: true,
       sameSite: "lax",
+      secure: (process.env.BASE_URL || "").startsWith("https"),
     },
   };
 
