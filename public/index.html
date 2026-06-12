@@ -816,18 +816,51 @@
       .shop-content { padding: 40px 24px 80px; }
       .content-section { padding: 100px 24px 80px; }
     }
+    /* ── BOTTOM NAV (móvil) ── */
+    .bottom-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(6,6,10,0.92);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 8px 0 env(safe-area-inset-bottom, 8px);
+      display: none;
+    }
+    .bottom-nav-inner { display: flex; justify-content: space-around; align-items: center; }
+    .bnav-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      background: none; border: none; color: rgba(255,255,255,0.38);
+      font-size: 10px; font-weight: 500; cursor: pointer; padding: 4px 12px;
+      transition: color 0.2s; letter-spacing: 0.3px; min-width: 60px;
+    }
+    .bnav-btn .bnav-icon { font-size: 20px; line-height: 1; }
+    .bnav-btn.active { color: var(--pink-light); }
+    .bnav-btn.active .bnav-icon { filter: drop-shadow(0 0 6px rgba(244,114,182,0.6)); }
+
     @media (max-width: 480px) {
       .nav-center { display: none; }
       .nav { justify-content: space-between; }
-      .hero-title .line-1, .hero-title .line-2 { font-size: clamp(60px, 18vw, 90px); }
+      .bottom-nav { display: block; }
+      .hero-title .line-1, .hero-title .line-2 { font-size: clamp(48px, 16vw, 80px); }
       .messages { height: 320px; }
       .glass-box { border-radius: 18px; }
-      .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .content-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .content-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .admin-grid-3 { grid-template-columns: 1fr 1fr; }
-      .filter-btn { padding: 7px 14px; font-size: 11px; }
-      .float-shop { bottom: 20px; right: 16px; padding: 11px 18px; font-size: 13px; }
+      .filter-btn { padding: 7px 12px; font-size: 11px; }
+      .float-shop { display: none; }
       .manifesto-stats { gap: 20px; }
+      .shop-content { padding: 40px 16px 100px; }
+      .content-section { padding: 100px 16px 100px; }
+      .chat-wrap { padding: 60px 16px 100px; }
+      .hero { padding: 80px 20px 60px; }
+      .hero-sub { font-size: 14px; }
+      .hero-actions { flex-direction: column; gap: 10px; }
+      .hero-actions .btn-primary, .hero-actions .btn-secondary { width: 100%; text-align: center; }
+      .manifesto { padding: 60px 20px; }
+      .shop-teaser { margin: 0 10px 40px; }
+      .page { padding-bottom: 64px; }
     }
 
     /* ── CAROUSEL 3D ── */
@@ -1251,6 +1284,24 @@
 
   <button class="float-shop" id="floatShop" onclick="showPage('sexshop')">🛍️ SexShop</button>
 
+  <!-- Bottom nav móvil -->
+  <nav class="bottom-nav" id="bottomNav">
+    <div class="bottom-nav-inner">
+      <button class="bnav-btn active" id="bnav-inicio" onclick="showPage('inicio')">
+        <span class="bnav-icon">🏠</span>Inicio
+      </button>
+      <button class="bnav-btn" id="bnav-contenido" onclick="showPage('contenido')">
+        <span class="bnav-icon">🔥</span>Contenido
+      </button>
+      <button class="bnav-btn" id="bnav-sexshop" onclick="showPage('sexshop')">
+        <span class="bnav-icon">🛍️</span>SexShop
+      </button>
+      <button class="bnav-btn" onclick="openAccount()">
+        <span class="bnav-icon">👤</span>Cuenta
+      </button>
+    </div>
+  </nav>
+
   <script>
     let FREE_MSGS = 15;
     let PROMO_MSGS = [4, 8, 12];
@@ -1321,8 +1372,10 @@
     function showPage(name) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('page-' + name).classList.add('active');
-      document.getElementById('btn-' + name).classList.add('active');
+      document.getElementById('btn-' + name)?.classList.add('active');
+      document.getElementById('bnav-' + name)?.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       document.getElementById('floatShop')?.classList.remove('visible');
     }
