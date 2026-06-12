@@ -18,7 +18,7 @@ const passport = require("passport");
 const { MercadoPagoConfig, Preference } = require("mercadopago");
 const { handleIncomingMessage } = require("./handlers/message");
 const { getJulianaResponse } = require("./groq");
-const { getConfig, saveConfig } = require("./config");
+const { getConfig, saveConfig, loadConfig } = require("./config");
 const { setupAuth } = require("./auth");
 const db = require("./db");
 
@@ -473,6 +473,8 @@ app.get("/set-profile-pic", async (req, res) => {
 
 db.connect()
   .catch(err => console.error("❌ Error conectando a MongoDB:", err.message))
+  .then(() => loadConfig())
+  .catch(err => console.error("❌ Error cargando config:", err.message))
   .finally(() => {
     app.listen(PORT, () => {
       console.log(`🌸 Juliana Bot corriendo en puerto ${PORT}`);

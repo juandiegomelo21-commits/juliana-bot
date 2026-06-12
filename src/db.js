@@ -190,6 +190,35 @@ async function setHumanMode(userId, enabled) {
   );
 }
 
+// ── Bot Config ────────────────────────────────────────────────────
+
+async function loadBotConfig(defaults) {
+  if (!isConnected()) return defaults;
+  try {
+    const doc = await db.collection('config').findOne({ _id: 'main' });
+    if (doc) {
+      const { _id, ...config } = doc;
+      return config;
+    }
+    // Primera vez: persistir defaults en Mongo
+    await saveBotConfig(defaults);
+    return defaults;
+  } catch (e) {
+    console.warn('⚠️ No se pudo leer config de MongoDB:', e.message);
+    return defaults;
+  }
+}
+
+async function saveBotConfig(config) {
+  if (!isConnected()) return;
+  const { _id, ...clean } = config;
+  await db.collection('config').replaceOne(
+    { _id: 'main' },
+    { _id: 'main', ...clean },
+    { upsert: true }
+  );
+}
+
 module.exports = {
   connect, isConnected,
   getUser, getUserByUsername,
@@ -198,4 +227,5 @@ module.exports = {
   clearUser,
   getUserByGoogleId, createGoogleAccount, updateGoogleProfile,
   getRecentConversations, setQueuedReply, popQueuedReply, setHumanMode,
+  loadBotConfig, saveBotConfig,
 };
