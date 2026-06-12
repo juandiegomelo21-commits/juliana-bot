@@ -424,6 +424,87 @@
     }
     .st-pprice { font-size: 12px; color: rgba(244,114,182,0.8); font-weight: 500; }
 
+    /* ── CONTENIDO TEASER (inicio) ── */
+    .content-teaser {
+      margin: 0 40px 80px;
+      border-radius: 32px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(124,58,237,0.16);
+      overflow: hidden;
+      position: relative;
+    }
+    .content-teaser::before {
+      content: '';
+      position: absolute; top: -100px; left: -100px;
+      width: 380px; height: 380px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,0.1), transparent 65%);
+      pointer-events: none;
+    }
+    .ct-inner {
+      padding: 72px 80px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 60px;
+      align-items: center;
+    }
+    .ct-tag {
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(167,139,250,0.6); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .ct-tag::before { content: ''; width: 28px; height: 1px; background: rgba(167,139,250,0.4); }
+    .ct-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 300; line-height: 0.95; letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #fff 30%, rgba(167,139,250,0.9) 80%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .ct-title em { font-style: italic; }
+    .ct-desc { font-size: 15px; color: rgba(255,255,255,0.32); line-height: 1.8; margin-bottom: 32px; max-width: 440px; }
+    .ct-cta-btn {
+      padding: 15px 36px; border-radius: 100px;
+      background: linear-gradient(135deg, rgba(109,40,217,0.88), rgba(167,139,250,0.78));
+      border: none; color: #fff; font-size: 14px; font-weight: 500; letter-spacing: 0.3px;
+      cursor: pointer; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 8px 28px rgba(109,40,217,0.4);
+    }
+    .ct-cta-btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 16px 44px rgba(109,40,217,0.6); }
+    .ct-cta-btn span { margin-left: 6px; display: inline-block; transition: transform 0.25s; }
+    .ct-cta-btn:hover span { transform: translateX(5px); }
+    .ct-previews { display: flex; gap: 12px; }
+    .ct-preview {
+      width: 120px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px; padding: 20px 12px; text-align: center;
+      cursor: pointer; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative; overflow: hidden;
+    }
+    .ct-preview:hover {
+      border-color: rgba(124,58,237,0.35); background: rgba(124,58,237,0.06);
+      transform: translateY(-6px) scale(1.04);
+      box-shadow: 0 16px 40px rgba(124,58,237,0.2);
+    }
+    .ct-emoji { font-size: 32px; display: block; margin-bottom: 10px; }
+    .ct-pname {
+      font-family: 'Cormorant Garamond', serif; font-size: 13px;
+      color: rgba(255,255,255,0.65); line-height: 1.3; margin-bottom: 5px;
+    }
+    .ct-pprice { font-size: 11px; color: rgba(167,139,250,0.8); font-weight: 500; }
+
+    @media (max-width: 900px) {
+      .ct-inner { grid-template-columns: 1fr; padding: 44px 32px; }
+      .ct-previews { justify-content: center; }
+      .content-teaser { margin: 0 16px 60px; }
+    }
+    @media (max-width: 480px) {
+      .content-teaser { margin: 0 10px 40px; }
+      .ct-inner { padding: 32px 20px; }
+      .ct-previews { flex-wrap: wrap; justify-content: center; gap: 8px; }
+      .ct-preview { width: 96px; padding: 14px 8px; }
+    }
+
     /* ── CHAT SECTION ── */
     .chat-wrap {
       padding: 100px 80px 120px;
@@ -992,7 +1073,7 @@
     <div class="nav-logo" onclick="showPage('inicio')">Juliana</div>
     <div class="nav-center">
       <button class="nav-btn active" id="btn-inicio" onclick="showPage('inicio')">Inicio</button>
-      <button class="nav-btn" id="btn-contenido" onclick="showPage('contenido')">Contenido</button>
+      <button class="nav-btn" id="btn-contenido" onclick="showPage('contenido')">Diviértete</button>
       <button class="nav-btn" id="btn-sexshop" onclick="showPage('sexshop')">SexShop</button>
     </div>
     <button class="nav-account" id="btn-cuenta" onclick="openAccount()">Mi Cuenta</button>
@@ -1013,7 +1094,7 @@
         </h1>
         <p class="hero-sub" data-reveal data-delay="2">Coqueta, sin filtros y siempre disponible para ti. Tu compañía perfecta, a cualquier hora.</p>
         <div class="hero-actions" data-reveal data-delay="3">
-          <button class="btn-primary" onclick="document.querySelector('.chat-wrap').scrollIntoView({behavior:'smooth'})">Hablar con ella</button>
+          <button class="btn-primary" onclick="showPage('contenido')">Hablar con ella</button>
           <button class="btn-secondary" onclick="showPage('sexshop')">Ver SexShop →</button>
         </div>
       </div>
@@ -1076,19 +1157,57 @@
       </div>
     </section>
 
+    <!-- CONTENIDO TEASER -->
+    <section class="content-teaser" data-reveal>
+      <div class="ct-inner">
+        <div class="ct-text">
+          <p class="ct-tag">Solo para ti</p>
+          <h3 class="ct-title">Contenido<br/><em>exclusivo</em></h3>
+          <p class="ct-desc">Fotos, videos y packs que no encontrarás en otro lugar. Privados, desbloqueables, solo para ti.</p>
+          <button class="ct-cta-btn" onclick="showPage('contenido')">Ver contenido <span>→</span></button>
+        </div>
+        <div class="ct-previews" id="contentTeaser"></div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Juliana es una inteligencia artificial. Solo para mayores de 18 años.</p>
+      <br/>
+      <p>Hecho con amor por <a href="#">ChatMe Tequila</a> · <span class="footer-trigger" id="adminTrigger" onclick="adminTap()">2025</span></p>
+    </footer>
+
+  </div><!-- end page-inicio -->
+
+  <!-- ── PAGE CONTENIDO ── -->
+  <div class="page" id="page-contenido">
+    <section class="content-section">
+      <p style="font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(236,72,153,0.6);margin-bottom:20px">Exclusivo · Solo para ti</p>
+      <h2 class="content-title">Contenido <em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(244,114,182,0.85)">Exclusivo</em></h2>
+      <p class="content-sub">Solo para los que saben apreciar a Juliana de verdad 😏</p>
+      <div class="content-grid" id="contentGrid"></div>
+      <div class="carousel-wrap" id="contentCarouselWrap" style="display:none">
+        <div class="carousel-scene">
+          <div class="carousel-stage" id="contentCarouselStage"></div>
+        </div>
+        <div class="carousel-nav">
+          <button class="carousel-btn" onclick="carouselMove(-1,'content')">‹</button>
+          <div class="carousel-dots" id="contentCarouselDots"></div>
+          <button class="carousel-btn" onclick="carouselMove(1,'content')">›</button>
+        </div>
+      </div>
+    </section>
+
     <!-- CHAT -->
     <section class="chat-wrap">
       <div class="chat-info" data-reveal>
-        <p class="chat-info-tag">02 · Escríbele</p>
+        <p class="chat-info-tag">Escríbele</p>
         <h2>Ella está <em>esperándote</em></h2>
         <p>Escríbele lo que quieras. Juliana responde de verdad, sin scripts, sin censura. Solo una conversación como ninguna otra.</p>
         <p style="font-size:12px;color:rgba(255,255,255,0.2);font-style:italic">Juliana es una IA. Solo para mayores de 18 años.</p>
       </div>
       <div class="glass-box" data-reveal data-delay="2">
         <div class="glass-header">
-          <div class="h-avatar">
-            <img src="./juliana-pp.jpg" alt="Juliana" />
-          </div>
+          <div class="h-avatar"><img src="./juliana-pp.jpg" alt="Juliana" /></div>
           <div class="h-info">
             <h3>Juliana</h3>
             <span id="julianaStatus" class="h-status-text">en línea · 24 años · IA</span>
@@ -1119,32 +1238,6 @@
       </div>
     </section>
 
-    <footer>
-      <p>Juliana es una inteligencia artificial. Solo para mayores de 18 años.</p>
-      <br/>
-      <p>Hecho con amor por <a href="#">ChatMe Tequila</a> · <span class="footer-trigger" id="adminTrigger" onclick="adminTap()">2025</span></p>
-    </footer>
-
-  </div><!-- end page-inicio -->
-
-  <!-- ── PAGE CONTENIDO ── -->
-  <div class="page" id="page-contenido">
-    <section class="content-section">
-      <p style="font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(236,72,153,0.6);margin-bottom:20px">Exclusivo · Solo para ti</p>
-      <h2 class="content-title">Contenido <em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(244,114,182,0.85)">Exclusivo</em></h2>
-      <p class="content-sub">Solo para los que saben apreciar a Juliana de verdad 😏</p>
-      <div class="content-grid" id="contentGrid"></div>
-      <div class="carousel-wrap" id="contentCarouselWrap" style="display:none">
-        <div class="carousel-scene">
-          <div class="carousel-stage" id="contentCarouselStage"></div>
-        </div>
-        <div class="carousel-nav">
-          <button class="carousel-btn" onclick="carouselMove(-1,'content')">‹</button>
-          <div class="carousel-dots" id="contentCarouselDots"></div>
-          <button class="carousel-btn" onclick="carouselMove(1,'content')">›</button>
-        </div>
-      </div>
-    </section>
     <footer>
       <p>Solo para mayores de 18 años.</p><br/>
       <p>Hecho con amor por <a href="#">ChatMe Tequila</a> · <span class="footer-trigger" id="adminTrigger2" onclick="adminTap()">2025</span></p>
@@ -1387,7 +1480,7 @@
         <span class="bnav-icon">🏠</span>Inicio
       </button>
       <button class="bnav-btn" id="bnav-contenido" onclick="showPage('contenido')">
-        <span class="bnav-icon">🔥</span>Contenido
+        <span class="bnav-icon">💬</span>Diviértete
       </button>
       <button class="bnav-btn" id="bnav-sexshop" onclick="showPage('sexshop')">
         <span class="bnav-icon">🛍️</span>SexShop
@@ -1421,7 +1514,11 @@
         renderCards();
         renderShop();
         updateCounter();
-        if (siteConfig.pageOrder?.length) applyPageOrder(siteConfig.pageOrder);
+        if (siteConfig.cards?.length) renderContentTeaser(siteConfig.cards);
+        if (siteConfig.pageOrder?.length) {
+          applyPageOrder(siteConfig.pageOrder);
+          showPage(siteConfig.pageOrder[0]);
+        }
         if (msgCount >= FREE_MSGS) showPaywall();
       } catch {
         siteConfig = { paymentLink: '#', cards: [], shopProducts: [], freeMsgs: 15 };
@@ -1689,6 +1786,18 @@
         </div>`).join('');
     }
 
+    function renderContentTeaser(cards) {
+      const wrap = document.getElementById('contentTeaser');
+      if (!wrap || !cards.length) return;
+      const shown = cards.slice(0, 3);
+      wrap.innerHTML = shown.map(c => `
+        <div class="ct-preview" onclick="showPage('contenido')">
+          <span class="ct-emoji">${c.emoji || '📸'}</span>
+          <p class="ct-pname">${c.name}</p>
+          <p class="ct-pprice">${c.price}</p>
+        </div>`).join('');
+    }
+
     function filterShop(btn, category) {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -1805,7 +1914,7 @@
 
     // ── Page order ───────────────────────────────────────────────
     let _pageOrder = ['inicio', 'contenido', 'sexshop'];
-    const PAGE_LABELS = { inicio:'🏠 Inicio', contenido:'🔥 Contenido', sexshop:'🛍️ SexShop' };
+    const PAGE_LABELS = { inicio:'🏠 Inicio', contenido:'💬 Diviértete', sexshop:'🛍️ SexShop' };
 
     function renderPageOrderAdmin() {
       const list = document.getElementById('pageOrderList');
@@ -1829,12 +1938,21 @@
     }
 
     function applyPageOrder(order) {
+      // Desktop nav
       const navCenter = document.querySelector('.nav-center');
-      if (!navCenter) return;
-      order.forEach(page => {
+      if (navCenter) order.forEach(page => {
         const btn = document.getElementById('btn-' + page);
         if (btn) navCenter.appendChild(btn);
       });
+      // Bottom nav (Cuenta siempre último)
+      const bnavInner = document.querySelector('.bottom-nav-inner');
+      if (bnavInner) {
+        const cuentaBtn = document.getElementById('bnav-cuenta');
+        order.forEach(page => {
+          const btn = document.getElementById('bnav-' + page);
+          if (btn) bnavInner.insertBefore(btn, cuentaBtn);
+        });
+      }
     }
 
     let _shopAdmin = [];
