@@ -304,12 +304,18 @@ app.post("/api/login", async (req, res) => {
   const valid = await bcrypt.compare(password, account.passwordHash);
   if (!valid) return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
 
-  res.json({
-    ok: true,
+  const userData = {
+    userId: account.userId,
     username: account.username,
     name: account.name || null,
     phone: account.userId,
     messageCount: account.messageCount || 0,
+    authType: "form",
+  };
+
+  req.login(userData, (err) => {
+    if (err) return res.status(500).json({ error: "Error al crear sesión" });
+    res.json({ ok: true, ...userData });
   });
 });
 
