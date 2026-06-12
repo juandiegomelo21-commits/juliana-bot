@@ -1262,6 +1262,7 @@
           <div class="admin-section">
             <h3>Contenido exclusivo · Imagen, blur y precio</h3>
             <div id="adminCards"></div>
+            <button class="shop-add-btn" onclick="addContentCard()">+ Agregar pack</button>
           </div>
         </div>
         <div class="admin-tab-panel" id="apanel-sexshop">
@@ -2067,34 +2068,71 @@
           { blurVal: blur, onBlurChange: (v) => { _adminCards[i].blur = v; } }
         );
         return `
-        <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.06)">
-          <p class="card-row-label" style="margin-bottom:10px">${c.emoji} ${c.tag} — ${c.name}</p>
-          <div class="card-row">
+        <div class="shop-prod-row" id="cpr-${i}">
+          <div class="shop-prod-hdr">
+            <span class="shop-prod-hdr-name">${c.emoji || '📸'} ${c.tag || ''} — ${c.name}</span>
+            <button class="admin-del-btn" onclick="removeContentCard(${i})">Eliminar</button>
+          </div>
+          <div class="admin-grid-3">
             <div>
-              <p class="card-row-label">Nombre</p>
-              <input class="admin-input" data-i="${i}" data-field="name" value="${escHtml(c.name)}" />
+              <p class="card-row-label">Emoji</p>
+              <input class="admin-input" data-i="${i}" data-field="emoji" value="${escHtml(c.emoji||'')}" placeholder="📸" />
+            </div>
+            <div>
+              <p class="card-row-label">Tag</p>
+              <input class="admin-input" data-i="${i}" data-field="tag" value="${escHtml(c.tag||'')}" placeholder="Exclusivo" />
             </div>
             <div>
               <p class="card-row-label">Precio</p>
-              <input class="admin-input" data-i="${i}" data-field="price" value="${escHtml(c.price)}" />
+              <input class="admin-input" data-i="${i}" data-field="price" value="${escHtml(c.price||'')}" placeholder="$15.000 COP" />
             </div>
           </div>
-          <p class="card-row-label" style="margin-top:10px;margin-bottom:4px">Foto de preview (se mostrará borrosa al cliente)</p>
+          <div class="admin-grid-1" style="margin-top:8px">
+            <p class="card-row-label">Nombre</p>
+            <input class="admin-input" data-i="${i}" data-field="name" value="${escHtml(c.name||'')}" placeholder="Nombre del pack" style="margin-bottom:8px" />
+          </div>
+          <div class="admin-chk-row">
+            <input type="checkbox" id="chot-${i}" data-i="${i}" data-field="hot" ${c.hot?'checked':''} />
+            <label for="chot-${i}">Destacado (precio en rojo)</label>
+          </div>
+          <p class="card-row-label" style="margin-top:10px;margin-bottom:4px">Foto de preview</p>
           ${imgUI}
         </div>`;
       }).join('');
     }
 
+    function removeContentCard(i) {
+      _adminCards.splice(i, 1);
+      renderAdminCards();
+    }
+
+    function addContentCard() {
+      _adminCards.push({
+        id: Date.now(), tag: 'Nuevo', name: 'Pack nuevo',
+        emoji: '📸', theme: '1', hot: false,
+        price: '$0 COP', blur: 0
+      });
+      renderAdminCards();
+      switchAdminTab('contenido');
+    }
+
     function collectCards() {
       return _adminCards.map((c, i) => {
-        const nameEl = document.querySelector(`[data-i="${i}"][data-field="name"]`);
-        const priceEl = document.querySelector(`[data-i="${i}"][data-field="price"]`);
+        const g = (field) => {
+          const el = document.querySelector(`[data-i="${i}"][data-field="${field}"]`);
+          if (!el) return c[field];
+          if (el.type === 'checkbox') return el.checked;
+          return el.value;
+        };
         const blurEl = document.getElementById(`iblurrange_card_${i}`);
         return {
           ...c,
-          name: nameEl?.value ?? c.name,
-          price: priceEl?.value ?? c.price,
-          blur: blurEl ? parseInt(blurEl.value) : (c.blur ?? 0),
+          name:  g('name')  ?? c.name,
+          price: g('price') ?? c.price,
+          emoji: g('emoji') ?? c.emoji,
+          tag:   g('tag')   ?? c.tag,
+          hot:   g('hot')   ?? c.hot,
+          blur:  blurEl ? parseInt(blurEl.value) : (c.blur ?? 0),
         };
       });
     }
