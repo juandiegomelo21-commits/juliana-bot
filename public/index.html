@@ -352,7 +352,16 @@
     .hero-photo-badge span {
       font-size: 12px; color: rgba(255,255,255,0.82); letter-spacing: 0.3px;
     }
-    .hero-mobile-cta { display: none; }
+    .hero-unit-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(103,232,249,0.55);
+      text-align: center; margin-top: 16px;
+    }
+    .hero-avatar-cta {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; margin-top: 10px;
+    }
     .hero-photo-glow {
       position: absolute;
       inset: -80px; z-index: -1;
@@ -964,7 +973,6 @@
       .hero-eyebrow::before { display: none; }
       .hero-actions { justify-content: center; }
       .hero-actions .btn-primary { display: none; }
-      .hero-mobile-cta { display: block; width: 100%; margin-top: 22px; }
       .manifesto { grid-template-columns: 1fr; padding: 80px 32px; gap: 40px; }
       .shop-teaser { margin: 0 16px 60px; }
       .st-inner { grid-template-columns: 1fr; padding: 44px 32px; }
@@ -1044,7 +1052,6 @@
       .hero-photo-wrap { width: min(290px, 78vw); }
       .hero-actions { flex-direction: column; gap: 10px; }
       .hero-actions .btn-primary { width: 100%; text-align: center; }
-      .hero-actions .btn-secondary { display: none; }
       .hero-scroll { display: none; }
 
       /* Secciones */
@@ -1165,7 +1172,6 @@
     <!-- HERO -->
     <section class="hero" id="heroSection">
       <div class="hero-left">
-        <p class="hero-eyebrow" data-reveal>Juliana · Unit-3091</p>
         <p class="hero-live" data-reveal data-delay="1"><span class="live-dot"></span>EN VIVO · <b id="heroLiveCount">2,481</b> fans conectados</p>
         <h1 class="hero-title" data-reveal data-delay="1">
           <span class="accent-bar"></span>
@@ -1193,7 +1199,8 @@
               <span>Juliana · en línea ahora</span>
             </div>
           </div>
-          <button class="btn-primary hero-mobile-cta" onclick="showPage('contenido')">Hablar con ella</button>
+          <p class="hero-unit-tag">UNIT-3091</p>
+          <button class="btn-primary hero-avatar-cta" onclick="showPage('contenido')">Hablar con ella</button>
         </div>
       </div>
       <div class="hero-scroll">
