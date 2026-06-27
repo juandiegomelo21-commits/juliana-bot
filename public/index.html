@@ -1067,12 +1067,12 @@
 
       /* Hero */
       .hero { padding: 20px 20px calc(70px + env(safe-area-inset-bottom, 0px)); gap: 16px; min-height: auto; }
-      .hero-title { margin-bottom: 18px; }
-      .hero-title .line-1, .hero-title .line-2 { font-size: clamp(40px, 13vw, 64px); letter-spacing: -2px; }
+      .hero-title { margin-bottom: 18px; white-space: nowrap; }
+      .hero-title .line-1, .hero-title .line-2 { display: inline; font-size: clamp(28px, 9.5vw, 44px); letter-spacing: -1px; }
       .hero-sub { font-size: 14px; margin-bottom: 14px; }
       .hero-chips { margin-bottom: 18px; }
       .hero-live { font-size: 10px; }
-      .hero-photo-wrap { width: min(220px, 60vw); }
+      .hero-photo-wrap { width: min(290px, 78vw); }
       .hero-actions { flex-direction: column; gap: 10px; }
       .hero-actions .btn-primary { width: 100%; text-align: center; }
       .hero-scroll { display: none; }
@@ -1198,8 +1198,7 @@
         <p class="hero-live" data-reveal data-delay="1"><span class="live-dot"></span>EN VIVO · <b id="heroLiveCount">2,481</b> fans conectados</p>
         <h1 class="hero-title" data-reveal data-delay="1">
           <span class="accent-bar"></span>
-          <span class="line-1">Juliana</span>
-          <span class="line-2">Love</span>
+          <span class="line-1">Juliana</span> <span class="line-2">Love</span>
         </h1>
         <p class="hero-sub" data-reveal data-delay="2">Soy Juliana. Chatea conmigo las 24 horas y descubre mi SexShop privado, hecho solo para ti.</p>
         <div class="hero-chips" data-reveal data-delay="2">
