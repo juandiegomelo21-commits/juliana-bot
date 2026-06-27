@@ -362,6 +362,7 @@
       display: flex; align-items: center; justify-content: center;
       width: 100%; margin-top: 10px;
     }
+    .hero-avatar-cta-shop { display: none; }
     .hero-photo-glow {
       position: absolute;
       inset: -80px; z-index: -1;
@@ -972,7 +973,8 @@
       .hero-left { align-items: center; }
       .hero-eyebrow::before { display: none; }
       .hero-actions { justify-content: center; }
-      .hero-actions .btn-primary { display: none; }
+      .hero-actions .btn-primary, .hero-actions .btn-secondary { display: none; }
+      .hero-avatar-cta-shop { display: flex; }
       .manifesto { grid-template-columns: 1fr; padding: 80px 32px; gap: 40px; }
       .shop-teaser { margin: 0 16px 60px; }
       .st-inner { grid-template-columns: 1fr; padding: 44px 32px; }
@@ -1027,10 +1029,7 @@
 
     @media (max-width: 480px) {
       /* Nav */
-      .nav-center { display: none; }
-      .nav-account { display: none; }
-      .nav { justify-content: center; padding: 0 20px; }
-      .nav-logo { font-size: 26px; }
+      .nav { display: none; }
       .bottom-nav { display: block; }
 
       /* Performance: apagar animaciones pesadas en móvil */
@@ -1045,7 +1044,7 @@
       .hero-photo-wrap { animation: none; }
 
       /* Hero */
-      .hero { padding: 76px 20px 52px; gap: 28px; min-height: auto; }
+      .hero { padding: 36px 20px 52px; gap: 28px; min-height: auto; }
       .hero-title .line-1, .hero-title .line-2 { font-size: clamp(46px, 15vw, 76px); letter-spacing: -2px; }
       .hero-sub { font-size: 15px; margin-bottom: 28px; }
       .hero-live { font-size: 10px; }
@@ -1201,6 +1200,7 @@
           </div>
           <p class="hero-unit-tag">UNIT-3091</p>
           <button class="btn-primary hero-avatar-cta" onclick="showPage('contenido')">Hablar con ella</button>
+          <button class="btn-secondary hero-avatar-cta hero-avatar-cta-shop" onclick="showPage('sexshop')">Ver SexShop →</button>
         </div>
       </div>
       <div class="hero-scroll">
