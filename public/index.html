@@ -6,7 +6,7 @@
   <title>Juliana</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -15,6 +15,8 @@
       --purple-light: #a855f7;
       --pink: #ec4899;
       --pink-light: #f472b6;
+      --cyan: #22d3ee;
+      --cyan-light: #67e8f9;
       --bg: #06060a;
       --surface: rgba(255,255,255,0.03);
       --border: rgba(255,255,255,0.08);
@@ -155,20 +157,41 @@
     }
     .hero-left { display: flex; flex-direction: column; align-items: flex-start; }
     .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
-      color: rgba(167,139,250,0.7); margin-bottom: 24px;
+      color: rgba(103,232,249,0.75); margin-bottom: 18px;
       display: flex; align-items: center; gap: 10px;
     }
     .hero-eyebrow::before {
       content: ''; display: block;
-      width: 24px; height: 1px; background: rgba(167,139,250,0.4);
+      width: 24px; height: 1px; background: rgba(103,232,249,0.45);
     }
+    .hero-live {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 1px;
+      color: rgba(255,255,255,0.4);
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 22px;
+    }
+    .hero-live .live-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #ef4444; box-shadow: 0 0 8px #ef4444;
+      animation: blink 1.6s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    .hero-live b { color: rgba(255,255,255,0.72); font-weight: 600; }
     .hero-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
       line-height: 0.88;
       letter-spacing: -3px;
       margin-bottom: 32px;
+    }
+    .hero-title .accent-bar {
+      display: block;
+      width: 46px; height: 4px; border-radius: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--pink-light));
+      margin-bottom: 18px;
     }
     .hero-title .line-1 {
       font-size: clamp(72px, 9vw, 130px);
@@ -233,43 +256,32 @@
       position: relative;
     }
 
-    /* ── HERO PHOTO ── */
+    /* ── HERO PHOTO (cyberpunk full-body avatar) ── */
     .hero-photo-wrap {
       position: relative;
-      width: 340px;
+      width: 400px;
+      animation: avatarFloat 5s ease-in-out infinite;
+    }
+    @keyframes avatarFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
     }
     .hero-photo-frame {
       position: relative;
       width: 100%;
       aspect-ratio: 3/4;
-      border-radius: 32px;
-      overflow: hidden;
-      box-shadow:
-        0 48px 120px rgba(0,0,0,0.65),
-        0 0 0 1px rgba(255,255,255,0.07),
-        0 0 80px rgba(236,72,153,0.12);
     }
     .hero-photo-frame img {
       width: 100%; height: 100%;
-      object-fit: cover; object-position: top center;
+      object-fit: contain; object-position: bottom center;
       display: block;
-      transition: transform 6s ease;
-    }
-    .hero-photo-frame:hover img { transform: scale(1.04); }
-    .hero-photo-frame::after {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(
-        to bottom,
-        transparent 40%,
-        rgba(6,6,10,0.55) 100%
-      );
+      filter: drop-shadow(0 30px 50px rgba(0,0,0,0.55));
     }
     .hero-photo-badge {
-      position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+      position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
       background: rgba(255,255,255,0.07);
       backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255,255,255,0.14);
+      border: 1px solid rgba(103,232,249,0.25);
       border-radius: 100px; padding: 10px 22px;
       display: flex; align-items: center; gap: 8px;
       white-space: nowrap; z-index: 2;
@@ -286,22 +298,28 @@
     }
     .hero-photo-glow {
       position: absolute;
-      inset: -60px; z-index: -1;
-      background: radial-gradient(ellipse at 50% 70%, rgba(236,72,153,0.18) 0%, rgba(124,58,237,0.1) 45%, transparent 70%);
+      inset: -80px; z-index: -1;
+      background: radial-gradient(ellipse at 50% 65%, rgba(236,72,153,0.28) 0%, rgba(34,211,238,0.16) 40%, rgba(124,58,237,0.12) 60%, transparent 75%);
+      filter: blur(10px);
+      animation: glowPulse 4s ease-in-out infinite;
       pointer-events: none;
     }
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
     .hero-photo-deco {
-      position: absolute; top: -18px; right: -18px;
-      width: 80px; height: 80px;
-      border: 1px solid rgba(236,72,153,0.22);
-      border-radius: 24px;
+      position: absolute; top: 40px; right: -10px;
+      width: 70px; height: 70px;
+      border: 1px solid rgba(34,211,238,0.3);
+      border-radius: 50%;
       pointer-events: none;
       animation: decoDrift 5s ease-in-out infinite alternate;
     }
     .hero-photo-deco-2 {
-      position: absolute; bottom: -14px; left: -14px;
-      width: 56px; height: 56px;
-      border: 1px solid rgba(124,58,237,0.2);
+      position: absolute; bottom: 60px; left: -16px;
+      width: 50px; height: 50px;
+      border: 1px solid rgba(236,72,153,0.3);
       border-radius: 16px;
       pointer-events: none;
       animation: decoDrift 7s ease-in-out infinite alternate-reverse;
@@ -958,12 +976,14 @@
       .grid-bg { opacity: 0.5; }
       [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
       .hero-photo-deco, .hero-photo-deco-2 { display: none; }
+      .hero-photo-wrap { animation: none; }
 
       /* Hero */
       .hero { padding: 76px 20px 52px; gap: 28px; min-height: auto; }
       .hero-title .line-1, .hero-title .line-2 { font-size: clamp(46px, 15vw, 76px); letter-spacing: -2px; }
       .hero-sub { font-size: 15px; margin-bottom: 28px; }
-      .hero-photo-wrap { width: min(260px, 72vw); }
+      .hero-live { font-size: 10px; }
+      .hero-photo-wrap { width: min(290px, 78vw); }
       .hero-actions { flex-direction: column; gap: 10px; }
       .hero-actions .btn-primary { width: 100%; text-align: center; }
       .hero-actions .btn-secondary { display: none; }
@@ -1088,7 +1108,9 @@
     <section class="hero">
       <div class="hero-left">
         <p class="hero-eyebrow" data-reveal>Latina · 24 años · IA</p>
+        <p class="hero-live" data-reveal data-delay="1"><span class="live-dot"></span>EN VIVO · <b id="heroLiveCount">2,481</b> fans conectados</p>
         <h1 class="hero-title" data-reveal data-delay="1">
+          <span class="accent-bar"></span>
           <span class="line-1">Chatea</span>
           <span class="line-2">con Juliana</span>
         </h1>
@@ -1104,7 +1126,7 @@
           <div class="hero-photo-deco"></div>
           <div class="hero-photo-deco-2"></div>
           <div class="hero-photo-frame">
-            <img src="./juliana-pp.jpg" alt="Juliana" />
+            <img src="./juliana-avatar-1.jpg" alt="Juliana" />
             <div class="hero-photo-badge">
               <div class="dot"></div>
               <span>Juliana · en línea ahora</span>
@@ -2516,6 +2538,15 @@
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
     document.querySelectorAll('[data-reveal]').forEach(el => _ro.observe(el));
+
+    // Hero live counter (FOMO HUD)
+    const _heroLiveEl = document.getElementById('heroLiveCount');
+    if (_heroLiveEl) {
+      setInterval(() => {
+        const base = 2481 + Math.floor(Math.random() * 40) - 20;
+        _heroLiveEl.textContent = base.toLocaleString('es-CO');
+      }, 4000);
+    }
 
     // Nav glass on scroll
     window.addEventListener('scroll', () => {
