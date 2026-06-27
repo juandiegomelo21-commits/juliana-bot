@@ -2663,8 +2663,9 @@
         frame.classList.add('hologram-active');
         if (!rafId) keyFrame();
 
-        const burstDuration = 3200 + Math.random() * 1800;
-        burstTimeout = setTimeout(endHologramBurst, burstDuration);
+        // Safety fallback in case 'ended' never fires (e.g. duration unknown)
+        clearTimeout(burstTimeout);
+        burstTimeout = setTimeout(endHologramBurst, 15000);
       }
 
       function endHologramBurst() {
@@ -2682,6 +2683,9 @@
         burstTimeout = setTimeout(playHologramBurst, nextDelay);
       }
 
+      video.addEventListener('ended', () => {
+        if (frame.classList.contains('hologram-active')) endHologramBurst();
+      });
       video.addEventListener('error', () => {
         clearTimeout(burstTimeout);
         canvas.style.display = 'none';
