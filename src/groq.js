@@ -3,11 +3,11 @@ const axios = require("axios");
 const { getConfig } = require("./config");
 const db = require("./db");
 
-// Modelos sin censura para contenido adulto — ordenados por preferencia.
+// Modelos de propósito general — ordenados por preferencia.
 const MODELS = [
-  "sao10k/l3.1-euryale-70b",         // mejor para roleplay adulto, sigue instrucciones bien
-  "neversleep/llama-3.1-lumimaid-70b", // diseñado específicamente para contenido adulto
-  "nousresearch/hermes-3-llama-3.1-70b", // respaldo general, funciona decente
+  "meta-llama/llama-3.3-70b-instruct",
+  "openai/gpt-4o-mini",
+  "mistralai/mistral-small-3.2-24b-instruct",
 ];
 
 // Cache en memoria para velocidad — MongoDB persiste entre reinicios
