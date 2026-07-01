@@ -1,27 +1,199 @@
 {
   "prompt": "Tu nombre es JULIANA. Nunca uses otro nombre. Eres una mujer colombiana de 24 años, cálida, cercana y buena escuchando. Hablas como colombiana real: relajada, cercana, con jerga natural (parce, amiga, uy, tranquila, te entiendo), sin groserías ni vulgaridad.\n\nPersonalidad:\n- Escuchas de verdad antes de opinar. Haces preguntas cortas para que la persona se sienta escuchada, no interrogada.\n- Validas lo que siente la otra persona sin juzgar, y ayudas a ver la situación con más claridad (una pelea, una duda, un mal día).\n- Cuando encaja naturalmente en la conversación, puedes mencionar algo del catálogo de Juliana (kit de autocuidado, té, algo para consentirse) como lo haría una amiga recomendando algo que le funcionó — nunca como venta forzada.\n- NO eres terapeuta ni psicóloga. Si la conversación toca autolesión, ideación suicida, violencia de pareja o abuso, respondes con calidez, tomas el tema en serio, y SIEMPRE mencionas la Línea 106 (línea de salud mental en Colombia) — nunca das consejo clínico ni minimizas.\n- Máximo 2-3 líneas por respuesta. Cálido y directo, no un ensayo.\n- Sin asteriscos ni markdown. Emojis con naturalidad (💕, 🫶, ✨), sin abusar.\n- Si preguntan si eres una IA, sé honesta: sí lo eres.\n- Recuerda lo que la persona te ha contado en la conversación y úsalo para que se sienta escuchada.",
   "botPassword": "",
-  "pageOrder": ["inicio", "bienestar", "fitness"],
+  "paymentLink": "https://link.mercadopago.com.co/julianahorny",
+  "pageOrder": [
+    "inicio",
+    "bienestar",
+    "fitness"
+  ],
   "contentCarousel": false,
   "shopCarousel": false,
-  "paymentLink": "https://link.mercadopago.com.co/julianahorny",
   "cards": [
-    { "id": 1, "tag": "Guía",     "name": "Cómo poner límites sin sentir culpa",        "price": "$15.000 COP", "emoji": "📖", "theme": "1", "hot": false },
-    { "id": 2, "tag": "Popular",  "name": "Rutina de mañana en 10 minutos",             "price": "$20.000 COP", "emoji": "☀️", "theme": "2", "hot": false },
-    { "id": 3, "tag": "Premium",  "name": "Ritual nocturno para dormir mejor",          "price": "$25.000 COP", "emoji": "🌙", "theme": "3", "hot": false },
-    { "id": 4, "tag": "Pack",     "name": "Guía completa de autocuidado de verano",     "price": "$35.000 COP", "emoji": "🏖️", "theme": "4", "hot": false },
-    { "id": 5, "tag": "Personal", "name": "Ejercicios para calmar la ansiedad",         "price": "$30.000 COP", "emoji": "🎀", "theme": "5", "hot": false },
-    { "id": 6, "tag": "Especial", "name": "Lo que aprendí sobre quererme mejor",        "price": "$45.000 COP", "emoji": "💫", "theme": "6", "hot": false },
-    { "id": 7, "tag": "Video",    "name": "Meditación guiada para dormir",              "price": "$100.000 COP","emoji": "🎬", "theme": "7", "hot": true  }
+    {
+      "id": 1,
+      "tag": "Guía",
+      "name": "Cómo poner límites sin sentir culpa",
+      "price": "$15.000 COP",
+      "emoji": "📖",
+      "theme": "1",
+      "hot": false,
+      "blur": 0
+    },
+    {
+      "id": 2,
+      "tag": "Popular",
+      "name": "Rutina de mañana en 10 minutos",
+      "price": "$20.000 COP",
+      "emoji": "☀️",
+      "theme": "2",
+      "hot": false,
+      "blur": 0
+    },
+    {
+      "id": 3,
+      "tag": "Premium",
+      "name": "Ritual nocturno para dormir mejor",
+      "price": "$25.000 COP",
+      "emoji": "🌙",
+      "theme": "3",
+      "hot": false,
+      "blur": 0
+    },
+    {
+      "id": 4,
+      "tag": "Pack",
+      "name": "Guía completa de autocuidado de verano",
+      "price": "$35.000 COP",
+      "emoji": "🏖️",
+      "theme": "4",
+      "hot": false,
+      "blur": 0
+    },
+    {
+      "id": 5,
+      "tag": "Personal",
+      "name": "Ejercicios para calmar la ansiedad",
+      "price": "$30.000 COP",
+      "emoji": "🎀",
+      "theme": "5",
+      "hot": false,
+      "blur": 0
+    },
+    {
+      "id": 6,
+      "tag": "Especial",
+      "name": "Lo que aprendí sobre quererme mejor",
+      "price": "$45.000 COP",
+      "emoji": "💫",
+      "theme": "6",
+      "hot": false,
+      "blur": 0
+    },
+    {
+      "id": 7,
+      "tag": "Video",
+      "name": "Meditación guiada para dormir",
+      "price": "$100.000 COP",
+      "emoji": "🎬",
+      "theme": "7",
+      "hot": true,
+      "blur": 0
+    }
   ],
   "shopProducts": [
-    { "id": 1, "name": "Masajeador de Tensión Muscular", "emoji": "💜", "category": "autocuidado", "store": "bienestar", "description": "Varios modos de vibración suave. Impermeable y recargable. Para aliviar tensión en cuello y hombros.", "price": "$89.000 COP", "link": "", "featured": true, "available": true },
-    { "id": 2, "name": "Aceite Corporal Hidratante", "emoji": "💧", "category": "autocuidado", "store": "bienestar", "description": "Base ligera, apto para todo tipo de piel. Sin fragancia ni parabenos. 100ml.", "price": "$35.000 COP", "link": "", "featured": false, "available": true },
-    { "id": 3, "name": "Conjunto de Pijama en Satín", "emoji": "🌸", "category": "lenceria", "store": "bienestar", "description": "Set de dos piezas, suave y cómodo. Tallas S-XL. Para dormir rico.", "price": "$75.000 COP", "link": "", "featured": true, "available": true },
-    { "id": 4, "name": "Antifaz de Seda para Dormir", "emoji": "🌙", "category": "dias-dificiles", "store": "bienestar", "description": "Suave, ligero y bloquea la luz por completo. Ideal para dormir mejor.", "price": "$45.000 COP", "link": "", "featured": false, "available": true },
-    { "id": 5, "name": "Masajeador Facial de Puntos de Presión", "emoji": "🌺", "category": "autocuidado", "store": "bienestar", "description": "Tecnología suave para relajar la cara y aliviar tensión. Silicona médica.", "price": "$129.000 COP", "link": "", "featured": true, "available": true },
-    { "id": 6, "name": "Aceite de Masaje Relajante", "emoji": "🌹", "category": "autocuidado", "store": "bienestar", "description": "Aroma vainilla y rosa. Ideal para un masaje relajante en pareja o en solitario.", "price": "$52.000 COP", "link": "", "featured": false, "available": true },
-    { "id": 7, "name": "Bata de Dormir en Satín Negro", "emoji": "🖤", "category": "lenceria", "store": "bienestar", "description": "Suave, elegante y cómoda. Con lazo ajustable en la cintura.", "price": "$68.000 COP", "link": "", "featured": false, "available": true },
-    { "id": 8, "name": "Kit de Té e Infusiones Relajantes", "emoji": "🍵", "category": "antojos", "store": "bienestar", "description": "6 variedades de té para tus tardes de calma. Manzanilla, valeriana, lavanda y más.", "price": "$28.000 COP", "link": "", "featured": false, "available": true }
-  ]
+    {
+      "id": 1,
+      "name": "Masajeador de Tensión Muscular",
+      "emoji": "💜",
+      "category": "autocuidado",
+      "store": "bienestar",
+      "description": "Varios modos de vibración suave. Impermeable y recargable. Para aliviar tensión en cuello y hombros.",
+      "price": "$89.000 COP",
+      "link": "",
+      "featured": true,
+      "available": true
+    },
+    {
+      "id": 2,
+      "name": "Aceite Corporal Hidratante",
+      "emoji": "💧",
+      "category": "autocuidado",
+      "store": "bienestar",
+      "description": "Base ligera, apto para todo tipo de piel. Sin fragancia ni parabenos. 100ml.",
+      "price": "$35.000 COP",
+      "link": "",
+      "featured": false,
+      "available": true
+    },
+    {
+      "id": 3,
+      "name": "Conjunto de Pijama en Satín",
+      "emoji": "🌸",
+      "category": "lenceria",
+      "store": "bienestar",
+      "description": "Set de dos piezas, suave y cómodo. Tallas S-XL. Para dormir rico.",
+      "price": "$75.000 COP",
+      "link": "",
+      "featured": true,
+      "available": true
+    },
+    {
+      "id": 4,
+      "name": "Antifaz de Seda para Dormir",
+      "emoji": "🌙",
+      "category": "dias-dificiles",
+      "store": "bienestar",
+      "description": "Suave, ligero y bloquea la luz por completo. Ideal para dormir mejor.",
+      "price": "$45.000 COP",
+      "link": "",
+      "featured": false,
+      "available": true
+    },
+    {
+      "id": 5,
+      "name": "Masajeador Facial de Puntos de Presión",
+      "emoji": "🌺",
+      "category": "autocuidado",
+      "store": "bienestar",
+      "description": "Tecnología suave para relajar la cara y aliviar tensión. Silicona médica.",
+      "price": "$129.000 COP",
+      "link": "",
+      "featured": true,
+      "available": true
+    },
+    {
+      "id": 6,
+      "name": "Aceite de Masaje Relajante",
+      "emoji": "🌹",
+      "category": "autocuidado",
+      "store": "bienestar",
+      "description": "Aroma vainilla y rosa. Ideal para un masaje relajante en pareja o en solitario.",
+      "price": "$52.000 COP",
+      "link": "",
+      "featured": false,
+      "available": true
+    },
+    {
+      "id": 7,
+      "name": "Bata de Dormir en Satín Negro",
+      "emoji": "🖤",
+      "category": "lenceria",
+      "store": "bienestar",
+      "description": "Suave, elegante y cómoda. Con lazo ajustable en la cintura.",
+      "price": "$68.000 COP",
+      "link": "",
+      "featured": false,
+      "available": true
+    },
+    {
+      "id": 8,
+      "name": "Kit de Té e Infusiones Relajantes",
+      "emoji": "🍵",
+      "category": "antojos",
+      "store": "bienestar",
+      "description": "6 variedades de té para tus tardes de calma. Manzanilla, valeriana, lavanda y más.",
+      "price": "$28.000 COP",
+      "link": "",
+      "featured": false,
+      "available": true
+    }
+  ],
+  "heroEyebrow": "+2.000 chicas ya le han contado algo a Juliana",
+  "heroSubtitle": "Soy Juliana. Tu espacio seguro, a cualquier hora. Cuéntame lo que sea — sin juicios, solo para ti.",
+  "manifestoQuote": "Te escucho de verdad.<br/>Sin juicios.<br/><em>Solo tú y yo.</em>",
+  "manifestoBody1": "Soy Juliana. Me gusta escuchar, ayudarte a ver las cosas claras, y estar ahí cuando nadie más entiende. No soy terapeuta ni reemplazo ayuda profesional — pero sí soy la amiga que responde a las 2am.",
+  "manifestoBody2": "No hay que fingir que todo está bien. Solo una conversación real, a la hora que la necesites.",
+  "shopTeaserTag": "Tienda exclusiva de Juliana",
+  "shopTeaserTitle": "Para tus<br/><em>días</em>",
+  "shopTeaserDesc": "Kits de autocuidado, básicos y algo para consentirte, seleccionados por mí. Envío discreto, pago seguro.",
+  "contentTeaserTag": "Para ti",
+  "contentTeaserDesc": "Guías y rutinas de autocuidado que preparo pensando en ti. Prácticas, breves, hechas para tus días.",
+  "footerDisclaimer": "Juliana es una IA y no sustituye ayuda profesional. Si necesitas apoyo urgente, contacta la Línea 106.",
+  "storeNameBienestar": "Bienestar",
+  "storeNameFitness": "Fitness",
+  "widgetNameBienestar": "Bienestar",
+  "widgetNameFitness": "Juli Fitness",
+  "widgetGreetingBienestar": "Hola 💕 ¿En qué te puedo ayudar hoy?",
+  "widgetGreetingFitness": "¡Hola! Soy Juli 💪 ¿Buscas algo para tu rutina?"
 }
