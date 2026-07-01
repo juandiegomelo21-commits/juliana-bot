@@ -37,7 +37,10 @@
     /* ── BACKGROUND ── */
     .bg {
       position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+      transition: filter 0.5s ease;
     }
+    body.theme-fitness .bg { filter: grayscale(0.55) hue-rotate(140deg) saturate(1.4) brightness(0.7); }
+    body.theme-fitness { --pink-light: #93c5fd; --pink: #3b82f6; --purple: #1e3a8a; --purple-light: #60a5fa; }
     .blob {
       position: absolute; border-radius: 50%;
       filter: blur(140px); opacity: 0.38;
@@ -102,7 +105,7 @@
       color: #fff;
       box-shadow: 0 2px 12px rgba(124,58,237,0.28);
     }
-    #btn-sexshop:not(.active) {
+    #btn-bienestar:not(.active), #btn-fitness:not(.active) {
       color: rgba(244,114,182,0.78);
       animation: shopNavPulse 3s ease-in-out infinite;
     }
@@ -759,6 +762,14 @@
     }
 
     .shop-content { padding: 60px 80px 120px; max-width: 1280px; }
+    .store-tabs { display: flex; gap: 10px; margin-bottom: 24px; }
+    .store-tab {
+      padding: 10px 22px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.5);
+      font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.28s;
+    }
+    .store-tab.active { background: linear-gradient(135deg, var(--purple), var(--pink)); border-color: transparent; color: #fff; }
+    body.theme-fitness .store-tab.active { background: linear-gradient(135deg, #1e3a8a, #0f172a); }
     .shop-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 48px; }
     .filter-btn {
       padding: 10px 24px; border-radius: 100px;
@@ -768,6 +779,8 @@
     }
     .filter-btn:hover { border-color: rgba(236,72,153,0.3); color: rgba(255,255,255,0.72); }
     .filter-btn.active { background: rgba(236,72,153,0.14); border-color: rgba(236,72,153,0.38); color: rgba(244,114,182,0.95); }
+    body.theme-fitness .filter-btn:hover { border-color: rgba(96,165,250,0.35); }
+    body.theme-fitness .filter-btn.active { background: rgba(59,130,246,0.16); border-color: rgba(96,165,250,0.4); color: rgba(219,234,254,0.95); }
 
     .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 22px; }
     .shop-card {
@@ -778,6 +791,7 @@
       position: relative; cursor: default;
     }
     .shop-card:hover { transform: translateY(-8px); border-color: rgba(236,72,153,0.22); box-shadow: 0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(236,72,153,0.07); }
+    body.theme-fitness .shop-card:hover { border-color: rgba(96,165,250,0.28); box-shadow: 0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(96,165,250,0.1); }
     .shop-card[data-hidden="true"] { display: none; }
     @keyframes shopCardIn { from { opacity: 0; transform: translateY(24px) scale(0.95); } to { opacity: 1; transform: none; } }
 
@@ -794,9 +808,14 @@
     .shop-thumb-autocuidado { background: linear-gradient(135deg, rgba(30,27,75,0.75), rgba(88,28,135,0.55)); }
     .shop-thumb-lenceria   { background: linear-gradient(135deg, rgba(109,40,217,0.42), rgba(236,72,153,0.38)); }
     .shop-thumb-antojos    { background: linear-gradient(135deg, rgba(49,46,129,0.62), rgba(131,24,67,0.48)); }
+    .shop-thumb-tops       { background: linear-gradient(135deg, rgba(30,58,138,0.65), rgba(15,23,42,0.6)); }
+    .shop-thumb-leggings   { background: linear-gradient(135deg, rgba(30,64,175,0.6), rgba(2,6,23,0.65)); }
+    .shop-thumb-conjuntos  { background: linear-gradient(135deg, rgba(12,74,110,0.55), rgba(15,23,42,0.65)); }
+    .shop-thumb-accesorios { background: linear-gradient(135deg, rgba(51,65,85,0.6), rgba(0,0,0,0.65)); }
     .shop-thumb-default    { background: linear-gradient(135deg, rgba(88,28,135,0.5), rgba(109,40,217,0.42)); }
     .shop-card-badges { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 6px; z-index: 2; }
     .badge-featured { background: linear-gradient(135deg, rgba(236,72,153,0.88), rgba(244,114,182,0.78)); color: #fff; font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; }
+    body.theme-fitness .badge-featured { background: linear-gradient(135deg, rgba(30,58,138,0.92), rgba(96,165,250,0.75)); }
     .shop-card-q { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(6,6,10,0.92) 60%, transparent); padding: 24px 14px 14px; opacity: 0; transition: opacity 0.28s; border-radius: 0 0 24px 24px; z-index: 4; pointer-events: none; }
     .shop-card:hover .shop-card-q { opacity: 1; }
     .shop-card-q-text { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic; color: rgba(255,255,255,0.85); line-height: 1.45; }
@@ -804,12 +823,15 @@
     .shop-card-q-text::after  { content: '"'; color: rgba(244,114,182,0.8); margin-left: 2px; }
     .shop-card-body { padding: 20px 22px 24px; }
     .shop-card-cat { font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(244,114,182,0.58); margin-bottom: 7px; }
+    body.theme-fitness .shop-card-cat { color: rgba(147,197,253,0.65); }
     .shop-card-name { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 400; color: rgba(255,255,255,0.9); margin-bottom: 8px; line-height: 1.2; }
     .shop-card-desc { font-size: 12px; color: rgba(255,255,255,0.28); line-height: 1.65; margin-bottom: 18px; }
     .shop-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .shop-price { font-size: 17px; font-weight: 500; color: rgba(255,255,255,0.88); letter-spacing: -0.3px; }
     .shop-buy { padding: 10px 22px; background: linear-gradient(135deg, rgba(236,72,153,0.82), rgba(167,139,250,0.72)); border: none; border-radius: 100px; color: #fff; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; letter-spacing: 0.2px; }
     .shop-buy:hover { transform: scale(1.07); box-shadow: 0 8px 28px rgba(236,72,153,0.45); }
+    body.theme-fitness .shop-buy { background: linear-gradient(135deg, rgba(30,58,138,0.88), rgba(96,165,250,0.7)); }
+    body.theme-fitness .shop-buy:hover { box-shadow: 0 8px 28px rgba(59,130,246,0.45); }
 
     /* ── CONTENIDO PAGE ── */
     .content-section { padding: 130px 80px 100px; max-width: 1280px; }
@@ -870,6 +892,7 @@
     .admin-del-btn { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.18); color: rgba(239,68,68,0.72); border-radius: 8px; padding: 5px 13px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
     .admin-del-btn:hover { background: rgba(239,68,68,0.2); color: #ef4444; border-color: rgba(239,68,68,0.35); }
     .admin-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+    .admin-grid-4 { display: grid; grid-template-columns: 0.7fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     .admin-grid-1 { margin-bottom: 8px; }
     .admin-chk-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
     .admin-chk-row label { font-size: 12px; color: rgba(255,255,255,0.38); cursor: pointer; user-select: none; }
@@ -965,6 +988,70 @@
     .float-shop.visible { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); animation: floatShopPulse 3.5s ease-in-out infinite; }
     .float-shop:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 16px 48px rgba(236,72,153,0.65); }
     @keyframes floatShopPulse { 0%,100% { box-shadow: 0 8px 32px rgba(236,72,153,0.5); } 50% { box-shadow: 0 8px 52px rgba(236,72,153,0.75); } }
+
+    /* ── CHAT WIDGET (tienda) — estilo holograma ── */
+    .juli-widget { position: fixed; bottom: 28px; right: 24px; z-index: 60; }
+    .juli-widget-bubble {
+      width: 62px; height: 62px; border-radius: 50%; border: none; cursor: pointer; padding: 3px;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      box-shadow: 0 8px 32px rgba(124,58,237,0.5), 0 0 0 1px rgba(103,232,249,0.3); position: relative;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .juli-widget-bubble:hover { transform: scale(1.08); }
+    .juli-widget-bubble img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.9); display: block; filter: drop-shadow(-1px 0 rgba(236,72,153,0.5)) drop-shadow(1px 0 rgba(34,211,238,0.5)); }
+    .juli-widget-ring { position: absolute; inset: -6px; border-radius: 50%; border: 1px solid rgba(103,232,249,0.55); pointer-events: none; animation: hologramRingPulse 2.6s ease-out infinite; }
+    .juli-widget-ring.ring-2 { animation-delay: 1.3s; }
+    @keyframes hologramRingPulse {
+      0% { transform: scale(1); opacity: 0.75; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+    .juli-widget-dot { position: absolute; bottom: 1px; right: 1px; width: 14px; height: 14px; border-radius: 50%; background: #34d399; border: 2px solid #0c0c14; box-shadow: 0 0 8px rgba(52,211,153,0.6); }
+    .juli-widget-panel {
+      position: absolute; bottom: 76px; right: 0; width: 320px; max-width: calc(100vw - 48px);
+      background: rgba(8,14,20,0.72); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(103,232,249,0.35); border-radius: 22px; overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 50px rgba(103,232,249,0.18), inset 0 0 40px rgba(103,232,249,0.05);
+      opacity: 0; pointer-events: none; transform: translateY(16px) scale(0.94); transform-origin: bottom right;
+      transition: opacity 0.3s cubic-bezier(0.34,1.56,0.64,1), transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .juli-widget-panel.show { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+    .juli-widget-panel.materialize { animation: widgetMaterialize 0.5s steps(6,end) 1; }
+    @keyframes widgetMaterialize {
+      0%, 100% { opacity: 1; }
+      15% { opacity: 0.3; }
+      30% { opacity: 0.85; }
+      45% { opacity: 0.4; }
+      60% { opacity: 1; }
+      75% { opacity: 0.6; }
+    }
+    .juli-widget-panel::before {
+      content: ''; position: absolute; inset: 0; z-index: 5; pointer-events: none; border-radius: inherit;
+      background: repeating-linear-gradient(to bottom, rgba(103,232,249,0.05) 0px, rgba(103,232,249,0.05) 1px, transparent 2px, transparent 4px);
+    }
+    .juli-widget-panel::after {
+      content: ''; position: absolute; inset: 0; z-index: 5; pointer-events: none; border-radius: inherit;
+      background: linear-gradient(180deg, transparent 0%, rgba(103,232,249,0.14) 50%, transparent 100%);
+      animation: hologramScan 3.2s linear infinite;
+    }
+    .juli-widget-corner { position: absolute; width: 14px; height: 14px; border: 1.5px solid rgba(103,232,249,0.65); pointer-events: none; z-index: 6; }
+    .juli-widget-corner.tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+    .juli-widget-corner.tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+    .juli-widget-header { position: relative; display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: linear-gradient(135deg, var(--purple), var(--pink)); }
+    .juli-widget-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.5); flex-shrink: 0; filter: drop-shadow(-1px 0 rgba(236,72,153,0.5)) drop-shadow(1px 0 rgba(34,211,238,0.6)); }
+    .juli-widget-name { font-size: 14px; font-weight: 600; color: #fff; }
+    .juli-widget-status { font-size: 10px; color: rgba(224,247,250,0.85); letter-spacing: 0.6px; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+    .juli-widget-status .dot { width: 5px; height: 5px; border-radius: 50%; background: #67e8f9; box-shadow: 0 0 6px #67e8f9; animation: blink 2.5s ease-in-out infinite; }
+    .juli-widget-close { margin-left: auto; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 13px; flex-shrink: 0; }
+    .juli-widget-close:hover { background: rgba(255,255,255,0.25); }
+    .juli-widget-msgs { position: relative; z-index: 2; height: 280px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .juli-widget-input-area { position: relative; z-index: 2; display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid rgba(103,232,249,0.15); }
+    .juli-widget-input { flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(103,232,249,0.2); border-radius: 100px; padding: 9px 14px; color: #fff; font-size: 13px; outline: none; font-family: inherit; }
+    .juli-widget-send { width: 36px; height: 36px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--purple), var(--pink)); color: #fff; cursor: pointer; flex-shrink: 0; }
+    .juli-widget-send:hover { transform: scale(1.06); }
+    @media (max-width: 480px) {
+      .juli-widget { bottom: 86px; right: 16px; }
+      .juli-widget-panel { width: calc(100vw - 32px); }
+    }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
@@ -1089,6 +1176,7 @@
 
       /* Admin */
       .admin-grid-3 { grid-template-columns: 1fr 1fr; }
+      .admin-grid-4 { grid-template-columns: 1fr 1fr; }
 
       /* Espaciado base de páginas */
       .page { padding-bottom: 72px; }
@@ -1168,8 +1256,8 @@
     <div class="nav-logo" onclick="showPage('inicio')">Juliana</div>
     <div class="nav-center">
       <button class="nav-btn active" id="btn-inicio" onclick="showPage('inicio')">Inicio</button>
-      <button class="nav-btn" id="btn-contenido" onclick="showPage('contenido')">Cuéntale</button>
-      <button class="nav-btn" id="btn-sexshop" onclick="showPage('sexshop')">Tienda</button>
+      <button class="nav-btn" id="btn-bienestar" onclick="goStore('bienestar')">Bienestar</button>
+      <button class="nav-btn" id="btn-fitness" onclick="goStore('fitness')">Fitness</button>
     </div>
     <button class="nav-account" id="btn-cuenta" onclick="openAccount()">Mi Cuenta</button>
   </nav>
@@ -1352,15 +1440,26 @@
   <div class="page" id="page-sexshop">
     <section class="shop-content" style="padding-top:100px">
       <div style="margin-bottom:28px;padding:0 4px">
-        <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--pink-light);opacity:0.7;margin-bottom:6px">Tienda exclusiva</p>
+        <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--pink-light);opacity:0.7;margin-bottom:6px" id="shopEyebrow">Tienda exclusiva</p>
         <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(32px,6vw,52px);font-weight:300;font-style:italic;color:#fff;line-height:1.1;margin-bottom:0">Mi Tienda</h2>
       </div>
-      <div class="shop-filters">
+      <div class="store-tabs">
+        <button class="store-tab active" id="stab-bienestar" onclick="switchStore('bienestar')">🌸 Bienestar</button>
+        <button class="store-tab" id="stab-fitness" onclick="switchStore('fitness')">💪 Fitness</button>
+      </div>
+      <div class="shop-filters" id="filters-bienestar">
         <button class="filter-btn active" onclick="filterShop(this,'todos')">✨ Todos</button>
         <button class="filter-btn" onclick="filterShop(this,'dias-dificiles')">🫂 Días difíciles</button>
         <button class="filter-btn" onclick="filterShop(this,'autocuidado')">🌿 Autocuidado</button>
         <button class="filter-btn" onclick="filterShop(this,'lenceria')">🌸 Lencería</button>
         <button class="filter-btn" onclick="filterShop(this,'antojos')">🍫 Antojos</button>
+      </div>
+      <div class="shop-filters" id="filters-fitness" style="display:none">
+        <button class="filter-btn active" onclick="filterShop(this,'todos')">✨ Todos</button>
+        <button class="filter-btn" onclick="filterShop(this,'tops')">👚 Tops</button>
+        <button class="filter-btn" onclick="filterShop(this,'leggings')">🩳 Leggings</button>
+        <button class="filter-btn" onclick="filterShop(this,'conjuntos')">🎽 Conjuntos</button>
+        <button class="filter-btn" onclick="filterShop(this,'accesorios')">🎒 Accesorios</button>
       </div>
       <div class="shop-grid" id="shopGrid"></div>
       <div class="carousel-wrap" id="shopCarouselWrap" style="display:none">
@@ -1387,6 +1486,35 @@
       <p>Juliana es una IA y no sustituye ayuda profesional. Si necesitas apoyo urgente, contacta la Línea 106.</p><br/>
       <p>Hecho con amor por <a href="#">ChatMe Tequila</a> · 2025</p>
     </footer>
+
+    <!-- Widget de chat flotante -->
+    <div class="juli-widget" id="juliWidget">
+      <div class="juli-widget-panel" id="juliWidgetPanel">
+        <span class="juli-widget-corner tl"></span>
+        <span class="juli-widget-corner tr"></span>
+        <div class="juli-widget-header">
+          <img class="juli-widget-avatar" src="./juliana-pp.jpg" alt="Juliana" />
+          <div>
+            <p class="juli-widget-name" id="juliWidgetName">Bienestar</p>
+            <p class="juli-widget-status"><span class="dot"></span>holograma · en línea</p>
+          </div>
+          <button class="juli-widget-close" onclick="toggleJuliWidget(false)">✕</button>
+        </div>
+        <div class="juli-widget-msgs" id="juliWidgetMsgs"></div>
+        <div class="juli-widget-input-area">
+          <input class="juli-widget-input" id="juliWidgetInp" placeholder="Escríbele..." onkeydown="if(event.key==='Enter')sendWidget()" />
+          <button class="juli-widget-send" onclick="sendWidget()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+      <button class="juli-widget-bubble" id="juliWidgetBubble" onclick="toggleJuliWidget()">
+        <span class="juli-widget-ring"></span>
+        <span class="juli-widget-ring ring-2"></span>
+        <img src="./juliana-pp.jpg" alt="Juliana" />
+        <span class="juli-widget-dot"></span>
+      </button>
+    </div>
   </div>
 
   </div><!-- end wrapper -->
@@ -1563,11 +1691,11 @@
       <button class="bnav-btn active" id="bnav-inicio" onclick="showPage('inicio')">
         <span class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg></span>Inicio
       </button>
-      <button class="bnav-btn" id="bnav-contenido" onclick="showPage('contenido')">
-        <span class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>Cuéntale
+      <button class="bnav-btn" id="bnav-bienestar" onclick="goStore('bienestar')">
+        <span class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>Bienestar
       </button>
-      <button class="bnav-btn" id="bnav-sexshop" onclick="showPage('sexshop')">
-        <span class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>Tienda
+      <button class="bnav-btn" id="bnav-fitness" onclick="goStore('fitness')">
+        <span class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="4" height="6" rx="1"/><rect x="18" y="9" width="4" height="6" rx="1"/><line x1="6" y1="12" x2="18" y2="12"/></svg></span>Fitness
       </button>
       <button class="bnav-btn" id="bnav-cuenta" onclick="openAccount()">
         <span class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>Cuenta
@@ -1582,6 +1710,12 @@
     let adminPassword = null;
     let adminTapCount = 0;
     let adminTapTimer = null;
+    let currentStore = 'bienestar';
+    let _shopRendered = [];
+    const CATEGORY_LABELS = {
+      'dias-dificiles': 'Días difíciles', 'autocuidado': 'Autocuidado', 'lenceria': 'Lencería', 'antojos': 'Antojos',
+      'tops': 'Tops', 'leggings': 'Leggings', 'conjuntos': 'Conjuntos', 'accesorios': 'Accesorios',
+    };
 
     async function loadConfig() {
       try {
@@ -1592,7 +1726,9 @@
         if (siteConfig.cards?.length) renderContentTeaser(siteConfig.cards);
         if (siteConfig.pageOrder?.length) {
           applyPageOrder(siteConfig.pageOrder);
-          showPage(siteConfig.pageOrder[0]);
+          const firstPage = siteConfig.pageOrder[0];
+          if (firstPage === 'bienestar' || firstPage === 'fitness') goStore(firstPage);
+          else showPage(firstPage);
         }
         if (!siteConfig.googleEnabled) {
           document.getElementById('googleAuthSection').style.display = 'none';
@@ -1647,10 +1783,22 @@
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('page-' + name).classList.add('active');
-      document.getElementById('btn-' + name)?.classList.add('active');
-      document.getElementById('bnav-' + name)?.classList.add('active');
+      if (name === 'sexshop') {
+        document.getElementById('btn-' + currentStore)?.classList.add('active');
+        document.getElementById('bnav-' + currentStore)?.classList.add('active');
+      } else {
+        document.getElementById('btn-' + name)?.classList.add('active');
+        document.getElementById('bnav-' + name)?.classList.add('active');
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
       document.getElementById('floatShop')?.classList.remove('visible');
+      document.body.classList.toggle('theme-fitness', name === 'sexshop' && currentStore === 'fitness');
+    }
+
+    function goStore(store) {
+      currentStore = store;
+      showPage('sexshop');
+      switchStore(store);
     }
 
     function resize(el) {
@@ -1766,15 +1914,18 @@
       const grid = document.getElementById('shopGrid');
       const carouselWrap = document.getElementById('shopCarouselWrap');
       if (!grid || !siteConfig?.shopProducts) return;
-      const products = siteConfig.shopProducts.filter(p => p.available !== false);
+      const products = siteConfig.shopProducts.filter(p => p.available !== false && (p.store || 'bienestar') === currentStore);
+      _shopRendered = products;
 
       const useCarousel = !!siteConfig.shopCarousel;
       grid.style.display = useCarousel ? 'none' : '';
       if (carouselWrap) carouselWrap.style.display = useCarousel ? '' : 'none';
 
+      const bienestarProducts = siteConfig.shopProducts.filter(p => p.available !== false && (p.store || 'bienestar') === 'bienestar');
+      renderShopTeaser(bienestarProducts);
+
       if (products.length === 0) {
         grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 24px;color:rgba(255,255,255,0.25);font-style:italic">Pronto habrá productos disponibles 🌹</div>`;
-        renderShopTeaser([]);
         return;
       }
 
@@ -1803,7 +1954,7 @@
                 <div class="shop-card-q"><span class="shop-card-q-text">${quote}</span></div>
               </div>
               <div class="shop-card-body">
-                <p class="shop-card-cat">${p.category || 'producto'}</p>
+                <p class="shop-card-cat">${CATEGORY_LABELS[p.category] || p.category || 'producto'}</p>
                 <p class="shop-card-name">${p.name}</p>
                 <p class="shop-card-desc">${p.description || ''}</p>
                 <div class="shop-card-footer">
@@ -1814,7 +1965,6 @@
             </div>`;
         }).join('');
       }
-      renderShopTeaser(products);
     }
 
     function renderShopTeaser(products) {
@@ -1851,8 +2001,80 @@
       });
     }
 
+    function switchStore(store) {
+      currentStore = store;
+      document.getElementById('stab-bienestar').classList.toggle('active', store === 'bienestar');
+      document.getElementById('stab-fitness').classList.toggle('active', store === 'fitness');
+      document.getElementById('filters-bienestar').style.display = store === 'bienestar' ? 'flex' : 'none';
+      document.getElementById('filters-fitness').style.display = store === 'fitness' ? 'flex' : 'none';
+      document.getElementById('shopEyebrow').textContent = store === 'fitness' ? 'Ropa y accesorios fitness' : 'Tienda exclusiva';
+      document.body.classList.toggle('theme-fitness', store === 'fitness');
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('btn-' + store)?.classList.add('active');
+      document.getElementById('bnav-' + store)?.classList.add('active');
+      document.querySelectorAll('#filters-' + store + ' .filter-btn').forEach((b, idx) => b.classList.toggle('active', idx === 0));
+      renderShop();
+      document.getElementById('juliWidgetName').textContent = store === 'fitness' ? 'Juli Fitness' : 'Bienestar';
+    }
+
+    let widgetBusy = false;
+
+    function toggleJuliWidget(force) {
+      const panel = document.getElementById('juliWidgetPanel');
+      const show = force !== undefined ? force : !panel.classList.contains('show');
+      panel.classList.toggle('show', show);
+      if (show) {
+        panel.classList.remove('materialize');
+        void panel.offsetWidth;
+        panel.classList.add('materialize');
+        setTimeout(() => panel.classList.remove('materialize'), 500);
+      }
+      if (show && !panel.dataset.greeted) {
+        panel.dataset.greeted = '1';
+        const greeting = currentStore === 'fitness'
+          ? '¡Hola! Soy Juli 💪 ¿Buscas algo para tu rutina?'
+          : 'Hola 💕 ¿En qué te puedo ayudar hoy?';
+        addWidgetMsg(greeting, 'bot');
+      }
+      if (show) document.getElementById('juliWidgetInp').focus();
+    }
+
+    function addWidgetMsg(text, type) {
+      const c = document.getElementById('juliWidgetMsgs');
+      const d = document.createElement('div');
+      d.className = `msg ${type}`;
+      d.innerHTML = type === 'bot'
+        ? `<div class="m-av"><img src="./juliana-pp.jpg" alt="Juliana" /></div><div class="bubble">${text}</div>`
+        : `<div class="bubble">${text}</div>`;
+      c.appendChild(d);
+      c.scrollTop = c.scrollHeight;
+    }
+
+    async function sendWidget() {
+      const inp = document.getElementById('juliWidgetInp');
+      const text = inp.value.trim();
+      if (!text || widgetBusy) return;
+      widgetBusy = true;
+      inp.value = '';
+      addWidgetMsg(text, 'user');
+      try {
+        const r = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, userId: userId() })
+        });
+        const data = await r.json();
+        addWidgetMsg(!r.ok || !data.reply ? 'Uy, se fue la señal 😅 inténtalo de nuevo' : data.reply, 'bot');
+      } catch {
+        addWidgetMsg('Uy, se fue la señal 😅 inténtalo de nuevo', 'bot');
+      }
+      widgetBusy = false;
+      inp.focus();
+    }
+
     async function buyShopProduct(i) {
-      const product = siteConfig?.shopProducts?.[i];
+      const product = _shopRendered?.[i];
       if (!product) return;
       if (product.link && product.link.trim()) {
         window.open(product.link.trim(), '_blank', 'noopener');
@@ -1957,8 +2179,8 @@
     }
 
     // ── Page order ───────────────────────────────────────────────
-    let _pageOrder = ['inicio', 'contenido', 'sexshop'];
-    const PAGE_LABELS = { inicio:'🏠 Inicio', contenido:'💬 Cuéntale', sexshop:'🛍️ Tienda' };
+    let _pageOrder = ['inicio', 'bienestar', 'fitness'];
+    const PAGE_LABELS = { inicio:'🏠 Inicio', bienestar:'🌸 Bienestar', fitness:'💪 Fitness' };
 
     function renderPageOrderAdmin() {
       const list = document.getElementById('pageOrderList');
@@ -2021,18 +2243,33 @@
             <span class="shop-prod-hdr-name">${p.emoji || '🛍️'} ${p.name || 'Nuevo producto'}</span>
             <button class="admin-del-btn" onclick="removeShopProduct(${i})">Eliminar</button>
           </div>
-          <div class="admin-grid-3">
+          <div class="admin-grid-4">
             <div>
               <p class="card-row-label">Emoji</p>
               <input class="admin-input" data-sp="${i}" data-spf="emoji" value="${escHtml(p.emoji||'')}" placeholder="💜" />
             </div>
             <div>
+              <p class="card-row-label">Tienda</p>
+              <select class="admin-input" data-sp="${i}" data-spf="store">
+                <option value="bienestar" ${(p.store||'bienestar')==='bienestar'?'selected':''}>🌸 Bienestar</option>
+                <option value="fitness"   ${p.store==='fitness'                ?'selected':''}>💪 Fitness</option>
+              </select>
+            </div>
+            <div>
               <p class="card-row-label">Categoría</p>
               <select class="admin-input" data-sp="${i}" data-spf="category">
-                <option value="dias-dificiles" ${p.category==='dias-dificiles'?'selected':''}>Días difíciles</option>
-                <option value="autocuidado"    ${p.category==='autocuidado'   ?'selected':''}>Autocuidado</option>
-                <option value="lenceria"       ${p.category==='lenceria'      ?'selected':''}>Lencería</option>
-                <option value="antojos"        ${p.category==='antojos'      ?'selected':''}>Antojos</option>
+                <optgroup label="Bienestar">
+                  <option value="dias-dificiles" ${p.category==='dias-dificiles'?'selected':''}>Días difíciles</option>
+                  <option value="autocuidado"    ${p.category==='autocuidado'   ?'selected':''}>Autocuidado</option>
+                  <option value="lenceria"       ${p.category==='lenceria'      ?'selected':''}>Lencería</option>
+                  <option value="antojos"        ${p.category==='antojos'      ?'selected':''}>Antojos</option>
+                </optgroup>
+                <optgroup label="Fitness">
+                  <option value="tops"       ${p.category==='tops'      ?'selected':''}>Tops</option>
+                  <option value="leggings"   ${p.category==='leggings'  ?'selected':''}>Leggings</option>
+                  <option value="conjuntos"  ${p.category==='conjuntos' ?'selected':''}>Conjuntos</option>
+                  <option value="accesorios" ${p.category==='accesorios'?'selected':''}>Accesorios</option>
+                </optgroup>
               </select>
             </div>
             <div>
@@ -2069,7 +2306,7 @@
     }
 
     function addShopProduct() {
-      _shopAdmin.push({ id: Date.now(), name: 'Nuevo Producto', emoji: '🛍️', category: 'autocuidado', description: '', price: '$0 COP', link: '', featured: false, available: true });
+      _shopAdmin.push({ id: Date.now(), name: 'Nuevo Producto', emoji: '🛍️', store: 'bienestar', category: 'autocuidado', description: '', price: '$0 COP', link: '', featured: false, available: true });
       renderAdminShop(_shopAdmin);
       switchAdminTab('sexshop');
     }
@@ -2087,7 +2324,7 @@
           if (el.type === 'checkbox') return el.checked;
           return el.value;
         };
-        return { ...p, emoji: get('emoji'), category: get('category'), price: get('price'), name: get('name'), description: get('description'), link: get('link'), featured: get('featured'), available: get('available') };
+        return { ...p, emoji: get('emoji'), store: get('store'), category: get('category'), price: get('price'), name: get('name'), description: get('description'), link: get('link'), featured: get('featured'), available: get('available') };
       });
     }
 
@@ -2258,7 +2495,7 @@
       document.getElementById('adminPayLink').value = cfg.paymentLink || '';
 
       // Page order
-      _pageOrder = cfg.pageOrder?.length ? [...cfg.pageOrder] : ['inicio','contenido','sexshop'];
+      _pageOrder = cfg.pageOrder?.length ? [...cfg.pageOrder] : ['inicio','bienestar','fitness'];
       renderPageOrderAdmin();
 
       // Content cards with image + blur
