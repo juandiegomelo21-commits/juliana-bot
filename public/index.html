@@ -3,7 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Juliana</title>
+  <title>Juliana · Tu compañera de bienestar 24/7</title>
+  <meta name="description" content="Soy Juliana. Tu espacio seguro a cualquier hora: chat sin juicios, cursos exclusivos y mi tienda de bienestar y fitness." />
+  <meta name="theme-color" content="#06060a" />
+  <link rel="icon" type="image/jpeg" href="./juliana-pp.jpg" />
+  <link rel="apple-touch-icon" href="./juliana-pp.jpg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Juliana · Tu compañera de bienestar 24/7" />
+  <meta property="og:description" content="Chat sin juicios a cualquier hora, cursos exclusivos y tienda de bienestar y fitness." />
+  <meta property="og:image" content="./juliana-pp.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -32,6 +41,22 @@
       background: var(--bg);
       color: #fff;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ── POLISH 2026 ── */
+    h1, h2, h3 { text-wrap: balance; }
+    ::selection { background: rgba(124,58,237,0.45); color: #fff; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.09); border-radius: 100px; border: 3px solid var(--bg); }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(167,139,250,0.3); }
+    .noise {
+      position: fixed; inset: 0; z-index: 2; pointer-events: none;
+      opacity: 0.032; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
     /* ── BACKGROUND ── */
@@ -177,9 +202,25 @@
     .hero-live {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px; letter-spacing: 1px;
-      color: rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.55);
       display: flex; align-items: center; gap: 8px;
       margin-bottom: 22px;
+      width: fit-content;
+      padding: 8px 18px 8px 14px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .hero-live::before {
+      content: '';
+      width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+      background: #34d399; box-shadow: 0 0 8px #34d399;
+      animation: blink 2.5s ease-in-out infinite;
+    }
+    @media (max-width: 480px) {
+      .hero-live { font-size: 10px; padding: 7px 14px 7px 12px; line-height: 1.5; }
     }
     .hero-live .live-dot {
       width: 6px; height: 6px; border-radius: 50%;
@@ -272,6 +313,15 @@
       transform: translateY(-3px);
       box-shadow: 0 12px 32px rgba(236,72,153,0.25);
     }
+
+    /* Brillo interno glossy en CTAs */
+    .btn-primary, .hero-chip-primary { box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 8px 32px rgba(124,58,237,0.45); }
+    .btn-primary:hover, .hero-chip-primary:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 16px 48px rgba(124,58,237,0.65); }
+    .st-cta-btn { box-shadow: inset 0 1px 0 rgba(255,255,255,0.26), 0 8px 28px rgba(236,72,153,0.4); }
+    .st-cta-btn:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,0.26), 0 16px 44px rgba(236,72,153,0.6); }
+    .ct-cta-btn { box-shadow: inset 0 1px 0 rgba(255,255,255,0.26), 0 8px 28px rgba(109,40,217,0.4); }
+    .ct-cta-btn:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,0.26), 0 16px 44px rgba(109,40,217,0.6); }
+    .send { box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 24px rgba(124,58,237,0.45); }
     .hero-scroll {
       position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -650,10 +700,22 @@
       background: rgba(255,255,255,0.028);
       backdrop-filter: blur(48px) saturate(160%);
       -webkit-backdrop-filter: blur(48px) saturate(160%);
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid transparent;
       border-radius: 28px;
       overflow: hidden;
+      position: relative;
       box-shadow: 0 40px 100px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.04) inset;
+    }
+    .glass-box::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 10;
+      border-radius: inherit; padding: 1px;
+      background: linear-gradient(160deg, rgba(255,255,255,0.22), rgba(167,139,250,0.28) 35%, rgba(255,255,255,0.05) 60%, rgba(236,72,153,0.18));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
     }
     .glass-header {
       padding: 18px 22px;
@@ -798,6 +860,20 @@
     .shop-card:hover { transform: translateY(-8px); border-color: rgba(236,72,153,0.22); box-shadow: 0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(236,72,153,0.07); }
     body.theme-fitness .shop-card:hover { border-color: rgba(103,232,249,0.35); box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(103,232,249,0.15); }
     .shop-card[data-hidden="true"] { display: none; }
+
+    /* Spotlight que sigue el cursor */
+    .shop-card::before, .content-card::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 3;
+      border-radius: inherit; opacity: 0;
+      background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(167,139,250,0.14), transparent 65%);
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+    .shop-card:hover::before, .content-card:hover::before { opacity: 1; }
+    body.theme-fitness .shop-card::before {
+      background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(103,232,249,0.13), transparent 65%);
+    }
     @keyframes shopCardIn { from { opacity: 0; transform: translateY(24px) scale(0.95); } to { opacity: 1; transform: none; } }
 
     .shop-card-thumb {
@@ -1255,6 +1331,7 @@
     <div class="blob blob-4"></div>
     <div class="grid-bg"></div>
   </div>
+  <div class="noise"></div>
 
   <!-- NAV -->
   <nav class="nav" id="mainNav">
@@ -1278,7 +1355,7 @@
         <p class="hero-live" id="heroEyebrowText" data-reveal data-delay="1">+2.000 chicas ya le han contado algo a Juliana</p>
         <h1 class="hero-title" data-reveal data-delay="1">
           <span class="accent-bar"></span>
-          <span class="line-1">Juliana</span> <span class="line-2">Love</span>
+          <span class="line-1">Juliana</span> <span class="line-2">Bienestar</span>
         </h1>
         <p class="hero-sub" id="heroSubtitleText" data-reveal data-delay="2">Soy Juliana. Tu espacio seguro, a cualquier hora. Cuéntame lo que sea — sin juicios, solo para ti.</p>
         <div class="hero-actions" data-reveal data-delay="3">
@@ -1288,7 +1365,7 @@
           </button>
           <button class="hero-chip" onclick="showPage('sexshop')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-            Espacio seguro
+            Mi Tienda
           </button>
         </div>
       </div>
@@ -1307,7 +1384,7 @@
               <span>Juliana · en línea ahora</span>
             </div>
           </div>
-          <p class="hero-unit-tag">UNIT-3091</p>
+          <p class="hero-unit-tag">JULIANA · HOLO-3091</p>
         </div>
       </div>
       <div class="hero-scroll">
@@ -1360,8 +1437,8 @@
       <div class="ct-inner">
         <div class="ct-text">
           <p class="ct-tag" id="contentTeaserTagText">Para ti</p>
-          <h3 class="ct-title">Contenido<br/><em>exclusivo</em></h3>
-          <p class="ct-desc" id="contentTeaserDescText">Guías y rutinas de autocuidado que preparo pensando en ti. Prácticas, breves, hechas para tus días.</p>
+          <h3 class="ct-title">Cursos<br/><em>exclusivos</em></h3>
+          <p class="ct-desc" id="contentTeaserDescText">Cursos y guías exclusivas que preparo pensando en ti. Prácticas, breves, hechas para tus días.</p>
           <button class="ct-cta-btn" onclick="showPage('contenido')">Ver contenido <span>→</span></button>
         </div>
         <div class="ct-previews" id="contentTeaser"></div>
@@ -1380,8 +1457,8 @@
   <div class="page" id="page-contenido">
     <section class="content-section">
       <p style="font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(236,72,153,0.6);margin-bottom:20px">Exclusivo · Para ti</p>
-      <h2 class="content-title">Contenido <em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(244,114,182,0.85)">Exclusivo</em></h2>
-      <p class="content-sub">Guías y rutinas de autocuidado, pensadas para tus días 💕</p>
+      <h2 class="content-title">Cursos <em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(244,114,182,0.85)">Exclusivos</em></h2>
+      <p class="content-sub">Guías y rutinas exclusivas, pensadas para tus días 💕</p>
       <div class="content-grid" id="contentGrid"></div>
       <div class="carousel-wrap" id="contentCarouselWrap" style="display:none">
         <div class="carousel-scene">
@@ -1479,6 +1556,18 @@
       </div>
     </section>
 
+    <!-- CONTENIDO TEASER (solo Fitness) -->
+    <div class="content-teaser" id="fitnessContentTeaser" style="display:none;margin:0 auto 40px;max-width:600px" data-reveal>
+      <div class="ct-inner">
+        <div class="ct-text">
+          <p class="ct-tag">Para ti</p>
+          <h3 class="ct-title">Cursos<br/><em>exclusivos</em></h3>
+          <p class="ct-desc">Rutinas y guías exclusivas que preparo pensando en tu progreso. Prácticas, breves, hechas para ti.</p>
+          <button class="ct-cta-btn" onclick="showPage('contenido')">Ver contenido <span>→</span></button>
+        </div>
+      </div>
+    </div>
+
     <div style="display:flex;align-items:center;gap:24px;margin:48px auto 0;max-width:600px;padding:28px 24px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:20px">
       <img src="./juliana-pp.jpg" alt="Juliana" style="width:72px;height:72px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(236,72,153,0.4)" />
       <div>
@@ -1500,7 +1589,7 @@
         <div class="juli-widget-header">
           <img class="juli-widget-avatar" src="./juliana-pp.jpg" alt="Juliana" />
           <div>
-            <p class="juli-widget-name" id="juliWidgetName">Bienestar</p>
+            <p class="juli-widget-name" id="juliWidgetName">Juliana</p>
             <p class="juli-widget-status"><span class="dot"></span>holograma · en línea</p>
           </div>
           <button class="juli-widget-close" onclick="toggleJuliWidget(false)">✕</button>
@@ -1607,7 +1696,7 @@
           <button class="admin-tab active" id="atab-general" onclick="switchAdminTab('general')">⚙️ General</button>
           <button class="admin-tab" id="atab-textos" onclick="switchAdminTab('textos')">📝 Textos</button>
           <button class="admin-tab" id="atab-paginas" onclick="switchAdminTab('paginas')">📄 Páginas</button>
-          <button class="admin-tab" id="atab-contenido" onclick="switchAdminTab('contenido')">🔥 Contenido</button>
+          <button class="admin-tab" id="atab-contenido" onclick="switchAdminTab('contenido')">🎓 Cursos</button>
           <button class="admin-tab" id="atab-sexshop" onclick="switchAdminTab('sexshop')">🛍️ Tienda</button>
           <button class="admin-tab" id="atab-monitor" onclick="switchAdminTab('monitor')">👁️ Monitor</button>
         </div>
@@ -1704,9 +1793,9 @@
             </label>
           </div>
           <div class="admin-section">
-            <h3>Contenido exclusivo · Imagen, blur y precio</h3>
+            <h3>Cursos y contenido exclusivo · Imagen y precio</h3>
             <div id="adminCards"></div>
-            <button class="shop-add-btn" onclick="addContentCard()">+ Agregar pack</button>
+            <button class="shop-add-btn" onclick="addContentCard()">+ Agregar curso</button>
           </div>
         </div>
         <div class="admin-tab-panel" id="apanel-sexshop">
@@ -1786,6 +1875,15 @@
       'tops': 'Tops', 'leggings': 'Leggings', 'conjuntos': 'Conjuntos', 'accesorios': 'Accesorios',
     };
 
+    // Spotlight hover en cards
+    document.addEventListener('pointermove', (e) => {
+      const card = e.target.closest?.('.shop-card, .content-card');
+      if (!card) return;
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    }, { passive: true });
+
     const TEXT_DEFAULTS = {
       heroEyebrow: '+2.000 chicas ya le han contado algo a Juliana',
       heroSubtitle: 'Soy Juliana. Tu espacio seguro, a cualquier hora. Cuéntame lo que sea — sin juicios, solo para ti.',
@@ -1796,11 +1894,11 @@
       shopTeaserTitle: 'Para tus<br/><em>días</em>',
       shopTeaserDesc: 'Kits de autocuidado, básicos y algo para consentirte, seleccionados por mí. Envío discreto, pago seguro.',
       contentTeaserTag: 'Para ti',
-      contentTeaserDesc: 'Guías y rutinas de autocuidado que preparo pensando en ti. Prácticas, breves, hechas para tus días.',
+      contentTeaserDesc: 'Cursos y guías exclusivas que preparo pensando en ti. Prácticas, breves, hechas para tus días.',
       footerDisclaimer: 'Juliana es una IA y no sustituye ayuda profesional. Si necesitas apoyo urgente, contacta la Línea 106.',
       storeNameBienestar: 'Bienestar',
       storeNameFitness: 'Fitness',
-      widgetNameBienestar: 'Bienestar',
+      widgetNameBienestar: 'Juliana',
       widgetNameFitness: 'Juli Fitness',
       widgetGreetingBienestar: 'Hola 💕 ¿En qué te puedo ayudar hoy?',
       widgetGreetingFitness: '¡Hola! Soy Juli 💪 ¿Buscas algo para tu rutina?',
@@ -2135,6 +2233,7 @@
       document.getElementById('filters-bienestar').style.display = store === 'bienestar' ? 'flex' : 'none';
       document.getElementById('filters-fitness').style.display = store === 'fitness' ? 'flex' : 'none';
       document.getElementById('shopEyebrow').textContent = store === 'fitness' ? 'Ropa y accesorios fitness' : 'Tienda exclusiva';
+      document.getElementById('fitnessContentTeaser').style.display = store === 'fitness' ? '' : 'none';
       document.body.classList.toggle('theme-fitness', store === 'fitness');
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
@@ -2673,13 +2772,13 @@
           </div>
           <div class="admin-grid-1" style="margin-top:8px">
             <p class="card-row-label">Nombre</p>
-            <input class="admin-input" data-i="${i}" data-field="name" value="${escHtml(c.name||'')}" placeholder="Nombre del pack" style="margin-bottom:8px" />
+            <input class="admin-input" data-i="${i}" data-field="name" value="${escHtml(c.name||'')}" placeholder="Nombre del curso" style="margin-bottom:8px" />
           </div>
           <div class="admin-chk-row">
             <input type="checkbox" id="chot-${i}" data-i="${i}" data-field="hot" ${c.hot?'checked':''} />
             <label for="chot-${i}">Destacado (precio en rojo)</label>
           </div>
-          <p class="card-row-label" style="margin-top:10px;margin-bottom:4px">Foto de preview</p>
+          <p class="card-row-label" style="margin-top:10px;margin-bottom:4px">Imagen de portada</p>
           ${imgUI}
         </div>`;
       }).join('');
@@ -2692,8 +2791,8 @@
 
     function addContentCard() {
       _adminCards.push({
-        id: Date.now(), tag: 'Nuevo', name: 'Pack nuevo',
-        emoji: '📸', theme: '1', hot: false,
+        id: Date.now(), tag: 'Nuevo', name: 'Curso nuevo',
+        emoji: '🎓', theme: '1', hot: false,
         price: '$0 COP', blur: 0
       });
       renderAdminCards();
