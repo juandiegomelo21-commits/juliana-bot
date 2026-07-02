@@ -150,6 +150,9 @@
       background: radial-gradient(ellipse 120% 80% at 50% -10%, #150c2e 0%, var(--bg) 55%);
     }
     body.theme-fitness .bg { filter: none; background: radial-gradient(ellipse 120% 80% at 50% -10%, #0a1730 0%, var(--bg) 55%); }
+    /* En modo claro + tienda fitness, el invert del modo claro debe ganarle al filter:none de arriba
+       (misma especificidad, así que se necesita el selector compuesto para tener prioridad real). */
+    body.theme-fitness.theme-light .bg { filter: invert(1) hue-rotate(180deg) brightness(1.04) contrast(0.98); }
     body.theme-fitness .bg .blob-1 { background: radial-gradient(circle, #2563eb, #0c1a3d); }
     body.theme-fitness .bg .blob-2 { background: radial-gradient(circle, #0ea5e9, #0c2340); }
     body.theme-fitness .bg .blob-3 { background: radial-gradient(circle, #1d4ed8, #0b1120); }
