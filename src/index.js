@@ -101,18 +101,32 @@ app.post("/api/payment/create", async (req, res) => {
     console.error("❌ MP_ACCESS_TOKEN no configurado");
     return res.status(503).json({ error: "Pagos no configurados aún" });
   }
-  const { title, price, quantity = 1 } = req.body;
-  if (!title || !price) {
-    return res.status(400).json({ error: "Faltan datos del producto" });
+  const { title, price, quantity = 1, items: cartItems } = req.body;
+
+  // Carrito con varios productos, o compra directa de un solo producto
+  let mpItems;
+  if (Array.isArray(cartItems) && cartItems.length) {
+    mpItems = cartItems.map((it) => ({
+      title: it.title,
+      unit_price: parseInt(String(it.price).replace(/[^0-9]/g, ""), 10),
+      quantity: parseInt(it.quantity, 10) || 1,
+      currency_id: "COP",
+    }));
+    if (mpItems.some((it) => !it.title || !it.unit_price)) {
+      return res.status(400).json({ error: "Datos de carrito inválidos" });
+    }
+  } else {
+    if (!title || !price) {
+      return res.status(400).json({ error: "Faltan datos del producto" });
+    }
+    const numericPrice = parseInt(String(price).replace(/[^0-9]/g, ""), 10);
+    if (!numericPrice || numericPrice <= 0) {
+      return res.status(400).json({ error: "Precio inválido" });
+    }
+    mpItems = [{ title, unit_price: numericPrice, quantity: parseInt(quantity), currency_id: "COP" }];
   }
 
-  // Parsear "$89.000 COP" → 89000
-  const numericPrice = parseInt(String(price).replace(/[^0-9]/g, ""), 10);
-  if (!numericPrice || numericPrice <= 0) {
-    return res.status(400).json({ error: "Precio inválido" });
-  }
-
-  console.log(`💳 Creando pago: ${title} - ${numericPrice} COP`);
+  console.log(`💳 Creando pago: ${mpItems.map((it) => `${it.title} x${it.quantity}`).join(", ")}`);
 
   try {
     const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
@@ -121,7 +135,7 @@ app.post("/api/payment/create", async (req, res) => {
 
     const result = await preference.create({
       body: {
-        items: [{ title, unit_price: numericPrice, quantity: parseInt(quantity), currency_id: "COP" }],
+        items: mpItems,
         back_urls: {
           success: `${baseUrl}/?payment=success`,
           failure: `${baseUrl}/?payment=failure`,
