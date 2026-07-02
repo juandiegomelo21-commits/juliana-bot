@@ -1,15 +1,33 @@
 const bcrypt = require("bcryptjs");
 const { getJulianaResponse, clearHistory, evictCache } = require("../groq");
 const { sendMessage, markAsRead } = require("../whatsapp");
+const { getConfig } = require("../config");
 const db = require("../db");
 
 const DONATION_LINK = process.env.DONATION_LINK || "https://www.instagram.com/jd.gms/";
+const SHOP_URL = process.env.APP_URL || "https://juliana-bot-production.up.railway.app";
 
 const messageCount = new Map();
 const DONATION_INTERVAL = 15;
 
 const RESET_KEYWORDS    = ["reiniciar", "reset", "nuevo", "empezar de nuevo", "borrar"];
 const DONATION_KEYWORDS = ["donar", "donación", "ayudar", "apoyar", "colaborar"];
+const CATALOG_KEYWORDS  = ["catalogo", "catálogo", "que vendes", "qué vendes", "que productos", "qué productos", "ver tienda", "lista de productos"];
+
+function buildWhatsAppCatalog() {
+  const cfg = getConfig();
+  const line = (p) => `${p.emoji || "•"} ${p.name} — ${p.price}`;
+  const products = (cfg.shopProducts || []).filter(p => p.available);
+  const bienestar = products.filter(p => p.store === "bienestar").map(line).join("\n");
+  const fitness = products.filter(p => p.store === "fitness").map(line).join("\n");
+  const guias = (cfg.cards || []).map(line).join("\n");
+
+  let text = "🛍️ *Catálogo Bienestar*\n" + (bienestar || "(sin productos)");
+  if (fitness) text += "\n\n💪 *Catálogo Fitness*\n" + fitness;
+  if (guias) text += "\n\n📖 *Guías digitales*\n" + guias;
+  text += `\n\nVe todo con fotos y compra aquí: ${SHOP_URL}`;
+  return text;
+}
 
 async function handleIncomingMessage(message, contact) {
   const userId = message.from;
@@ -35,6 +53,12 @@ async function handleIncomingMessage(message, contact) {
       userId,
       `Dar es uno de los actos más hermosos que existen. Puedes apoyar esta misión aquí:\n\n${DONATION_LINK}\n\nDios te lo paga con creces. 🙏`
     );
+    return;
+  }
+
+  // Catálogo
+  if (CATALOG_KEYWORDS.some(kw => lowerText.includes(kw))) {
+    await sendMessage(userId, buildWhatsAppCatalog());
     return;
   }
 
