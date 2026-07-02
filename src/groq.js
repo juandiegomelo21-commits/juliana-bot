@@ -13,6 +13,15 @@ const MODELS = [
 // Cache en memoria para velocidad — MongoDB persiste entre reinicios
 const conversationHistory = new Map();
 
+// Arma el catálogo desde config.json (misma fuente que edita el admin panel) para que el precio nunca quede desactualizado en el prompt
+function buildCatalogText(cfg) {
+  const list = (items) => items.map(p => `- ${p.name} — ${p.price}`).join('\n') || '(sin productos)';
+  const guias = list(cfg.cards || []);
+  const bienestar = list((cfg.shopProducts || []).filter(p => p.store === 'bienestar' && p.available));
+  const fitness = list((cfg.shopProducts || []).filter(p => p.store === 'fitness' && p.available));
+  return `\n\n## Catálogo actual (usa exactamente estos nombres y precios, no inventes otros ni cambies el valor)\n\nGuías y contenido digital:\n${guias}\n\nTienda Bienestar:\n${bienestar}\n\nTienda Fitness:\n${fitness}`;
+}
+
 const GARBAGE_PATTERNS = [
   /stripe/i,
   /credit card/i,
@@ -88,7 +97,8 @@ async function getJulianaResponse(userId, userMessage, userName) {
   for (const model of MODELS) {
     try {
       console.log(`🤖 Probando modelo: ${model}`);
-      const basePrompt = getConfig().prompt;
+      const cfg = getConfig();
+      const basePrompt = cfg.prompt + buildCatalogText(cfg);
       const systemPrompt = userName
         ? `${basePrompt}\n\nEl nombre de la persona con quien hablas es ${userName}. Úsalo de vez en cuando de forma natural.`
         : basePrompt;
