@@ -25,6 +25,7 @@ const db = require("./db");
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false })); // Twilio manda el webhook como form-urlencoded
 
 // Auth (sesión + passport) — debe ir antes de las rutas
 setupAuth(app);
@@ -72,6 +73,24 @@ app.post("/webhook", async (req, res) => {
 
   await handleIncomingMessage(message, contact).catch((err) => {
     console.error("❌ Error procesando mensaje:", err.message);
+  });
+});
+
+// Webhook de Twilio (WhatsApp Sandbox) — form-urlencoded, no JSON
+app.post("/webhook/twilio", async (req, res) => {
+  res.type("text/xml").send("<Response></Response>"); // Responder rápido, sin TwiML de respuesta
+
+  const body = req.body;
+  if (!body.Body) return;
+
+  const from = (body.WaId || body.From || "").replace("whatsapp:", "").replace("+", "");
+  const message = { from, id: body.MessageSid, text: { body: body.Body } };
+  const contact = { profile: { name: body.ProfileName } };
+
+  console.log(`📩 [Twilio] Mensaje de ${body.ProfileName || from}: ${body.Body}`);
+
+  await handleIncomingMessage(message, contact).catch((err) => {
+    console.error("❌ Error procesando mensaje (Twilio):", err.message);
   });
 });
 

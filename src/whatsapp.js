@@ -1,43 +1,19 @@
 require("dotenv").config();
 const axios = require("axios");
 
-const WHATSAPP_API_URL = `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID?.trim()}/messages`;
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN?.replace(/[^\x20-\x7E]/g, "").trim();
+const TWILIO_SID = process.env.TWILIO_ACCOUNT_SID;
+const TWILIO_AUTH = process.env.TWILIO_AUTH_TOKEN;
+const TWILIO_FROM = process.env.TWILIO_WHATSAPP_FROM; // ej: whatsapp:+14155238886
 
 async function sendMessage(to, text) {
   await axios.post(
-    WHATSAPP_API_URL,
-    {
-      messaging_product: "whatsapp",
-      recipient_type: "individual",
-      to,
-      type: "text",
-      text: { body: text },
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    }
+    `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`,
+    new URLSearchParams({ From: TWILIO_FROM, To: `whatsapp:+${to}`, Body: text }),
+    { auth: { username: TWILIO_SID, password: TWILIO_AUTH } }
   );
 }
 
-async function markAsRead(messageId) {
-  await axios.post(
-    WHATSAPP_API_URL.replace("/messages", "/messages"),
-    {
-      messaging_product: "whatsapp",
-      status: "read",
-      message_id: messageId,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-}
+// ponytail: Twilio no requiere marcar como leído en sandbox, no-op para mantener la firma del handler
+async function markAsRead() {}
 
 module.exports = { sendMessage, markAsRead };
