@@ -492,44 +492,6 @@
     }
     #heroStaticAvatar { position: relative; }
 
-    /* ── HOLOGRAM EFFECT (Blade Runner 2049 / Joi style) ── */
-    .hologram-scanlines {
-      position: absolute; inset: 0; z-index: 3;
-      pointer-events: none; opacity: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(103,232,249,0.06) 0px,
-        rgba(103,232,249,0.06) 1px,
-        transparent 2px,
-        transparent 4px
-      );
-      transition: opacity 0.3s ease;
-    }
-    #heroHologramFrame.hologram-active .hologram-scanlines { opacity: 1; }
-    #heroHologramFrame.hologram-active #heroWalkCanvas {
-      filter: drop-shadow(0 30px 50px rgba(0,0,0,0.55)) drop-shadow(-2px 0 rgba(236,72,153,0.55)) drop-shadow(2px 0 rgba(34,211,238,0.55));
-      animation: hologramFlicker 2.6s steps(1,end) infinite, hologramJitter 4s ease-in-out infinite;
-    }
-    #heroHologramFrame.hologram-active::before {
-      content: '';
-      position: absolute; inset: 0; z-index: 4;
-      pointer-events: none;
-      background: linear-gradient(180deg, transparent 0%, rgba(103,232,249,0.08) 50%, transparent 100%);
-      animation: hologramScan 2.2s linear infinite;
-    }
-    @keyframes hologramFlicker {
-      0%, 92%, 100% { opacity: 1; }
-      93% { opacity: 0.6; }
-      95% { opacity: 0.9; }
-      97% { opacity: 0.55; }
-    }
-    @keyframes hologramJitter {
-      0%, 100% { transform: translateX(0); }
-      48% { transform: translateX(0); }
-      49% { transform: translateX(-2px); }
-      50% { transform: translateX(2px); }
-      51% { transform: translateX(0); }
-    }
     @keyframes hologramScan {
       0% { transform: translateY(-100%); }
       100% { transform: translateY(100%); }
@@ -1522,7 +1484,6 @@
             <video id="heroWalkVideo" src="./juliana-walk-transparent.mp4" muted playsinline preload="auto" style="position:absolute;width:2px;height:2px;opacity:0;pointer-events:none"></video>
             <canvas id="heroWalkCanvas" style="display:none"></canvas>
             <img id="heroStaticAvatar" src="./juliana-avatar-3.png" alt="Juliana" />
-            <div class="hologram-scanlines"></div>
             <div class="hero-photo-badge">
               <div class="dot"></div>
               <span>Juliana · en línea ahora</span>
@@ -3377,12 +3338,14 @@
         rafId = requestAnimationFrame(keyFrame);
       }
 
+      let bursting = false;
+
       function playHologramBurst() {
         video.currentTime = 0;
         video.play().catch(() => {});
         staticImg.style.opacity = '0';
         canvas.style.display = 'block';
-        frame.classList.add('hologram-active');
+        bursting = true;
         if (!rafId) keyFrame();
 
         // Safety fallback in case 'ended' never fires (e.g. duration unknown)
@@ -3391,7 +3354,7 @@
       }
 
       function endHologramBurst() {
-        frame.classList.remove('hologram-active');
+        bursting = false;
         canvas.style.display = 'none';
         staticImg.style.opacity = '1';
         video.pause();
@@ -3406,7 +3369,7 @@
       }
 
       video.addEventListener('ended', () => {
-        if (frame.classList.contains('hologram-active')) endHologramBurst();
+        if (bursting) endHologramBurst();
       });
       video.addEventListener('error', () => {
         clearTimeout(burstTimeout);
