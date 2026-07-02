@@ -62,7 +62,7 @@
     body.theme-light .bg,
     body.theme-light .bg-spotlight,
     body.theme-light .noise,
-    body.theme-light .wrapper,
+    body.theme-light .page,
     body.theme-light .nav,
     body.theme-light .bottom-nav,
     body.theme-light .float-shop,
@@ -1198,7 +1198,8 @@
     @keyframes floatShopPulse { 0%,100% { box-shadow: 0 8px 32px rgba(236,72,153,0.5); } 50% { box-shadow: 0 8px 52px rgba(236,72,153,0.75); } }
 
     /* ── CHAT WIDGET (tienda) — estilo holograma ── */
-    .juli-widget { position: fixed; bottom: 28px; right: 24px; z-index: 60; }
+    .juli-widget { position: fixed; bottom: 28px; right: 24px; z-index: 60; display: none; }
+    .juli-widget.page-visible { display: block; }
     .juli-widget-bubble {
       width: 62px; height: 62px; border-radius: 50%; border: none; cursor: pointer; padding: 3px;
       background: linear-gradient(135deg, var(--purple), var(--pink));
@@ -1716,35 +1717,35 @@
       <p class="footerDisclaimerText">Juliana es una IA y no sustituye ayuda profesional. Si necesitas apoyo urgente, contacta la Línea 106.</p><br/>
       <p>Hecho con amor por <a href="#">ChatMe Tequila</a> · 2025</p>
     </footer>
+  </div>
 
-    <!-- Widget de chat flotante -->
-    <div class="juli-widget" id="juliWidget">
-      <div class="juli-widget-panel" id="juliWidgetPanel">
-        <span class="juli-widget-corner tl"></span>
-        <span class="juli-widget-corner tr"></span>
-        <div class="juli-widget-header">
-          <img class="juli-widget-avatar" src="./juliana-pp.jpg" alt="Juliana" />
-          <div>
-            <p class="juli-widget-name" id="juliWidgetName">Juliana</p>
-            <p class="juli-widget-status"><span class="dot"></span>holograma · en línea</p>
-          </div>
-          <button class="juli-widget-close" onclick="toggleJuliWidget(false)">✕</button>
+  <!-- Widget de chat flotante (fuera de .page para que no lo atrape el filtro del modo claro) -->
+  <div class="juli-widget" id="juliWidget">
+    <div class="juli-widget-panel" id="juliWidgetPanel">
+      <span class="juli-widget-corner tl"></span>
+      <span class="juli-widget-corner tr"></span>
+      <div class="juli-widget-header">
+        <img class="juli-widget-avatar" src="./juliana-pp.jpg" alt="Juliana" />
+        <div>
+          <p class="juli-widget-name" id="juliWidgetName">Juliana</p>
+          <p class="juli-widget-status"><span class="dot"></span>holograma · en línea</p>
         </div>
-        <div class="juli-widget-msgs" id="juliWidgetMsgs"></div>
-        <div class="juli-widget-input-area">
-          <input class="juli-widget-input" id="juliWidgetInp" placeholder="Escríbele..." onkeydown="if(event.key==='Enter')sendWidget()" />
-          <button class="juli-widget-send" onclick="sendWidget()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          </button>
-        </div>
+        <button class="juli-widget-close" onclick="toggleJuliWidget(false)">✕</button>
       </div>
-      <button class="juli-widget-bubble" id="juliWidgetBubble" onclick="toggleJuliWidget()">
-        <span class="juli-widget-ring"></span>
-        <span class="juli-widget-ring ring-2"></span>
-        <img src="./juliana-pp.jpg" alt="Juliana" />
-        <span class="juli-widget-dot"></span>
-      </button>
+      <div class="juli-widget-msgs" id="juliWidgetMsgs"></div>
+      <div class="juli-widget-input-area">
+        <input class="juli-widget-input" id="juliWidgetInp" placeholder="Escríbele..." onkeydown="if(event.key==='Enter')sendWidget()" />
+        <button class="juli-widget-send" onclick="sendWidget()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
     </div>
+    <button class="juli-widget-bubble" id="juliWidgetBubble" onclick="toggleJuliWidget()">
+      <span class="juli-widget-ring"></span>
+      <span class="juli-widget-ring ring-2"></span>
+      <img src="./juliana-pp.jpg" alt="Juliana" />
+      <span class="juli-widget-dot"></span>
+    </button>
   </div>
 
   </div><!-- end wrapper -->
@@ -2321,6 +2322,7 @@
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
       document.getElementById('floatShop')?.classList.remove('visible');
+      document.getElementById('juliWidget')?.classList.toggle('page-visible', name === 'sexshop');
       document.body.classList.toggle('theme-fitness', name === 'sexshop' && currentStore === 'fitness');
     }
 
