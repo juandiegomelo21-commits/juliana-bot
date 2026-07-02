@@ -209,6 +209,13 @@ async function loadBotConfig(defaults) {
   }
 }
 
+// ── Pedidos ───────────────────────────────────────────────────────
+
+async function saveOrder(order) {
+  if (!isConnected()) return;
+  await db.collection("orders").insertOne(order);
+}
+
 async function saveBotConfig(config) {
   if (!isConnected()) return;
   const { _id, ...clean } = config;
@@ -228,4 +235,5 @@ module.exports = {
   getUserByGoogleId, createGoogleAccount, updateGoogleProfile,
   getRecentConversations, setQueuedReply, popQueuedReply, setHumanMode,
   loadBotConfig, saveBotConfig,
+  saveOrder,
 };

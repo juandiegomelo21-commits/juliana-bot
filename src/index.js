@@ -101,7 +101,7 @@ app.post("/api/payment/create", async (req, res) => {
     console.error("❌ MP_ACCESS_TOKEN no configurado");
     return res.status(503).json({ error: "Pagos no configurados aún" });
   }
-  const { title, price, quantity = 1, items: cartItems } = req.body;
+  const { title, price, quantity = 1, items: cartItems, address } = req.body;
 
   // Carrito con varios productos, o compra directa de un solo producto
   let mpItems;
@@ -127,6 +127,9 @@ app.post("/api/payment/create", async (req, res) => {
   }
 
   console.log(`💳 Creando pago: ${mpItems.map((it) => `${it.title} x${it.quantity}`).join(", ")}`);
+  if (address) {
+    console.log(`📦 Envío a: ${address.name} · ${address.phone} · ${address.address}, ${address.city}${address.notes ? " · " + address.notes : ""}`);
+  }
 
   try {
     const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
@@ -142,8 +145,11 @@ app.post("/api/payment/create", async (req, res) => {
           pending: `${baseUrl}/?payment=pending`,
         },
         auto_return: "approved",
+        metadata: address ? { shipping_address: address } : undefined,
       },
     });
+
+    await db.saveOrder({ preferenceId: result.id, items: mpItems, address: address || null, createdAt: new Date() });
 
     console.log(`✅ Preferencia creada: ${result.id}`);
     res.json({ url: result.init_point });

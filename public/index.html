@@ -66,6 +66,7 @@
     body.theme-light .nav,
     body.theme-light .bottom-nav,
     body.theme-light .float-shop,
+    body.theme-light .mobile-theme-toggle,
     body.theme-light .juli-widget,
     body.theme-light .admin-overlay,
     body.theme-light .account-overlay,
@@ -91,6 +92,11 @@
     }
     .theme-toggle-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
     .theme-toggle-btn.cart-btn { position: relative; }
+    .mobile-theme-toggle {
+      display: none; position: fixed; top: 14px; right: 14px; z-index: 90;
+      background: rgba(8,8,14,0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    }
+    @media (max-width: 480px) { .mobile-theme-toggle { display: flex; } }
 
     /* ── CARRITO ── */
     .cart-badge {
@@ -127,8 +133,9 @@
     .cart-item-remove:hover { color: #ef4444; }
     .cart-empty { display: none; text-align: center; padding: 32px 0; color: rgba(255,255,255,0.3); font-style: italic; font-size: 14px; }
     .cart-footer { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; margin-top: 8px; }
-    .cart-total-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; font-size: 15px; color: rgba(255,255,255,0.7); }
+    .cart-total-row { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0; font-size: 15px; color: rgba(255,255,255,0.7); }
     .cart-total-row span:last-child { font-family: var(--font-display); font-size: 24px; font-weight: 400; color: #fff; }
+    .cart-ship-input { padding: 10px 14px; font-size: 13px; }
 
     /* ── POLISH 2026 ── */
     h1, h2, h3 { text-wrap: balance; }
@@ -1302,6 +1309,8 @@
       /* Nav */
       .nav { display: none; }
       .bottom-nav { display: block; }
+      .bnav-btn { min-width: 0; padding: 6px 4px; font-size: 9px; gap: 2px; }
+      .bnav-btn .bnav-icon svg { width: 19px; height: 19px; }
 
       /* Performance: apagar animaciones pesadas en móvil */
       .blob { animation: none !important; filter: blur(60px); opacity: 0.2; }
@@ -1783,6 +1792,12 @@
       <div class="cart-items" id="cartItems"></div>
       <div class="cart-empty" id="cartEmpty">Tu carrito está vacío 🛍️</div>
       <div class="cart-footer" id="cartFooter">
+        <p class="account-label" style="margin-top:0">Dirección de envío</p>
+        <input class="account-input cart-ship-input" id="shipName" placeholder="Nombre completo" />
+        <input class="account-input cart-ship-input" id="shipPhone" placeholder="Teléfono" style="margin-top:8px" />
+        <input class="account-input cart-ship-input" id="shipAddress" placeholder="Dirección (calle, número, barrio)" style="margin-top:8px" />
+        <input class="account-input cart-ship-input" id="shipCity" placeholder="Ciudad" style="margin-top:8px" />
+        <input class="account-input cart-ship-input" id="shipNotes" placeholder="Indicaciones adicionales (opcional)" style="margin-top:8px" />
         <div class="cart-total-row">
           <span>Total</span>
           <span id="cartTotal">$0 COP</span>
@@ -1964,6 +1979,11 @@
     Tienda
   </button>
 
+  <!-- Toggle de tema, solo visible en móvil (en escritorio ya está en .nav) -->
+  <button class="theme-toggle-btn mobile-theme-toggle" onclick="toggleTheme()" title="Cambiar tema">
+    <span id="mobileThemeIcon">🌙</span>
+  </button>
+
   <!-- Bottom nav móvil -->
   <nav class="bottom-nav" id="bottomNav">
     <div class="bottom-nav-inner">
@@ -1978,9 +1998,6 @@
       </button>
       <button class="bnav-btn" id="bnav-cuenta" onclick="openAccount()">
         <span class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>Cuenta
-      </button>
-      <button class="bnav-btn" id="bnav-theme" onclick="toggleTheme()">
-        <span class="bnav-icon" id="bnavThemeIcon" style="font-size:18px">🌙</span>Modo
       </button>
       <button class="bnav-btn" id="bnav-cart" onclick="openCart()" style="position:relative">
         <span class="bnav-icon" style="font-size:18px">🛒<span class="cart-badge" id="cartBadgeBnav">0</span></span>Carrito
@@ -2077,8 +2094,29 @@
       document.getElementById('cartTotal').textContent = formatCOP(total);
     }
 
+    function loadShippingAddress() {
+      let addr = {};
+      try { addr = JSON.parse(localStorage.getItem('jul_shipping') || '{}'); } catch { addr = {}; }
+      document.getElementById('shipName').value = addr.name || '';
+      document.getElementById('shipPhone').value = addr.phone || '';
+      document.getElementById('shipAddress').value = addr.address || '';
+      document.getElementById('shipCity').value = addr.city || '';
+      document.getElementById('shipNotes').value = addr.notes || '';
+    }
+
+    function readShippingAddress() {
+      return {
+        name: document.getElementById('shipName').value.trim(),
+        phone: document.getElementById('shipPhone').value.trim(),
+        address: document.getElementById('shipAddress').value.trim(),
+        city: document.getElementById('shipCity').value.trim(),
+        notes: document.getElementById('shipNotes').value.trim(),
+      };
+    }
+
     function openCart() {
       renderCartItems();
+      loadShippingAddress();
       document.getElementById('cartOverlay').classList.add('show');
     }
     function closeCart() { document.getElementById('cartOverlay').classList.remove('show'); }
@@ -2087,13 +2125,21 @@
       if (!cart.length) return;
       const btn = document.getElementById('cartCheckoutBtn');
       const msg = document.getElementById('cartMsg');
-      btn.disabled = true; btn.textContent = 'Procesando...';
       msg.style.display = 'none';
+
+      const address = readShippingAddress();
+      if (!address.name || !address.phone || !address.address || !address.city) {
+        msg.className = 'account-msg err'; msg.textContent = 'Completa nombre, teléfono, dirección y ciudad para el envío'; msg.style.display = 'block';
+        return;
+      }
+      localStorage.setItem('jul_shipping', JSON.stringify(address));
+
+      btn.disabled = true; btn.textContent = 'Procesando...';
       try {
         const r = await fetch('/api/payment/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: cart.map(c => ({ title: c.name, price: c.price, quantity: c.qty })) })
+          body: JSON.stringify({ items: cart.map(c => ({ title: c.name, price: c.price, quantity: c.qty })), address })
         });
         const data = await r.json();
         btn.disabled = false; btn.textContent = 'Pagar con Mercado Pago';
@@ -2114,18 +2160,18 @@
       localStorage.setItem('jul_theme', isLight ? 'light' : 'dark');
       const icon = isLight ? '☀️' : '🌙';
       const navBtn = document.getElementById('themeToggleBtn');
-      const bnavIcon = document.getElementById('bnavThemeIcon');
+      const mobileIcon = document.getElementById('mobileThemeIcon');
       if (navBtn) { navBtn.textContent = icon; navBtn.title = isLight ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'; }
-      if (bnavIcon) bnavIcon.textContent = icon;
+      if (mobileIcon) mobileIcon.textContent = icon;
     }
     (function initThemeIcon() {
       const isLight = document.body.classList.contains('theme-light');
       const icon = isLight ? '☀️' : '🌙';
       document.addEventListener('DOMContentLoaded', () => {
         const navBtn = document.getElementById('themeToggleBtn');
-        const bnavIcon = document.getElementById('bnavThemeIcon');
+        const mobileIcon = document.getElementById('mobileThemeIcon');
         if (navBtn) navBtn.textContent = icon;
-        if (bnavIcon) bnavIcon.textContent = icon;
+        if (mobileIcon) mobileIcon.textContent = icon;
       });
     })();
 
