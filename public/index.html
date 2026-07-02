@@ -69,27 +69,58 @@
     .bg {
       position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
       transition: filter 0.5s ease;
+      background: radial-gradient(ellipse 120% 80% at 50% -10%, #150c2e 0%, var(--bg) 55%);
     }
-    body.theme-fitness .bg { filter: none; }
+    body.theme-fitness .bg { filter: none; background: radial-gradient(ellipse 120% 80% at 50% -10%, #0a1730 0%, var(--bg) 55%); }
     body.theme-fitness .bg .blob-1 { background: radial-gradient(circle, #2563eb, #0c1a3d); }
     body.theme-fitness .bg .blob-2 { background: radial-gradient(circle, #0ea5e9, #0c2340); }
     body.theme-fitness .bg .blob-3 { background: radial-gradient(circle, #1d4ed8, #0b1120); }
     body.theme-fitness .bg .blob-4 { background: radial-gradient(circle, #06b6d4, #0c2340); }
+    body.theme-fitness .bg .blob-5 { background: radial-gradient(circle, #38bdf8, #0c2340); }
     body.theme-fitness .blob { opacity: 0.5; }
+    body.theme-fitness .aurora { opacity: 0.12; }
     body.theme-fitness { --pink-light: #67e8f9; --pink: #06b6d4; --purple: #1d4ed8; --purple-light: #3b82f6; }
+
+    /* Slow rotating conic nebula — sits behind the blobs, gives the bg a "living" glow */
+    .aurora {
+      position: absolute; inset: -30%;
+      background: conic-gradient(from 0deg at 50% 50%,
+        rgba(124,58,237,0.16), rgba(236,72,153,0.14), rgba(212,180,131,0.1),
+        rgba(34,211,238,0.14), rgba(124,58,237,0.16));
+      filter: blur(120px);
+      opacity: 0.22;
+      animation: auroraSpin 60s linear infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes auroraSpin {
+      to { transform: rotate(360deg); }
+    }
+
     .blob {
       position: absolute; border-radius: 50%;
-      filter: blur(140px); opacity: 0.38;
-      animation: drift 16s ease-in-out infinite alternate;
+      filter: blur(140px); opacity: 0.42;
+      mix-blend-mode: screen;
+      animation: drift 18s ease-in-out infinite alternate;
     }
     .blob-1 { width: 700px; height: 700px; background: radial-gradient(circle, #5b21b6, #1e1065); top: -200px; left: -200px; animation-delay: 0s; }
     .blob-2 { width: 520px; height: 520px; background: radial-gradient(circle, #9333ea, #581c87); top: 5%; right: -150px; animation-delay: 4s; }
     .blob-3 { width: 450px; height: 450px; background: radial-gradient(circle, #6d28d9, #1e1b4b); bottom: 5%; left: 20%; animation-delay: 8s; }
     .blob-4 { width: 340px; height: 340px; background: radial-gradient(circle, #be185d, #831843); bottom: 10%; right: 8%; animation-delay: 2s; }
+    .blob-5 { width: 380px; height: 380px; background: radial-gradient(circle, #d4b483, #3a2a12); top: 38%; left: 45%; animation-delay: 6s; opacity: 0.16; }
     @keyframes drift {
-      from { transform: translate(0,0) scale(1); }
-      to   { transform: translate(30px,20px) scale(1.07); }
+      from { transform: translate(0,0) rotate(0deg) scale(1); }
+      to   { transform: translate(30px,20px) rotate(8deg) scale(1.1); }
     }
+
+    /* Cursor-reactive spotlight across the whole page (desktop only) */
+    .bg-spotlight {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(560px circle at var(--sx,50%) var(--sy,50%), rgba(212,180,131,0.07), rgba(124,58,237,0.05) 45%, transparent 70%);
+      transition: opacity 0.4s ease;
+      mix-blend-mode: screen;
+    }
+    .bg-spotlight.active { opacity: 1; }
     .grid-bg {
       position: absolute; inset: 0;
       background-image:
@@ -1222,6 +1253,9 @@
       .blob-2 { width: 250px; height: 250px; }
       .blob-3 { width: 220px; height: 220px; display: none; }
       .blob-4 { width: 180px; height: 180px; display: none; }
+      .blob-5 { display: none; }
+      .aurora { animation: none !important; opacity: 0.08; filter: blur(60px); }
+      .bg-spotlight { display: none; }
       .grid-bg { opacity: 0.5; }
       [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
       .hero-photo-deco, .hero-photo-deco-2 { display: none; }
@@ -1331,12 +1365,15 @@
 <body>
 
   <div class="bg">
+    <div class="aurora"></div>
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
     <div class="blob blob-4"></div>
+    <div class="blob blob-5"></div>
     <div class="grid-bg"></div>
   </div>
+  <div class="bg-spotlight" id="bgSpotlight"></div>
   <div class="noise"></div>
 
   <!-- NAV -->
@@ -3124,6 +3161,17 @@
       _heroSection.addEventListener('mouseleave', () => {
         _heroParallax.style.transform = 'translate(0, 0)';
       });
+    }
+
+    // Whole-page cursor spotlight (desktop only, respects reduced-motion)
+    const _bgSpotlight = document.getElementById('bgSpotlight');
+    if (_bgSpotlight && _hasHover && !_reduceMotion) {
+      window.addEventListener('mousemove', (e) => {
+        _bgSpotlight.style.setProperty('--sx', e.clientX + 'px');
+        _bgSpotlight.style.setProperty('--sy', e.clientY + 'px');
+        _bgSpotlight.classList.add('active');
+      }, { passive: true });
+      window.addEventListener('mouseleave', () => _bgSpotlight.classList.remove('active'));
     }
 
     // Magnetic CTAs — subtle pull toward cursor (desktop only, respects reduced-motion)
