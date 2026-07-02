@@ -52,6 +52,32 @@
       letter-spacing: -0.1px;
     }
 
+    /* ── MODO CLARO ── */
+    /* "Smart invert": invertimos toda la página (fondo negro→blanco, texto blanco→negro)
+       y re-invertimos las fotos/video/canvas para que se vean con sus colores normales.
+       Evita reescribir cada rgba(255,255,255,x) del archivo a mano. */
+    body.theme-light {
+      filter: invert(1) hue-rotate(180deg) brightness(1.04) contrast(0.98);
+    }
+    body.theme-light img,
+    body.theme-light video,
+    body.theme-light canvas {
+      filter: invert(1) hue-rotate(180deg);
+    }
+    body.theme-light .shop-hero-img img { filter: invert(1) hue-rotate(180deg) brightness(0.9) saturate(1.1); }
+    body.theme-light .juli-widget-bubble img { filter: invert(1) hue-rotate(180deg) drop-shadow(-1px 0 rgba(236,72,153,0.5)) drop-shadow(1px 0 rgba(34,211,238,0.5)); }
+    body.theme-light .hero-photo-frame img,
+    body.theme-light .hero-photo-frame video,
+    body.theme-light .hero-photo-frame canvas { filter: invert(1) hue-rotate(180deg) drop-shadow(0 30px 50px rgba(0,0,0,0.55)); }
+    .theme-toggle-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.75); font-size: 15px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s; flex-shrink: 0;
+    }
+    .theme-toggle-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
+
     /* ── POLISH 2026 ── */
     h1, h2, h3 { text-wrap: balance; }
     ::selection { background: rgba(124,58,237,0.45); color: #fff; }
@@ -886,6 +912,18 @@
     body.theme-fitness .filter-btn:hover { border-color: rgba(103,232,249,0.4); }
     body.theme-fitness .filter-btn.active { background: rgba(6,182,212,0.2); border-color: rgba(103,232,249,0.5); color: rgba(224,247,250,0.95); }
 
+    /* ── VIEW TOGGLE (cuadrícula / carrusel) ── */
+    .view-toggle { display: flex; gap: 6px; justify-content: flex-end; margin-bottom: 18px; }
+    .view-toggle-btn {
+      width: 38px; height: 38px; border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.4); font-size: 15px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s;
+    }
+    .view-toggle-btn:hover { border-color: rgba(167,139,250,0.4); color: #fff; }
+    .view-toggle-btn.active { background: rgba(124,58,237,0.3); border-color: rgba(124,58,237,0.45); color: #fff; }
+
     .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 22px; }
     .shop-card {
       background: rgba(255,255,255,0.028);
@@ -1363,6 +1401,9 @@
   </style>
 </head>
 <body>
+  <script>
+    if (localStorage.getItem('jul_theme') === 'light') document.body.classList.add('theme-light');
+  </script>
 
   <div class="bg">
     <div class="aurora"></div>
@@ -1384,7 +1425,10 @@
       <button class="nav-btn" id="btn-bienestar" onclick="goStore('bienestar')">Bienestar</button>
       <button class="nav-btn" id="btn-fitness" onclick="goStore('fitness')">Fitness</button>
     </div>
-    <button class="nav-account" id="btn-cuenta" onclick="openAccount()">Mi Cuenta</button>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar a modo claro">🌙</button>
+      <button class="nav-account" id="btn-cuenta" onclick="openAccount()">Mi Cuenta</button>
+    </div>
   </nav>
 
   <div class="wrapper">
@@ -1502,6 +1546,10 @@
       <p style="font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(236,72,153,0.6);margin-bottom:20px">Exclusivo · Para ti</p>
       <h2 class="content-title">Cursos <em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(244,114,182,0.85)">Exclusivos</em></h2>
       <p class="content-sub">Guías y rutinas exclusivas, pensadas para tus días 💕</p>
+      <div class="view-toggle">
+        <button class="view-toggle-btn" data-mode="grid" onclick="setViewMode('grid')" title="Vista cuadrícula">▦</button>
+        <button class="view-toggle-btn" data-mode="carousel" onclick="setViewMode('carousel')" title="Vista carrusel">🎠</button>
+      </div>
       <div class="content-grid" id="contentGrid"></div>
       <div class="carousel-wrap" id="contentCarouselWrap" style="display:none">
         <div class="carousel-scene">
@@ -1585,6 +1633,10 @@
         <button class="filter-btn" onclick="filterShop(this,'leggings')">🩳 Leggings</button>
         <button class="filter-btn" onclick="filterShop(this,'conjuntos')">🎽 Conjuntos</button>
         <button class="filter-btn" onclick="filterShop(this,'accesorios')">🎒 Accesorios</button>
+      </div>
+      <div class="view-toggle">
+        <button class="view-toggle-btn" data-mode="grid" onclick="setViewMode('grid')" title="Vista cuadrícula">▦</button>
+        <button class="view-toggle-btn" data-mode="carousel" onclick="setViewMode('carousel')" title="Vista carrusel">🎠</button>
       </div>
       <div class="shop-grid" id="shopGrid"></div>
       <div class="carousel-wrap" id="shopCarouselWrap" style="display:none">
@@ -1901,6 +1953,9 @@
       <button class="bnav-btn" id="bnav-cuenta" onclick="openAccount()">
         <span class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>Cuenta
       </button>
+      <button class="bnav-btn" id="bnav-theme" onclick="toggleTheme()">
+        <span class="bnav-icon" id="bnavThemeIcon" style="font-size:18px">🌙</span>Modo
+      </button>
     </div>
   </nav>
 
@@ -1913,6 +1968,36 @@
     let adminTapTimer = null;
     let currentStore = 'bienestar';
     let _shopRendered = [];
+
+    // Modo claro/oscuro
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle('theme-light');
+      localStorage.setItem('jul_theme', isLight ? 'light' : 'dark');
+      const icon = isLight ? '☀️' : '🌙';
+      const navBtn = document.getElementById('themeToggleBtn');
+      const bnavIcon = document.getElementById('bnavThemeIcon');
+      if (navBtn) { navBtn.textContent = icon; navBtn.title = isLight ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'; }
+      if (bnavIcon) bnavIcon.textContent = icon;
+    }
+    (function initThemeIcon() {
+      const isLight = document.body.classList.contains('theme-light');
+      const icon = isLight ? '☀️' : '🌙';
+      document.addEventListener('DOMContentLoaded', () => {
+        const navBtn = document.getElementById('themeToggleBtn');
+        const bnavIcon = document.getElementById('bnavThemeIcon');
+        if (navBtn) navBtn.textContent = icon;
+        if (bnavIcon) bnavIcon.textContent = icon;
+      });
+    })();
+
+    // Vista elegida por el visitante (cuadrícula/carrusel) — pisa la preferencia del admin
+    function getViewMode() { return localStorage.getItem('jul_viewMode'); }
+    function setViewMode(mode) {
+      localStorage.setItem('jul_viewMode', mode);
+      document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+      renderShop();
+      renderCards();
+    }
     const CATEGORY_LABELS = {
       'dias-dificiles': 'Días difíciles', 'autocuidado': 'Autocuidado', 'lenceria': 'Lencería', 'antojos': 'Antojos',
       'tops': 'Tops', 'leggings': 'Leggings', 'conjuntos': 'Conjuntos', 'accesorios': 'Accesorios',
@@ -2011,9 +2096,11 @@
       const cwrap = document.getElementById('contentCarouselWrap');
       if (!grid || !siteConfig.cards) return;
 
-      const useCarousel = !!siteConfig.contentCarousel;
+      const viewOverride = getViewMode();
+      const useCarousel = viewOverride ? viewOverride === 'carousel' : !!siteConfig.contentCarousel;
       grid.style.display = useCarousel ? 'none' : '';
       if (cwrap) cwrap.style.display = useCarousel ? '' : 'none';
+      document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === (useCarousel ? 'carousel' : 'grid')));
 
       const cards = siteConfig.cards;
       if (useCarousel) {
@@ -2185,9 +2272,11 @@
       const products = siteConfig.shopProducts.filter(p => p.available !== false && (p.store || 'bienestar') === currentStore);
       _shopRendered = products;
 
-      const useCarousel = !!siteConfig.shopCarousel;
+      const viewOverride = getViewMode();
+      const useCarousel = viewOverride ? viewOverride === 'carousel' : !!siteConfig.shopCarousel;
       grid.style.display = useCarousel ? 'none' : '';
       if (carouselWrap) carouselWrap.style.display = useCarousel ? '' : 'none';
+      document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === (useCarousel ? 'carousel' : 'grid')));
 
       const bienestarProducts = siteConfig.shopProducts.filter(p => p.available !== false && (p.store || 'bienestar') === 'bienestar');
       renderShopTeaser(bienestarProducts);
