@@ -2745,6 +2745,7 @@
       if (newIdx < 0 || newIdx >= _pageOrder.length) return;
       [_pageOrder[idx], _pageOrder[newIdx]] = [_pageOrder[newIdx], _pageOrder[idx]];
       renderPageOrderAdmin();
+      applyPageOrder(_pageOrder);
     }
 
     function applyPageOrder(order) {
@@ -3166,6 +3167,7 @@
         renderCards();
         renderShop();
         applyTexts();
+        applyPageOrder(_pageOrder);
         setMsg('saveMsg', '✓ Cambios guardados', 'ok');
         setTimeout(() => setMsg('saveMsg', '', ''), 3000);
       } catch {
