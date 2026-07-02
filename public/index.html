@@ -2227,8 +2227,9 @@
         renderShop();
         if (siteConfig.cards?.length) renderContentTeaser(siteConfig.cards);
         if (siteConfig.pageOrder?.length) {
-          applyPageOrder(siteConfig.pageOrder);
-          const firstPage = siteConfig.pageOrder[0];
+          const order = sanitizePageOrder(siteConfig.pageOrder);
+          applyPageOrder(order);
+          const firstPage = order[0];
           if (firstPage === 'bienestar' || firstPage === 'fitness') goStore(firstPage);
           else showPage(firstPage);
         }
@@ -2725,6 +2726,14 @@
     // ── Page order ───────────────────────────────────────────────
     let _pageOrder = ['inicio', 'bienestar', 'fitness'];
     const PAGE_LABELS = { inicio:'🏠 Inicio', bienestar:'🌸 Bienestar', fitness:'💪 Fitness' };
+    const KNOWN_PAGES = Object.keys(PAGE_LABELS);
+
+    // Filtra ids de páginas que ya no existen (ej. nombres viejos antes de un rename) y agrega las que falten
+    function sanitizePageOrder(order) {
+      const clean = (order || []).filter(p => KNOWN_PAGES.includes(p));
+      KNOWN_PAGES.forEach(p => { if (!clean.includes(p)) clean.push(p); });
+      return clean;
+    }
 
     function renderPageOrderAdmin() {
       const list = document.getElementById('pageOrderList');
@@ -3046,7 +3055,7 @@
       });
 
       // Page order
-      _pageOrder = cfg.pageOrder?.length ? [...cfg.pageOrder] : ['inicio','bienestar','fitness'];
+      _pageOrder = sanitizePageOrder(cfg.pageOrder);
       renderPageOrderAdmin();
 
       // Content cards with image + blur
